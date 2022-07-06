@@ -1,4 +1,4 @@
-<mvc:View controllerName="com.ferrero.zmoruiapp.controller.MyInbox"
+<mvc:View controllerName="com.ferrero.zmrouiapp.controller.MyInbox"
     xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"

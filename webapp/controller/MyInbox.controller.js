@@ -61,7 +61,7 @@ sap.ui.define(
                 if (!this._pPopover) {
                     this._pPopover = Fragment.load({
                         id: oView.getId(),
-                        name: "com.ferrero.zmrouiapp.fragments.Popover",
+                        name: "com.ferrero.ztestmro.fragments.Popover",
                         controller: this,
                     }).then(function (oPopover) {
                         oView.addDependent(oPopover);
