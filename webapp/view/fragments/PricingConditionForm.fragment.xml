@@ -1,0 +1,117 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:semantic="sap.f.semantic"
+    xmlns:l="sap.ui.layout"
+    xmlns:footerbar="sap.ushell.ui.footerbar"
+    xmlns:core="sap.ui.core">
+    <Dialog id="myDialog" title="Pricing Detailed Information.." contentHeight="50%" contentWidth="55%">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <f:Form id="SimpleFormToolbarPricingDisplay" editable="true">
+                    <!-- <f:title>
+                        <core:Title text="Address" />
+                    </f:title> -->
+                    <f:layout>
+                        <f:ResponsiveGridLayout labelSpanXL="4" labelSpanL="4" labelSpanM="8" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="2" singleContainerFullSize="false" />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Manufacturer Code">
+                                    <f:fields>
+                                        <Text text="{pricingData>manufacturerCode}" id="nameText" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Manufacturer Desc">
+                                    <f:fields>
+                                        <Text text="{pricingData>manufacturerDesc}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Country">
+                                    <f:fields>
+                                        <Text text="{pricingData>country}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Country Code">
+                                    <f:fields>
+                                        <Text text="{pricingData>countryCode}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Plant">
+                                    <f:fields>
+                                        <Text text="{pricingData>plant}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Plant Desc">
+                                    <f:fields>
+                                        <Text text="{pricingData>plantDescription}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Validity Start">
+                                    <f:fields>
+                                        <Text text="{pricingData>validityStart}" />
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                        <f:FormContainer>
+                            <f:formElements>
+                                
+                                <f:FormElement label="Validity End">
+                                    <f:fields>
+                                        <Text text="{pricingData>validityEnd}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Creation Date">
+                                    <f:fields>
+                                        <Text text="{pricingData>creationDate}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="End Date">
+                                    <f:fields>
+                                        <Text text="{pricingData>latestDate}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Status">
+                                    <f:fields>
+                                        <Text text="{pricingData>status}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Local Ownership">
+                                    <f:fields>
+                                        <Text text="{=${pricingData>localOwnership} === true ? 'Yes' : 'No'}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Exchange Rate" visible="{=${pricingData>/bEdit} === true ? false: true}">
+                                    <f:fields>
+                                        <Text text="{pricingData>exchangeRate}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Exchange Rate" visible="{=${pricingData>/bEdit} === true ? true: false}">
+                                    <f:fields>
+                                        <Input value ="{pricingData>exchangeRate}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Country Factor" visible="{=${pricingData>/bEdit} === true ? false: true}">
+                                    <f:fields>
+                                        <Text text="{pricingData>countryFactor}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Country Factor" visible="{=${pricingData>/bEdit} === true ? true: false}">
+                                    <f:fields>
+                                        <Input value ="{pricingData>countryFactor}"/>
+                                    </f:fields>
+                                </f:FormElement>
+
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+        </content>
+        <buttons>
+            <Button text="Save" id="save" visible="{pricingData>/bInput}" type="Emphasized" press=".onSavePricingData"/>
+            <Button press="onClosepricingData" text="Cancel" id="cancel" type="Emphasized"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

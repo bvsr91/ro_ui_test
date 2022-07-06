@@ -1,0 +1,96 @@
+<core:FragmentDefinition xmlns="sap.m"     xmlns:f="sap.ui.layout.form"    xmlns:semantic="sap.f.semantic"
+    xmlns:l="sap.ui.layout"    xmlns:footerbar="sap.ushell.ui.footerbar"    xmlns:core="sap.ui.core">
+    <Dialog id="myDialog" title="Vendor Data Detailed Information.." contentHeight="45%" contentWidth="60%">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <f:Form id="SimpleFormToolbarDisplay" editable="true">
+                    <!-- <f:title>
+                        <core:Title text="Address" />
+                    </f:title> -->
+                    <f:layout>
+                        <f:ResponsiveGridLayout labelSpanXL="4" labelSpanL="4" labelSpanM="8" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="2" singleContainerFullSize="false" />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Manufacturer Code">
+                                    <f:fields>
+                                        <Text text="{vendorData>manufacturerCode}" id="nameText" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Manufacturer Description">
+                                    <f:fields>
+                                        <Text text="{vendorData>manufacturerDesc}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Local Dealer Manufacturer code">
+                                    <f:fields>
+                                        <Text text="{vendorData>localDealerManufacturerCode}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Local Dealer Manufacturer Desc">
+                                    <f:fields>
+                                        <Text text="{vendorData>localDealerMaufacturerDesc}" id="countryText" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Purchasing Organization">
+                                    <f:fields>
+                                        <Text text="{vendorData>purchasingOrganization}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Purchasing Org Desc">
+                                    <f:fields>
+                                        <Text text="{vendorData>purchasingOrganizationDesc}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Payment Terms" visible="{=${vendorData>/bEdit} === true ? false: true}">
+                                    <f:fields>
+                                        <Text text="{vendorData>paymentTerms}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Payment Terms" visible="{=${vendorData>/bEdit} === true ? true: false}">
+                                    <f:fields>
+                                        <Input value ="{vendorData>paymentTerms}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Payment Term Description" visible="{=${vendorData>/bEdit} === true ? false: true}">
+                                    <f:fields>
+                                        <Text text="{vendorData>paymentTermDesc}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Payment Term Description" visible="{=${vendorData>/bEdit} === true ? true: false}">
+                                    <f:fields>
+                                        <Input value ="{vendorData>paymentTermDesc}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Creation Date">
+                                    <f:fields>
+                                        <Text text="{vendorData>creationDate}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="End Date">
+                                    <f:fields>
+                                        <Text text="{vendorData>latestDate}" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Status">
+                                    <f:fields>
+                                        <Text text="{vendorData>status}" />
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </VBox>
+        </content>
+        <buttons>
+            <Button text="Save" id="save" visible="{vendorData>/bInput}" type="Emphasized" press=".onSaveVendorData"/>
+            <Button press="onCloseVendorData" text="Cancel" id="cancel" type="Emphasized"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

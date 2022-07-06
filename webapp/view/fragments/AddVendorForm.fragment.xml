@@ -1,0 +1,64 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:semantic="sap.f.semantic"
+    xmlns:footerbar="sap.ushell.ui.footerbar"
+    xmlns:core="sap.ui.core">
+    <Dialog id="myDialog" title="New Vendor" contentHeight="35%" contentWidth="60%">
+        <content>
+            <!-- <VBox class="sapUiSmallMargin"> -->
+                <f:Form id="SimpleFormToolbarAdd" editable="true">
+                    <f:layout>
+                        <f:ResponsiveGridLayout labelSpanXL="5" labelSpanL="7" labelSpanM="7" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="2" singleContainerFullSize="false" />
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Manufacturer Code">
+                                    <f:fields>
+                                        <Input id="idIpManf" required="true" maxLength="10"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Manufacturer Code Desc">
+                                    <f:fields>
+                                        <Input id="idIpManfDesc" />
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Local Dealer Manufacturer">
+                                    <f:fields>
+                                        <Input id="idIpLocalManf" required="true" maxLength="10"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Local Dealer Manufacturer Desc">
+                                    <f:fields>
+                                        <Input id="idIpLocalManfDesc" />
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                        <f:FormContainer>
+                            <f:formElements>
+                                <f:FormElement label="Country">
+                                    <f:fields>
+                                        <!-- <Input id="idIpCountry"/> -->
+                                        <Input  id="idIpCountry"  type="Text" placeholder="Enter Country ..."
+                                            showValueHelp="true" valueHelpOnly="true"  valueHelpRequest=".onValueHelpRequestCountry"
+                                            class="sapUiSmallMarginBottom" required="true"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement label="Country Desc">
+                                    <f:fields>
+                                        <Text id="idIpCountryDesc"/>
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            <!-- </VBox> -->
+        </content>
+        <buttons>
+            <Button text="Save" type="Emphasized" press=".onSaveNewVendorData"/>
+            <Button text="Cancel" press="onCloseVendor" type="Emphasized"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

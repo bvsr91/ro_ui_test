@@ -1,0 +1,201 @@
+{
+    "_version": "1.40.0",
+    "sap.app": {
+        "id": "com.ferrero.zmrouiapp",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap-ux/fiori-freestyle-writer:basic",
+            "version": "0.11.15",
+            "toolsId": "9cd07e46-d52d-48e5-8c1f-b0e6f396ff52"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/v2/MroSrv/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [
+                        "annotation0"
+                    ],
+                    "localUri": "localService/metadata.xml",
+                    "odataVersion": "2.0"
+                }
+            },
+            "annotation0": {
+                "uri": "annotations/annotation0.xml",
+                "type": "ODataAnnotation",
+                "settings": {
+                    "localUri": "annotations/annotation0.xml"
+                }
+            }
+        },
+        "crossNavigation": {
+            "inbounds": {
+                "com-ferrero-zmrouiapp-inbound": {
+                    "signature": {
+                        "parameters": {},
+                        "additionalParameters": "allowed"
+                    },
+                    "semanticObject": "mro",
+                    "action": "display",
+                    "title": "{{flpTitle}}",
+                    "subTitle": "{{flpSubtitle}}",
+                    "icon": "sap-icon://supplier"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.102.1",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.f": {},
+                "sap.suite.ui.generic.template": {},
+                "sap.ui.comp": {},
+                "sap.ui.generic.app": {},
+                "sap.ui.table": {},
+                "sap.ushell": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "com.ferrero.zmrouiapp.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {}
+            },
+            "userModel": {
+                "type": "sap.ui.model.json.JSONModel",
+                "uri": "model/UserModel.json"
+            }
+        },
+        "resources": {
+            "css": [
+                {
+                    "uri": "css/style.css"
+                }
+            ]
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "viewType": "XML",
+                "async": true,
+                "viewPath": "com.ferrero.zmrouiapp.view",
+                "controlAggregation": "pages",
+                "controlId": "mainContents",
+                "clearControlAggregation": false
+            },
+            "routes": [
+                {
+                    "name": "home",
+                    "pattern": "",
+                    "target": [
+                        "home"
+                    ]
+                },
+                {
+                    "name": "vendorList",
+                    "pattern": "vendorList",
+                    "target": "vendorList"
+                },
+                {
+                    "name": "pricingCond",
+                    "pattern": "pricing",
+                    "target": "pricingCond"
+                },
+                {
+                    "name": "myInbox",
+                    "pattern": "myInbox",
+                    "target": "myInbox"
+                },
+                {
+                    "name": "notFound",
+                    "pattern": "notFound",
+                    "target": "notFound"
+                }
+            ],
+            "targets": {
+                "home": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "home",
+                    "viewName": "Home"
+                },
+                "vendorList": {
+                    "viewName": "VendorList",
+                    "viewType": "XML",
+                    "viewId": "VendorList",
+                    "clearControlAggregation": false,
+                    "transition": "show"
+                },
+                "pricingCond": {
+                    "viewName": "PricingCond",
+                    "viewType": "XML",
+                    "viewId": "PricingCond",
+                    "clearControlAggregation": false,
+                    "transition": "show"
+                },
+                "myInbox": {
+                    "viewName": "MyInbox",
+                    "viewType": "XML",
+                    "viewId": "MyInbox",
+                    "clearControlAggregation": false,
+                    "transition": "show"
+                },
+                "notFound": {
+                    "viewName": "NotFound",
+                    "viewType": "XML",
+                    "viewId": "NotFound",
+                    "clearControlAggregation": false,
+                    "transition": "show"
+                }
+            }
+        },
+        "rootView": {
+            "viewName": "com.ferrero.zmrouiapp.view.App",
+            "type": "XML",
+            "async": true,
+            "id": "mainContents"
+        }
+    },
+    "sap.cloud": {
+        "public": true,
+        "service": "com-ferrero-zmrouiapp"
+    }
+}

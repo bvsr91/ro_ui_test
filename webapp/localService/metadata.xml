@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="MroService" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="Roles" EntityType="MroService.Roles"/>
+                <EntitySet Name="Users" EntityType="MroService.Users"/>
+                <EntitySet Name="MaintainApproval" EntityType="MroService.MaintainApproval"/>
+                <EntitySet Name="VendorList" EntityType="MroService.VendorList"/>
+                <EntitySet Name="PricingConditions" EntityType="MroService.PricingConditions"/>
+                <EntitySet Name="StatusCodeList" EntityType="MroService.StatusCodeList"/>
+                <EntitySet Name="CountriesCodeList" EntityType="MroService.CountriesCodeList"/>
+                <EntitySet Name="CheckUserRole" EntityType="MroService.CheckUserRole"/>
+                <AssociationSet Name="Users_role" Association="MroService.Users_role">
+                    <End Role="Users" EntitySet="Users"/>
+                    <End Role="Roles" EntitySet="Roles"/>
+                </AssociationSet>
+                <AssociationSet Name="CheckUserRole_role" Association="MroService.CheckUserRole_role">
+                    <End Role="CheckUserRole" EntitySet="CheckUserRole"/>
+                    <End Role="Roles" EntitySet="Roles"/>
+                </AssociationSet>
+            </EntityContainer>
+            <EntityType Name="Roles">
+                <Key>
+                    <PropertyRef Name="role"/>
+                </Key>
+                <Property Name="role" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="description" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="Users">
+                <Key>
+                    <PropertyRef Name="userid"/>
+                </Key>
+                <Property Name="userid" Type="Edm.String" MaxLength="30" Nullable="false"/>
+                <NavigationProperty Name="role" Relationship="MroService.Users_role" FromRole="Users" ToRole="Roles"/>
+                <Property Name="role_role" Type="Edm.String" MaxLength="3"/>
+            </EntityType>
+            <EntityType Name="MaintainApproval">
+                <Key>
+                    <PropertyRef Name="userid"/>
+                    <PropertyRef Name="managerid"/>
+                </Key>
+                <Property Name="userid" Type="Edm.String" MaxLength="30" Nullable="false"/>
+                <Property Name="managerid" Type="Edm.String" MaxLength="30" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="VendorList">
+                <Key>
+                    <PropertyRef Name="manufacturerCode"/>
+                    <PropertyRef Name="localManufacturerCode"/>
+                    <PropertyRef Name="countryCode"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="manufacturerCode" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="localManufacturerCode" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="countryCode" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="countryDesc" Type="Edm.String"/>
+                <Property Name="uuid" Type="Edm.Guid"/>
+                <Property Name="manufacturerCodeDesc" Type="Edm.String" MaxLength="35"/>
+                <Property Name="localManufacturerCodeDesc" Type="Edm.String" MaxLength="35"/>
+                <Property Name="initiator" Type="Edm.String"/>
+                <Property Name="approver" Type="Edm.String"/>
+                <Property Name="status" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="PricingConditions">
+                <Key>
+                    <PropertyRef Name="manufacturerCode"/>
+                    <PropertyRef Name="countryCode"/>
+                </Key>
+                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="manufacturerCode" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="countryCode" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="countryDesc" Type="Edm.String"/>
+                <Property Name="uuid" Type="Edm.Guid"/>
+                <Property Name="manufacturerCodeDesc" Type="Edm.String" MaxLength="35"/>
+                <Property Name="localCurrency" Type="Edm.String" MaxLength="3"/>
+                <Property Name="exchangeRate" Type="Edm.Decimal" Scale="2" Precision="4"/>
+                <Property Name="countryFactor" Type="Edm.Decimal" Scale="2" Precision="4"/>
+                <Property Name="validityStart" Type="Edm.DateTime" sap:display-format="Date"/>
+                <Property Name="validityEnd" Type="Edm.DateTime" sap:display-format="Date"/>
+                <Property Name="initiator" Type="Edm.String"/>
+                <Property Name="approver" Type="Edm.String"/>
+                <Property Name="ld_initiator" Type="Edm.String"/>
+                <Property Name="status" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="StatusCodeList">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="CountriesCodeList">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="desc" Type="Edm.String"/>
+            </EntityType>
+            <EntityType Name="CheckUserRole">
+                <Key>
+                    <PropertyRef Name="userid"/>
+                </Key>
+                <Property Name="userid" Type="Edm.String" MaxLength="30" Nullable="false"/>
+                <NavigationProperty Name="role" Relationship="MroService.CheckUserRole_role" FromRole="CheckUserRole" ToRole="Roles"/>
+                <Property Name="role_role" Type="Edm.String" MaxLength="3"/>
+            </EntityType>
+            <Association Name="Users_role">
+                <End Role="Users" Type="MroService.Users" Multiplicity="*"/>
+                <End Role="Roles" Type="MroService.Roles" Multiplicity="0..1"/>
+                <ReferentialConstraint>
+                    <Principal Role="Roles">
+                        <PropertyRef Name="role"/>
+                    </Principal>
+                    <Dependent Role="Users">
+                        <PropertyRef Name="role_role"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Association Name="CheckUserRole_role">
+                <End Role="CheckUserRole" Type="MroService.CheckUserRole" Multiplicity="*"/>
+                <End Role="Roles" Type="MroService.Roles" Multiplicity="0..1"/>
+                <ReferentialConstraint>
+                    <Principal Role="Roles">
+                        <PropertyRef Name="role"/>
+                    </Principal>
+                    <Dependent Role="CheckUserRole">
+                        <PropertyRef Name="role_role"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <Annotations Target="MroService.Roles/role" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Role"/>
+            </Annotations>
+            <Annotations Target="MroService.Roles/description" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="MroService.Users/userid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="User ID"/>
+            </Annotations>
+            <Annotations Target="MroService.Users/role" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Role"/>
+            </Annotations>
+            <Annotations Target="MroService.Users/role_role" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Role"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="manufacturerCode"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="manufacturerCodeDesc"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="localManufacturerCode"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="localManufacturerCodeDesc"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="countryCode"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="countryDesc"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="initiator"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="approver"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="createdAt"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="createdBy"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="modifiedAt"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="modifiedBy"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>manufacturerCode</PropertyPath>
+                        <PropertyPath>localManufacturerCode</PropertyPath>
+                        <PropertyPath>countryCode</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/createdAt" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Created On"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/createdBy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/modifiedAt" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Changed On"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/modifiedBy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Changed By"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/manufacturerCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Text" Path="manufacturerCodeDesc"/>
+                <Annotation Term="Common.Label" String="Manufacturer Code"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/localManufacturerCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Text" Path="localManufacturerCodeDesc"/>
+                <Annotation Term="Common.Label" String="Local Manufacturer Code"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/countryCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Text" Path="countryDesc"/>
+                <Annotation Term="Common.Label" String="Country Code"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/countryDesc" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Country Description"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/manufacturerCodeDesc" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Manufacturer Code Desc"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/localManufacturerCodeDesc" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Local Manufacturer Code Desc"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/initiator" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Initiator"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/approver" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Approver"/>
+            </Annotations>
+            <Annotations Target="MroService.VendorList/status" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Status"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="manufacturerCode"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="countryCode"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="countryFactor"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="exchangeRate"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="status"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="manufacturerCodeDesc"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="countryDesc"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="localCurrency"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="validityStart"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="validityEnd"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ld_initiator"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="approver"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="approver"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="createdAt"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="createdBy"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="modifiedAt"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="modifiedBy"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Low"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>manufacturerCode</PropertyPath>
+                        <PropertyPath>countryCode</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/createdAt" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Created On"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/createdBy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Immutable" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Created By"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/modifiedAt" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Common.Label" String="Changed On"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/modifiedBy" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.Description" String="User's unique ID"/>
+                <Annotation Term="Common.Label" String="Changed By"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/manufacturerCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Text" Path="manufacturerCodeDesc"/>
+                <Annotation Term="Common.Label" String="Manufacturer Code"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/countryCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Text" Path="countryDesc"/>
+                <Annotation Term="Common.Label" String="Country Code"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/countryDesc" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="UI.HiddenFilter" Bool="true"/>
+                <Annotation Term="Common.Label" String="Country Description"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/manufacturerCodeDesc" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Manufacturer Code Desc"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/localCurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Local Currency"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/exchangeRate" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Exchange Rate"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/countryFactor" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Country Factor"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/validityStart" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Validity Start"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/validityEnd" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="validtyEnd"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/initiator" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Initiator"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/approver" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Approver"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/ld_initiator" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Local Delivery Initiator"/>
+            </Annotations>
+            <Annotations Target="MroService.PricingConditions/status" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Status"/>
+            </Annotations>
+            <Annotations Target="MroService.CountriesCodeList/code" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Core.Description" String="Country Code"/>
+            </Annotations>
+            <Annotations Target="MroService.CountriesCodeList/desc" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Core.Description" String="Description"/>
+            </Annotations>
+            <Annotations Target="MroService.EntityContainer/CheckUserRole" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="MroService.CheckUserRole/userid" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="User ID"/>
+            </Annotations>
+            <Annotations Target="MroService.CheckUserRole/role" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Role"/>
+            </Annotations>
+            <Annotations Target="MroService.CheckUserRole/role_role" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Label" String="Role"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,23 @@
+{
+    "selectedKey": "",
+    "navigation": [
+        {
+            "titleI18nKey": "scVendListTab",
+            "icon": "sap-icon://building",
+            "expanded": false,
+            "key": "vendorList"
+        },
+        {
+            "titleI18nKey": "scPriceConTab",
+            "icon": "sap-icon://money-bills",
+            "expanded": false,
+            "key": "pricingCond"
+        },
+        {
+            "titleI18nKey": "scMyInbox",
+            "icon": "sap-icon://inbox",
+            "expanded": false,
+            "key": "myInbox"
+        }
+    ]
+}

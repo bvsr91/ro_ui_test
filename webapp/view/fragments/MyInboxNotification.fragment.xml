@@ -1,0 +1,26 @@
+<core:FragmentDefinition xmlns="sap.m"    xmlns:f="sap.ui.layout.form"    xmlns:semantic="sap.f.semantic"
+    xmlns:footerbar="sap.ushell.ui.footerbar"    xmlns:core="sap.ui.core"    xmlns:l="sap.ui.layout">
+    <ResponsivePopover id="myDialog" class="sapUiContentPadding" placement="Bottom">
+        <customHeader>
+            <Bar>
+                <contentMiddle>
+                    <Title text = "Notifications"/>
+                </contentMiddle>
+                <contentRight>
+                    <Button press="onCloseNotification" icon= "sap-icon://decline" tooltip ="Cancel" id="cancel" type="Transparent"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <List id="notificationList" class="sapContrast sapContrastPlus" items="{ path: 'notificationData>/notificationListData'}">
+
+            <NotificationListItem title="{notificationData>title}" description="{notificationData>description}" showCloseButton="true" datetime="{notificationData>dateTime}" unread="false" priority="{notificationData>priority}" authorName="{notificationData>author}" close="onItemClose" press="onListItemPress" hideShowMoreButton="true" truncate="false">
+
+            </NotificationListItem>
+        </List>
+        <!-- </content>
+        <buttons>
+            <Button press="onCloseNotification" text="Cancel" id="cancel" type="Emphasized"/>
+        </buttons>
+    </Dialog> -->
+    </ResponsivePopover>
+</core:FragmentDefinition>
