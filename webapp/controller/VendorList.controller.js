@@ -308,17 +308,11 @@ sap.ui.define(
             },
             onDelete: function (oEvent) {
                 var oModel = this.getOwnerComponent().getModel();
-                var oPayLoad = oEvent.getParameter("row").getBindingContext().getObject();
-                // var oPayLoad = {};
+
+                var oPayLoad = {};
                 oPayLoad.status_code = "Deleted";
-                delete oPayLoad.status;
-                delete oPayLoad.createdAt;
-                delete oPayLoad.modifiedAt;
-                delete oPayLoad.__metadata;
-                delete oPayLoad.uuid;
-                
                 sap.ui.core.BusyIndicator.show();
-                oModel.update(oEvent.getParameter("row").getBindingContext().sPath, {
+                oModel.update(oEvent.getParameter("row").getBindingContext().sPath, oPayLoad, {
                     success: function (oData) {
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record Deleted successfully");
