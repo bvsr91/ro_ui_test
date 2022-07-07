@@ -1,6 +1,6 @@
 <edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
     <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
-        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI" />
     </edmx:Reference>
     <edmx:Reference Uri="/v2/MroSrv/$metadata">
         <edmx:Include Alias="Metadata" Namespace="MroService" />
@@ -97,6 +97,9 @@
                 <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
             </Annotations>
             <Annotations Target="Metadata.StatusCodeList/name">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/descr">
                 <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
             </Annotations>
         </Schema>

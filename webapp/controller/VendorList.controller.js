@@ -103,8 +103,7 @@ sap.ui.define(
 
             onLinksDownload: function (oEvent) {
                 var oInput = oEvent.getSource(),
-                    oBinding = oInput
-                        .getParent()
+                    oBinding = oInput.getParent()
                         .getBindingContext("vendorData")
                         .getObject();
                 //   bEnDevelopment = oBinding.MyDevelopment === "X",
@@ -298,7 +297,7 @@ sap.ui.define(
                     var oRow = oEvent.getParameter("row");
                     var oItem = oEvent.getParameter("item");
                     if (oItem.getType() === "Delete") {
-                        this.onDelete(oEvent);
+                        this.onDeleteAwaitConfirm(oEvent);
                     }
                 } else {
                     MessageBox.error("You can not edit/delete the record that was created by others");
@@ -306,13 +305,26 @@ sap.ui.define(
                 // sap.m.MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " pressed for product with id " +
                 //     oRow.getBindingContext().getObject().manufacturerCode);
             },
-            onDelete: function (oEvent) {
+            onDeleteAwaitConfirm: function (oEvent) {
+                this._oDelObjContext = oEvent.getSource().getBindingContext();
+                MessageBox.confirm("Do you want to delete the record?", {
+                    actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
+                    initialFocus: MessageBox.Action.CANCEL,
+                    onClose: function (sAction) {
+                        if (sAction === "YES") {
+                            this.onConfirmDelete(this._oDelObjContext);
+                        }
+                    }.bind(this),
+                }
+                );                
+            },
+            onConfirmDelete: function (oContext) {
                 var oModel = this.getOwnerComponent().getModel();
 
                 var oPayLoad = {};
                 oPayLoad.status_code = "Deleted";
                 sap.ui.core.BusyIndicator.show();
-                oModel.update(oEvent.getParameter("row").getBindingContext().sPath, oPayLoad, {
+                oModel.update(oContext.sPath, oPayLoad, {
                     success: function (oData) {
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record Deleted successfully");

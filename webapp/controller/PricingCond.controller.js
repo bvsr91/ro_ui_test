@@ -142,14 +142,14 @@ sap.ui.define(
             onPressDelete: function (oInput, oEvent) {
                 this._oDelObjContext = oInput.getParent().getBindingContext();
                 MessageBox.confirm("Do you want to delete the record?", {
-                    actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
-                    initialFocus: MessageBox.Action.CANCEL,
-                    onClose: function (sAction) {
-                        if (sAction === "YES") {
-                            this.onConfirmDelete(this._oDelObjContext);
-                        }
-                    }.bind(this),
-                }
+                        actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
+                        initialFocus: MessageBox.Action.CANCEL,
+                        onClose: function (sAction) {
+                            if (sAction === "YES") {
+                                this.onConfirmDelete(this._oDelObjContext);
+                            }
+                        }.bind(this),
+                    }
                 );
             },
             onConfirmDelete: function (oObjectContext) {
