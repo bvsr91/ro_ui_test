@@ -28,7 +28,11 @@ sap.ui.define(
              */
             onInit: function () {
                 this.getRouter().getRoute("myInbox").attachPatternMatched(this._onRouteMatched, this);
-                // this.getRouter().attachBypassed(this.onBypassed, this);
+                var that = this;
+                var oHashChanger = new sap.ui.core.routing.HashChanger.getInstance();
+                oHashChanger.attachEvent("hashChanged", function (oEvent) {
+                    that.routeAuthValidation(oHashChanger.getHash());
+                });
             },
 
             /* =========================================================== */
@@ -52,7 +56,9 @@ sap.ui.define(
             _onRouteMatched: function () {
                 //Set the layout property of the FCL control to 'OneColumn'
                 // this.getModel("appView").setProperty("/layout", "OneColumn");
+
                 this.setSelKey("myInbox");
+                this.routeAuthValidation("myInbox");
             },
             handleResponsivePopoverPress: function (oEvent) {
                 var oButton = oEvent.getSource(),

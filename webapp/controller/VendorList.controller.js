@@ -39,6 +39,11 @@ sap.ui.define(
                 // this.getView().byId("vendSmartTab").rebindTable();
                 // this.createRecord();
                 this.extendTable();
+                var that = this;
+                var oHashChanger = new sap.ui.core.routing.HashChanger.getInstance();
+                oHashChanger.attachEvent("hashChanged", function (oEvent) {
+                    that.routeAuthValidation(oHashChanger.getHash());
+                });
             },
             createRecord: function () {
                 var oPayLoad = {};
@@ -93,6 +98,7 @@ sap.ui.define(
                 //Set the layout property of the FCL control to 'OneColumn'
                 // this.getModel("appView").setProperty("/layout", "OneColumn");
                 this.setSelKey("vendorList");
+                this.routeAuthValidation("vendorList");
             },
 
             onLinksDownload: function (oEvent) {

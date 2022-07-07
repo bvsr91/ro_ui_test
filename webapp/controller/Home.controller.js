@@ -26,9 +26,12 @@ sap.ui.define(
              * @public
              */
             onInit: function () {
-                this.getRouter()
-                    .getRoute("home")
-                    .attachPatternMatched(this._onRouteMatched, this);
+                this.getRouter().getRoute("home").attachPatternMatched(this._onRouteMatched, this);
+                var that = this;
+                var oHashChanger = new sap.ui.core.routing.HashChanger.getInstance();
+                oHashChanger.attachEvent("hashChanged", function (oEvent) {
+                    that.routeAuthValidation(oHashChanger.getHash());
+                });
                 // this.getRouter().attachBypassed(this.onBypassed, this);
             },
 

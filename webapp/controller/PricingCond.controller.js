@@ -27,13 +27,16 @@ sap.ui.define(
              * @public
              */
             onInit: function () {
-                this.getRouter()
-                    .getRoute("pricingCond")
-                    .attachPatternMatched(this._onRouteMatched, this);
+                this.getRouter().getRoute("pricingCond").attachPatternMatched(this._onRouteMatched, this);
                 // this.getRouter().attachBypassed(this.onBypassed, this);
                 // var oModel = this.getOwnerComponent().getModel("mrosrv_v2")
                 // this.getView().setModel(oModel);
                 // this.getView().byId("priceSmartTab").rebindTable();
+                var that = this;
+                var oHashChanger = new sap.ui.core.routing.HashChanger.getInstance();
+                oHashChanger.attachEvent("hashChanged", function (oEvent) {
+                    that.routeAuthValidation(oHashChanger.getHash());
+                });
             },
 
             /* =========================================================== */
@@ -55,9 +58,11 @@ sap.ui.define(
             /* =========================================================== */
 
             _onRouteMatched: function () {
+                debugger;
                 //Set the layout property of the FCL control to 'OneColumn'
                 // this.getModel("appView").setProperty("/layout", "OneColumn");
                 this.setSelKey("pricingCond");
+                this.routeAuthValidation("pricingCond");
             },
             onModify: function (oInput, oEvent) {
                 this.openDialog(oInput, true);

@@ -1,7 +1,7 @@
 sap.ui.define(
     ["sap/ui/core/mvc/Controller", "sap/ui/core/routing/History",
-    "sap/ui/core/Fragment"],
-    function (Controller, History,Fragment) {
+        "sap/ui/core/Fragment"],
+    function (Controller, History, Fragment) {
         "use strict";
 
         return Controller.extend("com.ferrero.zmrouiapp.controller.BaseController", {
@@ -144,6 +144,42 @@ sap.ui.define(
                 }
                 oInput.setValue(oSelectedItem.getTitle());
                 this.byId(sap.ui.core.Fragment.createId(sFragmentID, sTextID)).setText(oSelectedItem.getDescription());
+            },
+            routeAuthValidation(sRoute) {
+                var oModel = this.getOwnerComponent().getModel("userModel");
+                var oData = oModel.getData();
+                var role = oData.role;
+                var aCDTRoutes = ["vendorList", "pricingCond", "myInbox"];
+                var aLDTRoutes = ["pricingCond", "myInbox"];
+                var aManagerRoutes = ["myInbox"];
+                var oRouter = this.getOwnerComponent().getRouter();
+                if (role) {
+                    if (role.role_role === "CDT") {
+                        if (aCDTRoutes.includes(sRoute)) {
+                            oRouter.navTo(sRoute);
+                        } else {
+                            oRouter.navTo("notFound");
+                        }
+                    } else if (role.role_role === "LDT") {
+                        if (aLDTRoutes.includes(sRoute)) {
+                            oRouter.navTo(sRoute);
+                        } else {
+                            oRouter.navTo("notFound");
+                        }
+                    } else if (role.role_role === "LP" || role.role_role === "GCM") {
+                        if (aManagerRoutes.includes(sRoute)) {
+                            oRouter.navTo(sRoute);
+                        } else {
+                            oRouter.navTo("notFound");
+                        }
+                    } else {
+                        this.getOwnerComponent().getRouter().navTo("notFound");
+                        // window.location.reload();
+                    }
+                } else {
+                    this.getOwnerComponent().getRouter().navTo("notFound");
+                    // window.location.reload();
+                }
             }
         });
     }
