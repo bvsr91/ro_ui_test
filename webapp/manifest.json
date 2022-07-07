@@ -135,7 +135,7 @@
                 },
                 {
                     "name": "pricingCond",
-                    "pattern": "pricing",
+                    "pattern": "pricingCond",
                     "target": "pricingCond"
                 },
                 {

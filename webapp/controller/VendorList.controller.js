@@ -272,7 +272,7 @@ sap.ui.define(
                                 items: [
                                     // new RowActionItem({ icon: "sap-icon://attachment", text: "Attachment", press: fnPress }),
                                     // new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
-                                    // new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
+                                    new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
                                     new RowActionItem({ text: "Delete", press: fnPress, type: sap.ui.table.RowActionType.Delete })
                                 ]
                             });
@@ -292,32 +292,63 @@ sap.ui.define(
                 oTable.setRowActionCount(iCount);
             },
             handleActionPress: function (oEvent) {
-                var oRow = oEvent.getParameter("row");
-                var oItem = oEvent.getParameter("item");
-                if (oItem.getType() === "Delete") {
-                    this.onDelete(oEvent);
+                var oRecordCreator = oEvent.getParameter("row").getBindingContext().getObject().initiator;
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                    var oRow = oEvent.getParameter("row");
+                    var oItem = oEvent.getParameter("item");
+                    if (oItem.getType() === "Delete") {
+                        this.onDelete(oEvent);
+                    }
+                } else {
+                    MessageBox.error("You can not edit/delete the record that was created by others");
                 }
                 // sap.m.MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " pressed for product with id " +
                 //     oRow.getBindingContext().getObject().manufacturerCode);
             },
             onDelete: function (oEvent) {
                 var oModel = this.getOwnerComponent().getModel();
-                this.getView().setBusy(true);
-                oModel.remove(oEvent.getParameter("row").getBindingContext().sPath, {
+                var oPayLoad = oEvent.getParameter("row").getBindingContext().getObject();
+                // var oPayLoad = {};
+                oPayLoad.status_code = "Deleted";
+                delete oPayLoad.status;
+                delete oPayLoad.createdAt;
+                delete oPayLoad.modifiedAt;
+                delete oPayLoad.__metadata;
+                delete oPayLoad.uuid;
+                
+                sap.ui.core.BusyIndicator.show();
+                oModel.update(oEvent.getParameter("row").getBindingContext().sPath, {
                     success: function (oData) {
-                        this.getView().setBusy(false);
+                        sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record Deleted successfully");
                     }.bind(this),
                     error: function (error) {
-                        this.getView().setBusy(false);
+                        sap.ui.core.BusyIndicator.hide();
                         var errorObj1 = JSON.parse(error.responseText).error.message;
                         MessageBox.show(
                             errorObj1.value,
                             sap.m.MessageBox.Icon.ERROR,
-                            "Error In Create Operation"
+                            "Error In Delete Operation"
                         );
                     }.bind(this)
                 });
+                // this.getView().setBusy(true);
+                // oModel.remove(oEvent.getParameter("row").getBindingContext().sPath, {
+                //     success: function (oData) {
+                //         this.getView().setBusy(false);
+                //         MessageBox.success("Record Deleted successfully");
+                //     }.bind(this),
+                //     error: function (error) {
+                //         this.getView().setBusy(false);
+                //         var errorObj1 = JSON.parse(error.responseText).error.message;
+                //         MessageBox.show(
+                //             errorObj1.value,
+                //             sap.m.MessageBox.Icon.ERROR,
+                //             "Error In Create Operation"
+                //         );
+                //     }.bind(this)
+                // });
             },
             onValueHelpRequestCountry: function (oEvent) {
                 this.openCountryValueHelpDialog(oEvent);
