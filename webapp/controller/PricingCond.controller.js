@@ -238,6 +238,18 @@ sap.ui.define(
 
             onValueHelpDialogClose: function (oEvent) {
                 this.countryValueHelpClose(oEvent, "FrgAddPricing", "idIpCountry", "idIpCountryDesc")
+            },
+            onSearch: function (oEvent) {
+                var sValue = oEvent.getParameter("value");
+                // var oFilter = new Filter("desc", FilterOperator.Contains, sValue, true);
+                var aFilters = [];
+                aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
+
+                var oBinding = oEvent.getParameter("itemsBinding");
+                oBinding.filter(aFilters);
+            },
+            createFilter: function (key, operator, value, useToLower) {
+                return new Filter(useToLower ? "tolower(" + key + ")" : key, operator, useToLower ? "'" + value.toLowerCase() + "'" : value);
             }
         });
     }

@@ -21,15 +21,23 @@
                         <Column id="actions" hAlign="Center" importance="High" width="5rem">
                             <customData>
                                 <core:CustomData key="p13nData"
-                                    value='\{"columnKey": "actions", "autoColumnWidth": true, "maxLength": 5,"columnIndex":5}' />
+                                    value='\{"columnKey": "actions", "autoColumnWidth": true, "maxLength": 5,"columnIndex":4}' />
                             </customData>
                             <Text text="Actions" />
+                        </Column>
+                        <Column id="idApprover" hAlign="Center" importance="High" width="5rem">
+                            <customData>
+                                <core:CustomData key="p13nData"
+                                    value='\{"columnKey": "approver", "autoColumnWidth": true, "maxLength": 5,"columnIndex":6}' />
+                            </customData>
+                            <Text text="Approver" />
                         </Column>
                     </columns>
                     <items>
                         <ColumnListItem>
                             <cells>
                                 <Button icon="sap-icon://overflow" press="onPressActions"/>
+                                <Text text="{approver}"/>
                             </cells>
                         </ColumnListItem>
                     </items>

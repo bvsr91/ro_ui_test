@@ -74,7 +74,7 @@
                 <Property Name="localManufacturerCodeDesc" Type="Edm.String" MaxLength="35"/>
                 <Property Name="initiator" Type="Edm.String"/>
                 <Property Name="approver" Type="Edm.String"/>
-                <Property Name="status" Type="Edm.String" MaxLength="10"/>
+                <Property Name="status_code" Type="Edm.String" MaxLength="10"/>
             </EntityType>
             <EntityType Name="PricingConditions">
                 <Key>
@@ -98,7 +98,7 @@
                 <Property Name="initiator" Type="Edm.String"/>
                 <Property Name="approver" Type="Edm.String"/>
                 <Property Name="ld_initiator" Type="Edm.String"/>
-                <Property Name="status" Type="Edm.String" MaxLength="10"/>
+                <Property Name="status_code" Type="Edm.String" MaxLength="10"/>
             </EntityType>
             <EntityType Name="StatusCodeList">
                 <Key>
@@ -188,7 +188,7 @@
                             <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
                         </Record>
                         <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="status"/>
+                            <PropertyValue Property="Value" Path="status_code"/>
                             <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/Medium"/>
                         </Record>
                         <Record Type="UI.DataField">
@@ -276,7 +276,7 @@
             <Annotations Target="MroService.VendorList/approver" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="Approver"/>
             </Annotations>
-            <Annotations Target="MroService.VendorList/status" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotations Target="MroService.VendorList/status_code" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="Status"/>
             </Annotations>
             <Annotations Target="MroService.PricingConditions" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -299,7 +299,7 @@
                             <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
                         </Record>
                         <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="status"/>
+                            <PropertyValue Property="Value" Path="status_code"/>
                             <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
                         </Record>
                         <Record Type="UI.DataField">
@@ -422,7 +422,7 @@
             <Annotations Target="MroService.PricingConditions/ld_initiator" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="Local Delivery Initiator"/>
             </Annotations>
-            <Annotations Target="MroService.PricingConditions/status" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotations Target="MroService.PricingConditions/status_code" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.Label" String="Status"/>
             </Annotations>
             <Annotations Target="MroService.CountriesCodeList/code" xmlns="http://docs.oasis-open.org/odata/ns/edm">

@@ -40,6 +40,36 @@ sap.ui.define(
                 // this.createRecord();
                 this.extendTable();
             },
+            createRecord: function () {
+                var oPayLoad = {};
+                // oPayLoad.uuid_manufacturerCode = "55515";
+                oPayLoad.uuid = "5";
+                // oPayLoad.uuid_countryCode = "AE";
+                oPayLoad.comment = "SRini";
+                var oModel = this.getOwnerComponent().getModel();
+                // this.getView().setBusy(true);
+                sap.ui.core.BusyIndicator.show();
+                oModel.create("/VendorComments", oPayLoad, {
+                    success: function (oData) {
+                        console.log(oData);
+                        this.onCloseVendor();
+                        // this.getView().setBusy(false);
+                        sap.ui.core.BusyIndicator.hide();
+                        MessageBox.success("Record created successfully");
+                    }.bind(this),
+                    error: function (error) {
+                        console.log(error);
+                        sap.ui.core.BusyIndicator.hide();
+                        var errorObj1 = JSON.parse(error.responseText).error.message;
+                        MessageBox.show(
+                            errorObj1.value,
+                            sap.m.MessageBox.Icon.ERROR,
+                            "Error In Create Operation"
+                        );
+                        // this.getView().setBusy(false);
+                    }.bind(this)
+                });
+            },
 
             /* =========================================================== */
             /* event handlers                                              */
@@ -293,6 +323,18 @@ sap.ui.define(
 
             onValueHelpDialogClose: function (oEvent) {
                 this.countryValueHelpClose(oEvent, "FrgAddVendorData", "idIpCountry", "idIpCountryDesc")
+            },
+            onSearch: function (oEvent) {
+                var sValue = oEvent.getParameter("value");
+                // var oFilter = new Filter("desc", FilterOperator.Contains, sValue, true);
+                var aFilters = [];
+                aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
+
+                var oBinding = oEvent.getParameter("itemsBinding");
+                oBinding.filter(aFilters);
+            },
+            createFilter: function (key, operator, value, useToLower) {
+                return new Filter(useToLower ? "tolower(" + key + ")" : key, operator, useToLower ? "'" + value.toLowerCase() + "'" : value);
             }
         });
     }

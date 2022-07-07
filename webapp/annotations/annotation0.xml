@@ -52,14 +52,14 @@
                 </Annotation>
                 <!--<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>-->
             </Annotations>
-            <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="Metadata.PricingConditions/status">
+            <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="Metadata.PricingConditions/status_code">
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
                         <PropertyValue Property="CollectionPath" String="StatusCodeList" />
                         <PropertyValue Property="Parameters">
                             <Collection>
                                 <Record Type="Common.ValueListParameterInOut">
-                                    <PropertyValue Property="LocalDataProperty" PropertyPath="status" />
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="status_code" />
                                     <PropertyValue Property="ValueListProperty" String="code" />
                                 </Record>
                             </Collection>
@@ -68,14 +68,14 @@
                 </Annotation>
                 <Annotation Term="Common.ValueListWithFixedValues" Bool="true" />
             </Annotations>
-            <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="Metadata.VendorList/status">
+            <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="Metadata.VendorList/status_code">
                 <Annotation Term="Common.ValueList">
                     <Record Type="Common.ValueListType">
                         <PropertyValue Property="CollectionPath" String="StatusCodeList" />
                         <PropertyValue Property="Parameters">
                             <Collection>
                                 <Record Type="Common.ValueListParameterInOut">
-                                    <PropertyValue Property="LocalDataProperty" PropertyPath="status" />
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="status_code" />
                                     <PropertyValue Property="ValueListProperty" String="code" />
                                 </Record>
                             </Collection>
@@ -85,6 +85,18 @@
                 <Annotation Term="Common.ValueListWithFixedValues" Bool="true" />
             </Annotations>
             <Annotations Target="Metadata.VendorList/countryDesc">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/createDeleteHidden">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/insertDeleteRestriction">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/criticality">
+                <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
+            </Annotations>
+            <Annotations Target="Metadata.StatusCodeList/name">
                 <Annotation Term="com.sap.vocabularies.UI.v1.Hidden" />
             </Annotations>
         </Schema>
