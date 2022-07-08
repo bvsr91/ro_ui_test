@@ -276,7 +276,6 @@ sap.ui.define(
                 } else {
                     MessageBox.error("You can not edit/delete the record that was created by others");
                 }
-                
             },
 
             onEditPricingForm: function (oEvent) {
