@@ -270,7 +270,7 @@ sap.ui.define(
                             var oTemplate = new RowAction({
                                 items: [
                                     // new RowActionItem({ icon: "sap-icon://attachment", text: "Attachment", press: fnPress }),
-                                    // new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
+                                    // new RowActionItem({ icon: "sap-icon://history", text: "History", press: fnPress }),
                                     new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
                                     new RowActionItem({ text: "Delete", press: fnPress, type: sap.ui.table.RowActionType.Delete })
                                 ]
@@ -298,6 +298,8 @@ sap.ui.define(
                     var oItem = oEvent.getParameter("item");
                     if (oItem.getType() === "Delete") {
                         this.onDeleteAwaitConfirm(oEvent);
+                    } else {
+                        this.onEditVendorForm(oEvent);
                     }
                 } else {
                     MessageBox.error("You can not edit/delete the record that was created by others");
@@ -305,6 +307,68 @@ sap.ui.define(
                 // sap.m.MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " pressed for product with id " +
                 //     oRow.getBindingContext().getObject().manufacturerCode);
             },
+            onEditVendorForm: function (oEvent) {
+                this._editObjContext = oEvent.getSource().getBindingContext();
+                this.open_Dialog(this._editObjContext);
+            },
+            open_Dialog: function (oEvent) {
+                var oCtx = oEvent.getObject();
+                var sPath = oEvent.getPath();
+                if (!this._oDialog) {
+                    this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorData"), "com.ferrero.zmrouiapp.view.fragments.VendorForm", this);
+                    this.getView().addDependent(this._oDialog);
+                }
+                this.byId(
+                    sap.ui.core.Fragment.createId("FrgVendorData", "SimpleFormToolbarDisplay")).bindElement({
+                        path: sPath,
+                    });
+                // var oModel = this.getOwnerComponent().getModel("pricingData");
+             this._oDialog.open();
+            },
+            onCloseVendorData: function () {
+                if (this._oDialog) {
+                    this._oDialog.close();
+                    this._oDialog.destroy();
+                    this._oDialog = undefined;
+                }
+            },
+            onSaveVendorData : function (oEvent) {
+                var oModel = this.getOwnerComponent().getModel();
+                // oModel.setProperty("/bText", true);
+                var sPath = oEvent.getSource().getParent().getParent().getController()._editObjContext.sPath;
+                // vas path=oEditObject.sPath;
+                var manufacturerDesc = this.byId(Fragment.createId("FrgVendorData", "ManfDescId")).getValue();
+                var localDealerMaufacturerDesc = this.byId(Fragment.createId("FrgVendorData", "localManufDescID")).getValue();
+                var oPayLoad = {};
+                oPayLoad.manufacturerCodeDesc = manufacturerDesc;
+                oPayLoad.localManufacturerCodeDesc = localDealerMaufacturerDesc;
+                var oModel = this.getOwnerComponent().getModel();
+                // this.getView().setBusy(true);
+                sap.ui.core.BusyIndicator.show();
+                oModel.update(sPath, oPayLoad, {
+                    success: function (oData) {
+                        console.log(oData);
+                        this.onCloseVendorData();
+                        // this.getView().setBusy(false);
+                        sap.ui.core.BusyIndicator.hide();
+                        MessageBox.success("Record updated successfully");
+                    }.bind(this),
+                    error: function (error) {
+                        console.log(error);
+                        sap.ui.core.BusyIndicator.hide();
+                        var errorObj1 = JSON.parse(error.responseText).error.message;
+                        MessageBox.show(
+                            errorObj1.value,
+                            sap.m.MessageBox.Icon.ERROR,
+                            "Error In Update Operation"
+                        );
+                        // this.getView().setBusy(false);
+                    }.bind(this)
+                });
+
+
+            },
+                      
             onDeleteAwaitConfirm: function (oEvent) {
                 this._oDelObjContext = oEvent.getSource().getBindingContext();
                 MessageBox.confirm("Do you want to delete the record?", {
@@ -339,23 +403,8 @@ sap.ui.define(
                         );
                     }.bind(this)
                 });
-                // this.getView().setBusy(true);
-                // oModel.remove(oEvent.getParameter("row").getBindingContext().sPath, {
-                //     success: function (oData) {
-                //         this.getView().setBusy(false);
-                //         MessageBox.success("Record Deleted successfully");
-                //     }.bind(this),
-                //     error: function (error) {
-                //         this.getView().setBusy(false);
-                //         var errorObj1 = JSON.parse(error.responseText).error.message;
-                //         MessageBox.show(
-                //             errorObj1.value,
-                //             sap.m.MessageBox.Icon.ERROR,
-                //             "Error In Create Operation"
-                //         );
-                //     }.bind(this)
-                // });
             },
+        
             onValueHelpRequestCountry: function (oEvent) {
                 this.openCountryValueHelpDialog(oEvent);
             },

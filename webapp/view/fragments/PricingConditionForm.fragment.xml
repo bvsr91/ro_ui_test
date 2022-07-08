@@ -20,17 +20,17 @@
                                 </f:FormElement>
                                 <f:FormElement label="Manufacturer Code Desc">
                                     <f:fields>
-                                        <Text id="idIpManfDesc" />
+                                        <Text id="idIpManfDesc" text="{manufacturerCodeDesc}" />
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Country">
                                     <f:fields>
-                                        <Text  id="idIpCountry"/>
+                                        <Text  id="idIpCountry" text="{countryCode}"/>
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Country Desc">
                                     <f:fields>
-                                        <Text id="idIpCountryDesc" />
+                                        <Text id="idIpCountryDesc"  text="{countryDesc}"/>
                                     </f:fields>
                                 </f:FormElement>
                             </f:formElements>
@@ -39,27 +39,27 @@
                             <f:formElements>
                                 <f:FormElement label="Exchange Rate">
                                     <f:fields>
-                                        <Input id="idIpExchRate" type="Number" />
+                                        <Input id="idIpExchRate" type="Number" value="{exchangeRate}" />
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Country Factor">
                                     <f:fields>
-                                        <Input id="idIpContFact"  type="Number" />
+                                        <Input id="idIpContFact"  type="Number" value="{countryFactor}"/>
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Validity Start">
                                     <f:fields>
-                                        <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy"/>
+                                        <DatePicker  id="validityStartId"  valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityStart', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Validity End">
                                     <f:fields>
-                                        <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy"/>
+                                        <DatePicker  id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityEnd', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Local Ownership">
                                     <f:fields>
-                                        <CheckBox id="localOwnershipId"/>
+                                        <CheckBox selected="{local_ownership}" id="localOwnershipId"/>
                                     </f:fields>
                                 </f:FormElement>
                             </f:formElements>

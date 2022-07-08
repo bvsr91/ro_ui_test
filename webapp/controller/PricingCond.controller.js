@@ -94,11 +94,11 @@ sap.ui.define(
                             items: [
                                 new sap.m.Button({
                                     text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem',
-                                    press: this.onModify.bind(this, oInput)
+                                    press: this.onModify(oEvent)
                                 }),
                                 new sap.m.Button({
                                     text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem',
-                                    press: this.onPressDelete.bind(this, oInput)
+                                    press: this.onPressDelete.bind(oEvent)
                                 })
                             ]
                         }).addStyleClass("sapUiTinyMargin"),
@@ -241,7 +241,7 @@ sap.ui.define(
                             var oTemplate = new RowAction({
                                 items: [
                                     // new RowActionItem({ icon: "sap-icon://attachment", text: "Attachment", press: fnPress }),
-                                    // new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
+                                    // new RowActionItem({ icon: "sap-icon://action", text: "Action", press: fnPress })
                                     new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress  }),
                                     new RowActionItem({ text: "Delete", press: fnPress, type: sap.ui.table.RowActionType.Delete })
                                 ]
@@ -267,7 +267,7 @@ sap.ui.define(
                 if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
                     var oRow = oEvent.getParameter("row");
                     var oItem = oEvent.getParameter("item");
-                    if (oItem.getType() === "Edit") {
+                    if (oItem.getType() === "Delete") {
                         this.onDeleteAwaitConfirm(oEvent);
                     }else {
                         this.onEditPricingForm(oEvent);
@@ -284,8 +284,8 @@ sap.ui.define(
                 this.open_Dialog(this._editObjContext);
             },
             open_Dialog: function (oEvent) {
-                var oCtx = oEvent.getBindingContext().getObject();
-                var sPath = oCtx.getPath();
+                var oCtx = oEvent.getObject();
+                var sPath = oEvent.getPath();
                 if (!this._oDialog) {
                     this._oDialog = sap.ui.xmlfragment(this.createId("FrgPricingData"), "com.ferrero.zmrouiapp.view.fragments.PricingConditionForm", this);
                     this.getView().addDependent(this._oDialog);
@@ -338,7 +338,8 @@ sap.ui.define(
                         );
                     }.bind(this)
                 });
-            }
+            },
+        
         });
     }
 );
