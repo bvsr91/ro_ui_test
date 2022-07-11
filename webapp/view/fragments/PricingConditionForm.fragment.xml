@@ -20,7 +20,7 @@
                                 </f:FormElement>
                                 <f:FormElement label="Manufacturer Code Desc">
                                     <f:fields>
-                                        <Text id="idIpManfDesc" text="{manufacturerCodeDesc}" />
+                                        <Input id="idIpManfDesc" value="{manufacturerCodeDesc}" />
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Country">
@@ -39,12 +39,12 @@
                             <f:formElements>
                                 <f:FormElement label="Exchange Rate">
                                     <f:fields>
-                                        <Input id="idIpExchRate" type="Number" value="{exchangeRate}" />
+                                        <Input id="idExchRate" type="Number" value="{exchangeRate}" />
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Country Factor">
                                     <f:fields>
-                                        <Input id="idIpContFact"  type="Number" value="{countryFactor}"/>
+                                        <Input id="idContFactor"  type="Number" value="{countryFactor}"/>
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement label="Validity Start">

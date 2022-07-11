@@ -101,104 +101,6 @@ sap.ui.define(
                 this.routeAuthValidation("vendorList");
             },
 
-            onLinksDownload: function (oEvent) {
-                var oInput = oEvent.getSource(),
-                    oBinding = oInput.getParent()
-                        .getBindingContext("vendorData")
-                        .getObject();
-                //   bEnDevelopment = oBinding.MyDevelopment === "X",
-                var oPopover = new sap.m.Popover({
-                    placement: "Bottom",
-                    showHeader: false,
-                    content: [
-                        new sap.m.HBox({
-                            items: [
-                                new sap.ui.core.Icon({
-                                    src: "sap-icon://edit",
-                                    size: "1.0rem",
-                                    //   color: "#BC9D61",
-                                }).addStyleClass("sapUiSmallMarginBeginEnd"),
-                                new sap.m.Link({
-                                    text: "Modify",
-                                    press: this.onModify.bind(this, oInput),
-                                    enabled: true,
-                                    wrapping: true,
-                                }),
-                            ],
-                        }).addStyleClass("sapUiSmallMarginTopBottom sapUiSmallMarginEnd"),
-                        new sap.m.HBox({
-                            items: [
-                                new sap.ui.core.Icon({
-                                    src: "sap-icon://delete",
-                                    size: "1.0rem",
-                                    //   ,
-                                    color: "red",
-                                }).addStyleClass("sapUiSmallMarginBeginEnd"),
-                                new sap.m.Link({
-                                    text: "Delete",
-                                    enabled: true,
-                                    press: this.onDelete.bind(this, oInput),
-                                    wrapping: true,
-                                }),
-                            ],
-                        }).addStyleClass("sapUiSmallMarginBottom linkColorReject"),
-                    ],
-                });
-                oPopover.openBy(oInput);
-            },
-            onModify: function (oInput, oEvent) {
-                this.openDialog(oInput, true);
-            },
-            openDialog: function (oInput, bEdit) {
-                var oCtx = oInput.getBindingContext("vendorData");
-                var sPath = oCtx.getPath();
-                if (!this._oDialog) {
-                    this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorData"), "com.ferrero.zmrouiapp.view.fragments.VendorForm", this);
-                    this.getView().addDependent(this._oDialog);
-                }
-                this.byId(
-                    sap.ui.core.Fragment.createId("FrgVendorData", "SimpleFormToolbarDisplay")).bindElement({
-                        path: sPath,
-                        model: "vendorData",
-                    });
-                var oModel = this.getOwnerComponent().getModel("vendorData");
-                oModel.setProperty("/bText", !bEdit);
-                oModel.setProperty("/bInput", bEdit);
-                oModel.setProperty("/bEdit", bEdit);
-                oModel.refresh(true);
-                // this._oDialog.setEscapeHandler(function (o) {
-                //   o.reject();
-                // });
-                this._oDialog.open();
-            },
-            onCloseVendorData: function () {
-                if (this._oDialog) {
-                    this._oDialog.close();
-                    this._oDialog.destroy();
-                    this._oDialog = undefined;
-                }
-            },
-            onSaveVendorData: function () {
-                var oModel = this.getOwnerComponent().getModel("vendorData");
-                oModel.setProperty("/bText", true);
-                oModel.setProperty("/bInput", false);
-                oModel.refresh(true);
-                this.onCloseVendorData();
-            },
-            handleAddVendorDetails: function () {
-                if (!this._DialogAddVendor) {
-                    this._DialogAddVendor = sap.ui.xmlfragment(this.createId("FrgAddVendorData"), "com.ferrero.zmrouiapp.view.fragments.AddVendorForm", this);
-                    this.getView().addDependent(this._DialogAddVendor);
-                }
-                this._DialogAddVendor.open();
-            },
-            onCloseVendor: function () {
-                if (this._DialogAddVendor) {
-                    this._DialogAddVendor.close();
-                    this._DialogAddVendor.destroy(true);
-                    this._DialogAddVendor = undefined;
-                }
-            },
             handleAddVendor: function () {
                 if (!this._DialogAddVendor) {
                     this._DialogAddVendor = sap.ui.xmlfragment(this.createId("FrgAddVendorData"), "com.ferrero.zmrouiapp.view.fragments.AddVendorForm", this);
@@ -270,9 +172,9 @@ sap.ui.define(
                             var oTemplate = new RowAction({
                                 items: [
                                     // new RowActionItem({ icon: "sap-icon://attachment", text: "Attachment", press: fnPress }),
-                                    // new RowActionItem({ icon: "sap-icon://history", text: "History", press: fnPress }),
-                                    new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
-                                    new RowActionItem({ text: "Delete", press: fnPress, type: sap.ui.table.RowActionType.Delete })
+                                     new RowActionItem({ icon: "sap-icon://action", text: "Action", press: fnPress }),
+                                    // new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
+                                    // new RowActionItem({ text: "Delete", press: fnPress, type: sap.ui.table.RowActionType.Delete })
                                 ]
                             });
                             return [2, oTemplate];
@@ -291,29 +193,63 @@ sap.ui.define(
                 oTable.setRowActionCount(iCount);
             },
             handleActionPress: function (oEvent) {
-                var oRecordCreator = oEvent.getParameter("row").getBindingContext().getObject().initiator;
+                this.onLinksDownload(oEvent);
+                // var oRecordCreator = oEvent.getParameter("row").getBindingContext().getObject().initiator;
+                // var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                // if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                //     var oRow = oEvent.getParameter("row");
+                //     var oItem = oEvent.getParameter("item");
+                //     if (oItem.getType() === "Delete") {
+                //         this.onDeleteAwaitConfirm(oEvent);
+                //     } else {
+                //         this.onEditVendorForm(oEvent);
+                //     }
+                // } else {
+                //     MessageBox.error("You can not edit/delete the record that was created by others");
+                // }
+                // // sap.m.MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " pressed for product with id " +
+                // //     oRow.getBindingContext().getObject().manufacturerCode);
+            },
+            onLinksDownload: function (oEvent) {
+                var oInput = oEvent.getSource().getParent();
+                //   bEnDevelopment = oBinding.MyDevelopment === "X",
+                var oPopover = new sap.m.Popover({
+                    placement: "Bottom",
+                    showHeader: false,
+                    content: [
+                        new sap.m.VBox({
+                            items: [
+                                new sap.m.Button({
+                                    text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem',
+                                    press: this.onEditVendorForm.bind(this, oInput)
+                                }),
+                                new sap.m.Button({
+                                    text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem',
+                                    press: this.onDeleteAwaitConfirm.bind(this, oInput)
+                                }),
+                                new sap.m.Button({
+                                    text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                                    press: this.onHistoryClick.bind(this, oInput)
+                                })
+                            ]
+                        }).addStyleClass("sapUiTinyMargin"),
+                    ],
+                }).addStyleClass("sapUiResponsivePadding");
+                oPopover.openBy(oInput);
+            },
+            onEditVendorForm: function (oInput) {
+                var oRecordCreator = oInput.getBindingContext().getObject().initiator;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                    var oRow = oEvent.getParameter("row");
-                    var oItem = oEvent.getParameter("item");
-                    if (oItem.getType() === "Delete") {
-                        this.onDeleteAwaitConfirm(oEvent);
-                    } else {
-                        this.onEditVendorForm(oEvent);
-                    }
+                    this._editObjContext = oInput.getBindingContext();
+                    this.open_Dialog(this._editObjContext);
                 } else {
                     MessageBox.error("You can not edit/delete the record that was created by others");
                 }
-                // sap.m.MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " pressed for product with id " +
-                //     oRow.getBindingContext().getObject().manufacturerCode);
             },
-            onEditVendorForm: function (oEvent) {
-                this._editObjContext = oEvent.getSource().getBindingContext();
-                this.open_Dialog(this._editObjContext);
-            },
-            open_Dialog: function (oEvent) {
-                var oCtx = oEvent.getObject();
-                var sPath = oEvent.getPath();
+            open_Dialog: function (editObj) {
+                var oCtx = editObj.getObject();
+                var sPath = editObj.getPath();
                 if (!this._oDialog) {
                     this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorData"), "com.ferrero.zmrouiapp.view.fragments.VendorForm", this);
                     this.getView().addDependent(this._oDialog);
@@ -322,7 +258,6 @@ sap.ui.define(
                     sap.ui.core.Fragment.createId("FrgVendorData", "SimpleFormToolbarDisplay")).bindElement({
                         path: sPath,
                     });
-                // var oModel = this.getOwnerComponent().getModel("pricingData");
              this._oDialog.open();
             },
             onCloseVendorData: function () {
@@ -332,11 +267,9 @@ sap.ui.define(
                     this._oDialog = undefined;
                 }
             },
-            onSaveVendorData : function (oEvent) {
+            onSaveVendorData : function (oInput) {
                 var oModel = this.getOwnerComponent().getModel();
-                // oModel.setProperty("/bText", true);
-                var sPath = oEvent.getSource().getParent().getParent().getController()._editObjContext.sPath;
-                // vas path=oEditObject.sPath;
+                var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
                 var manufacturerDesc = this.byId(Fragment.createId("FrgVendorData", "ManfDescId")).getValue();
                 var localDealerMaufacturerDesc = this.byId(Fragment.createId("FrgVendorData", "localManufDescID")).getValue();
                 var oPayLoad = {};
@@ -365,22 +298,26 @@ sap.ui.define(
                         // this.getView().setBusy(false);
                     }.bind(this)
                 });
-
-
-            },
-                      
-            onDeleteAwaitConfirm: function (oEvent) {
-                this._oDelObjContext = oEvent.getSource().getBindingContext();
-                MessageBox.confirm("Do you want to delete the record?", {
-                    actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
-                    initialFocus: MessageBox.Action.CANCEL,
-                    onClose: function (sAction) {
-                        if (sAction === "YES") {
-                            this.onConfirmDelete(this._oDelObjContext);
-                        }
-                    }.bind(this),
+            },       
+            onDeleteAwaitConfirm: function (oInput) {
+                var oRecordCreator = oInput.getBindingContext().getObject().initiator;
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                    this._oDelObjContext = oInput.getBindingContext();
+                    MessageBox.confirm("Do you want to delete the record?", {
+                        actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
+                        initialFocus: MessageBox.Action.CANCEL,
+                        onClose: function (sAction) {
+                            if (sAction === "YES") {
+                                this.onConfirmDelete(this._oDelObjContext);
+                            }
+                        }.bind(this),
+                    }
+                    );    
+                } else {
+                    MessageBox.error("You can not edit/delete the record that was created by others");
                 }
-                );                
+                            
             },
             onConfirmDelete: function (oContext) {
                 var oModel = this.getOwnerComponent().getModel();
@@ -404,7 +341,26 @@ sap.ui.define(
                     }.bind(this)
                 });
             },
-        
+            onHistoryClick: function (oInput) {
+                var sPath=oInput.getBindingContext().getPath;
+                if (!this._oDialog) {
+                    this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorComments"), "com.ferrero.zmrouiapp.view.fragments.VendorCommentsData", this);
+                    this.getView().addDependent(this._oDialog);
+                }
+                // this.byId(
+                //     sap.ui.core.Fragment.createId("FrgVendorComments", "commentsList")).bindElement({
+                //         path: sPath,
+                //     });
+                this._oDialog.open();
+            },
+            onCloseCommentsData: function () {
+                if (this._oDialog) {
+                    this._oDialog.close();
+                    this._oDialog.destroy();
+                    this._oDialog = undefined;
+                }
+
+            },
             onValueHelpRequestCountry: function (oEvent) {
                 this.openCountryValueHelpDialog(oEvent);
             },
