@@ -103,8 +103,18 @@ sap.ui.define([
                         {
                             "titleI18nKey": "scMyInbox",
                             "icon": "sap-icon://inbox",
-                            "expanded": false,
-                            "key": "myInbox"
+                            "expanded": true,
+                            "key": "myInbox",
+                            "items": [
+                                {
+                                    "title": "Vendor Notifications",
+                                    "key": "vendNoti"
+                                },
+                                {
+                                    "title": "Pricing Notifications",
+                                    "key": "pricingNoti"
+                                }
+                            ]
                         }
                     ]
                 };

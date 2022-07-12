@@ -1,0 +1,89 @@
+<mvc:View controllerName="com.ferrero.zmrouiapp.controller.PricingNotifications"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:l="sap.ui.layout">
+    <IconTabBar
+		id="idIconTabBar"
+		select=".onFilterSelect"
+		class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
+		<items>
+			<IconTabFilter
+				showAll="true"
+				count="{/ProductCollectionStats/Counts/Total}"
+				text="Total"
+				key="All" />
+			<IconTabSeparator />
+			<IconTabFilter
+				icon="sap-icon://begin"
+				iconColor="Positive"
+				count="{/ProductCollectionStats/Counts/Weight/Ok}"
+				text="Approved"
+				key="Approved" />
+			<IconTabFilter
+				icon="sap-icon://compare"
+				iconColor="Critical"
+				count="{/ProductCollectionStats/Counts/Weight/Heavy}"
+				text="Pending"
+				key="Pending" />
+			<IconTabFilter
+				icon="sap-icon://inventory"
+				iconColor="Negative"
+				count="{/ProductCollectionStats/Counts/Weight/Overweight}"
+				text="Rejected"
+				key="Rejected" />
+		</items>
+		<content>
+			<Table
+				id="idTabPricingNoti"
+				inset="false"
+				showSeparators="Inner"
+				items="{
+					path: '/PricingNotifications',
+					sorter: {
+						path: 'createdAt'
+					}
+				}">
+				<columns>
+					<Column
+						width="12em">
+						<Text text="Manufacturer" />
+					</Column>
+					<Column
+						minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="Country" />
+					</Column>
+					<Column
+						minScreenWidth="Desktop"
+						demandPopin="true"
+						hAlign="End">
+						<Text text="Status" />
+					</Column>
+					<Column
+						minScreenWidth="Desktop"
+						demandPopin="true"
+						hAlign="Center">
+						<Text text="Starting Date" />
+					</Column>
+					<Column
+						hAlign="End">
+						<Text text="Completion Date" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{Pricing_Conditions_manufacturerCode}"/>
+							<Text text="{Pricing_Conditions_countryCode}" />
+							<Text text="{status}" />
+							<Text text="{createdAt}" />
+                            <Text text="{completionDate}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</IconTabBar>
+</mvc:View>

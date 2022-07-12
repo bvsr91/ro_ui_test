@@ -147,6 +147,16 @@
                     "name": "notFound",
                     "pattern": "notFound",
                     "target": "notFound"
+                },
+                {
+                    "name": "vendNoti",
+                    "pattern": "vendNoti",
+                    "target": "vendNoti"
+                },
+                {
+                    "name": "pricingNoti",
+                    "pattern": "pricingNoti",
+                    "target": "pricingNoti"
                 }
             ],
             "targets": {
@@ -182,6 +192,20 @@
                     "viewName": "NotFound",
                     "viewType": "XML",
                     "viewId": "NotFound",
+                    "clearControlAggregation": false,
+                    "transition": "show"
+                },
+                "vendNoti": {
+                    "viewName": "VendorNotifications",
+                    "viewType": "XML",
+                    "viewId": "vendNoti",
+                    "clearControlAggregation": false,
+                    "transition": "show"
+                },
+                "pricingNoti": {
+                    "viewName": "PricingNotifications",
+                    "viewType": "XML",
+                    "viewId": "pricingNoti",
                     "clearControlAggregation": false,
                     "transition": "show"
                 }

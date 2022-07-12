@@ -170,7 +170,7 @@ sap.ui.define(
                                      new RowActionItem({ icon: "sap-icon://action", text: "Action", press: fnPress })
                                 ]
                             });
-                            return [2, oTemplate];
+                            return [1, oTemplate];
                         }
                     }
                 ];

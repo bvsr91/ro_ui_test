@@ -23,7 +23,12 @@
                         <tnt:NavigationList items="{
                             path: 'userModel>/navigation'
                         }" id="idNL" itemSelect="onItemSelect" selectedKey="{userModel>/selectedKey}">
-                            <tnt:NavigationListItem text="{path: 'userModel>titleI18nKey', formatter: '.formatter.getBundleText'}" icon="{userModel>icon}" expanded="{userModel>expanded}" key="{userModel>key}">
+                            <tnt:NavigationListItem text="{path: 'userModel>titleI18nKey', formatter: '.formatter.getBundleText'}" 
+                                icon="{userModel>icon}" expanded="{userModel>expanded}" key="{userModel>key}" items="{userModel>items}">
+                                    <tnt:NavigationListItem
+                                        text="{userModel>title}"
+                                        key="{userModel>key}"
+                                        enabled="{userModel>enabled}" />
                             </tnt:NavigationListItem>
                         </tnt:NavigationList>
                     </tnt:item>

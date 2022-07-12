@@ -171,13 +171,10 @@ sap.ui.define(
                         handler: function () {
                             var oTemplate = new RowAction({
                                 items: [
-                                    // new RowActionItem({ icon: "sap-icon://attachment", text: "Attachment", press: fnPress }),
-                                     new RowActionItem({ icon: "sap-icon://action", text: "Action", press: fnPress }),
-                                    // new RowActionItem({ icon: "sap-icon://edit", text: "Edit", press: fnPress }),
-                                    // new RowActionItem({ text: "Delete", press: fnPress, type: sap.ui.table.RowActionType.Delete })
+                                     new RowActionItem({ icon: "sap-icon://action", text: "Action", press: fnPress })
                                 ]
                             });
-                            return [2, oTemplate];
+                            return [1, oTemplate];
                         }
                     }
                 ];

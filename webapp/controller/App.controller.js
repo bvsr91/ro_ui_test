@@ -47,8 +47,18 @@ sap.ui.define(
                 var oToolPage = this.byId("app");
                 var bSideExpanded = oToolPage.getSideExpanded();
                 var sSelKey = oEvent.getParameters("Item").item.getProperty("key");
-                this.byId("app").setSideExpanded(false);
-                this.getRouter().navTo(sSelKey);
+                var aAggregationItems = oEvent.getParameter("item").getAggregation("items");
+                if (aAggregationItems !== null) {
+                    if (aAggregationItems.length > 0) {
+                        oEvent.getSource().setExpanded(!oEvent.getSource().setExpanded(true));
+                    } else {
+                        this.byId("app").setSideExpanded(false);
+                        this.getRouter().navTo(sSelKey);
+                    }
+                } else {
+                    this.byId("app").setSideExpanded(false);
+                    this.getRouter().navTo(oEvent.getParameter("item").getKey());
+                }
             },
             onItemClose: function (oEvent) {
                 var oItem = oEvent.getSource(),

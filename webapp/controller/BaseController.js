@@ -149,9 +149,10 @@ sap.ui.define(
                 var oModel = this.getOwnerComponent().getModel("userModel");
                 var oData = oModel.getData();
                 var role = oData.role;
-                var aCDTRoutes = ["vendorList", "pricingCond", "myInbox"];
-                var aLDTRoutes = ["pricingCond", "myInbox"];
-                var aManagerRoutes = ["myInbox"];
+                var aCDTRoutes = ["vendorList", "pricingCond", "myInbox", "pricingNoti", "vendNoti"];
+                var aLDTRoutes = ["pricingCond", "myInbox", "pricingNoti"];
+                var aGCMRoutes = ["myInbox", "pricingNoti", "vendNoti"];
+                var aLPRoutes = ["myInbox", "pricingNoti"];
                 var oRouter = this.getOwnerComponent().getRouter();
                 if (role) {
                     if (role.role_role === "CDT") {
@@ -166,8 +167,14 @@ sap.ui.define(
                         } else {
                             oRouter.navTo("notFound");
                         }
-                    } else if (role.role_role === "LP" || role.role_role === "GCM") {
-                        if (aManagerRoutes.includes(sRoute)) {
+                    } else if (role.role_role === "GCM") {
+                        if (aGCMRoutes.includes(sRoute)) {
+                            oRouter.navTo(sRoute);
+                        } else {
+                            oRouter.navTo("notFound");
+                        }
+                    } else if (role.role_role === "LP") {
+                        if (aLPRoutes.includes(sRoute)) {
                             oRouter.navTo(sRoute);
                         } else {
                             oRouter.navTo("notFound");
