@@ -83,7 +83,7 @@ sap.ui.define(
                         mBindingParams.filters.push(newFilter);
                     }
                     if (sTabSelKey !== "All" && sTabSelKey !== "") {
-                        mBindingParams.filters.push(new Filter("status", FilterOperator.EQ, sTabSelKey));
+                        mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
                     }
                 }
                 oModel.attachRequestFailed(this._showError, this);

@@ -7,7 +7,8 @@
     xmlns:u="sap.ui.unified"
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"	
     xmlns:smartTable="sap.ui.comp.smarttable"
-    xmlns:t="sap.ui.table">
+    xmlns:t="sap.ui.table"
+    xmlns:form="sap.ui.layout.form">
     <Page showHeader="false" enableScrolling="false" class="sapUiNoContentPadding" showNavButton="false">
         <content>
             <Panel expandable="true" headerText="Filter Bar" class="sapUiNoContentPadding">
@@ -38,8 +39,37 @@
                 </t:Table> 
                 <smartTable:customToolbar>
                     <OverflowToolbar>
-                        <ToolbarSpacer />
-                        <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" />
+                        <content>                        
+                            <ToolbarSpacer />
+                            <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" />
+                            <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="true" press="onOpenAddDialog"/>
+                        </content>
+                        <dependents>
+                            <Dialog id="OpenDialog" title="Create New Vendor">
+                                <buttons>
+                                    <Button id="confirmCreate" text="Create" press=".onCreate" type="Emphasized" />
+                                    <Button id="cancelCreate" text="Cancel" press="onCancelDialog" type="Transparent" />
+                                </buttons>
+                                <form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+                                    <form:content>
+                                        <Label text="Manufacturer Code" required="true"/>
+                                        <Input id="idIpManf" change="onNameChange" maxLength="10"/>
+                                        <Label text="Manufacturer Desc" />
+                                        <Input id="idIpManfDesc" rows="4" maxLength="35"/>
+                                        <Label text="Local Manufacturer Code" required="true"/>
+                                        <Input id="idIpLocalManf" rows="4" maxLength="10"/>
+                                        <Label text="Local Manufacturer Desc"  />
+                                        <Input id="idIpLocalManfDesc" rows="4" maxLength="35" />
+                                        <Label text="Country" required="true"/>
+                                        <Input  id="idIpCountry"  type="Text" placeholder="Enter Country ..."
+                                            showValueHelp="true" valueHelpOnly="true"  valueHelpRequest=".onValueHelpRequestCountry"
+                                            class="sapUiSmallMarginBottom" required="true"/>
+                                        <Label text="Country Desc" />
+                                        <Text id="idIpCountryDesc"/>
+                                    </form:content>
+                                </form:SimpleForm>
+                            </Dialog>
+                        </dependents>
                     </OverflowToolbar>
                 </smartTable:customToolbar>
             </smartTable:SmartTable>

@@ -115,21 +115,21 @@ sap.ui.define(
                     this._DialogAddVendor = undefined;
                 }
             },
-            onSaveNewVendorData: function () {
-                var manufacturerCode = this.byId(Fragment.createId("FrgAddVendorData", "idIpManf")).getValue();
-                var manufacturerDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpManfDesc")).getValue();
-                var localDealerManufacturerCode = this.byId(Fragment.createId("FrgAddVendorData", "idIpLocalManf")).getValue();
-                var localDealerMaufacturerDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpLocalManfDesc")).getValue();
-                var country = this.byId(Fragment.createId("FrgAddVendorData", "idIpCountry")).getValue();
-                var countryDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpCountryDesc")).getText();
+            onSaveNewVendorData: function (oPayLoad) {
+                // var manufacturerCode = this.byId(Fragment.createId("FrgAddVendorData", "idIpManf")).getValue();
+                // var manufacturerDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpManfDesc")).getValue();
+                // var localDealerManufacturerCode = this.byId(Fragment.createId("FrgAddVendorData", "idIpLocalManf")).getValue();
+                // var localDealerMaufacturerDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpLocalManfDesc")).getValue();
+                // var country = this.byId(Fragment.createId("FrgAddVendorData", "idIpCountry")).getValue();
+                // var countryDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpCountryDesc")).getText();
 
-                var oPayLoad = {};
-                oPayLoad.manufacturerCode = manufacturerCode === "" ? null : manufacturerCode;
-                oPayLoad.localManufacturerCode = localDealerManufacturerCode === "" ? null : localDealerManufacturerCode;
-                oPayLoad.countryCode = country === "" ? null : country;
-                oPayLoad.countryDesc = countryDesc;
-                oPayLoad.manufacturerCodeDesc = manufacturerDesc;
-                oPayLoad.localManufacturerCodeDesc = localDealerMaufacturerDesc;
+                // var oPayLoad = {};
+                oPayLoad.manufacturerCode = oPayLoad.manufacturerCode === "" ? null : oPayLoad.manufacturerCode;
+                oPayLoad.localManufacturerCode = oPayLoad.localManufacturerCode === "" ? null : oPayLoad.localManufacturerCode;
+                oPayLoad.countryCode = oPayLoad.countryCode === "" ? null : oPayLoad.countryCode;
+                // oPayLoad.countryDesc = countryDesc;
+                // oPayLoad.manufacturerCodeDesc = manufacturerDesc;
+                // oPayLoad.localManufacturerCodeDesc = localDealerMaufacturerDesc;
 
                 var oModel = this.getOwnerComponent().getModel();
                 // this.getView().setBusy(true);
@@ -139,6 +139,7 @@ sap.ui.define(
                         console.log(oData);
                         this.onCloseVendor();
                         // this.getView().setBusy(false);
+                        this.getView().byId("OpenDialog").close();
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record created successfully");
                     }.bind(this),
@@ -149,7 +150,7 @@ sap.ui.define(
                         MessageBox.show(
                             errorObj1.value,
                             sap.m.MessageBox.Icon.ERROR,
-                            "Error In Create Operation"
+                            "Error"
                         );
                         // this.getView().setBusy(false);
                     }.bind(this)
@@ -171,7 +172,7 @@ sap.ui.define(
                         handler: function () {
                             var oTemplate = new RowAction({
                                 items: [
-                                     new RowActionItem({ icon: "sap-icon://action", text: "Action", press: fnPress })
+                                    new RowActionItem({ icon: "sap-icon://action", text: "Action", press: fnPress })
                                 ]
                             });
                             return [1, oTemplate];
@@ -191,21 +192,6 @@ sap.ui.define(
             },
             handleActionPress: function (oEvent) {
                 this.onLinksDownload(oEvent);
-                // var oRecordCreator = oEvent.getParameter("row").getBindingContext().getObject().initiator;
-                // var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                // if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                //     var oRow = oEvent.getParameter("row");
-                //     var oItem = oEvent.getParameter("item");
-                //     if (oItem.getType() === "Delete") {
-                //         this.onDeleteAwaitConfirm(oEvent);
-                //     } else {
-                //         this.onEditVendorForm(oEvent);
-                //     }
-                // } else {
-                //     MessageBox.error("You can not edit/delete the record that was created by others");
-                // }
-                // // sap.m.MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " pressed for product with id " +
-                // //     oRow.getBindingContext().getObject().manufacturerCode);
             },
             onLinksDownload: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
@@ -214,11 +200,11 @@ sap.ui.define(
                 var oRecordCreator = oInput.getBindingContext().getObject().initiator;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                   bEdit=true;
-                   bDelete=true;
+                    bEdit = true;
+                    bDelete = true;
                 } else {
-                    bEdit=false;
-                    bDelete=false
+                    bEdit = false;
+                    bDelete = false
                 }
                 var oPopover = new sap.m.Popover({
                     placement: "Bottom",
@@ -227,11 +213,11 @@ sap.ui.define(
                         new sap.m.VBox({
                             items: [
                                 new sap.m.Button({
-                                    text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem',enabled:bEdit,
+                                    text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
                                     press: this.onEditVendorForm.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
-                                    text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem',enabled:bDelete,
+                                    text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
                                     press: this.onDeleteAwaitConfirm.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
@@ -245,8 +231,8 @@ sap.ui.define(
                 oPopover.openBy(oInput);
             },
             onEditVendorForm: function (oInput) {
-                    this._editObjContext = oInput.getBindingContext();
-                    this.open_Dialog(this._editObjContext);
+                this._editObjContext = oInput.getBindingContext();
+                this.open_Dialog(this._editObjContext);
             },
             open_Dialog: function (editObj) {
                 var oCtx = editObj.getObject();
@@ -259,7 +245,7 @@ sap.ui.define(
                     sap.ui.core.Fragment.createId("FrgVendorData", "SimpleFormToolbarDisplay")).bindElement({
                         path: sPath,
                     });
-             this._oDialog.open();
+                this._oDialog.open();
             },
             onCloseVendorData: function () {
                 if (this._oDialog) {
@@ -268,7 +254,7 @@ sap.ui.define(
                     this._oDialog = undefined;
                 }
             },
-            onSaveVendorData : function (oInput) {
+            onSaveVendorData: function (oInput) {
                 var oModel = this.getOwnerComponent().getModel();
                 var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
                 var manufacturerDesc = this.byId(Fragment.createId("FrgVendorData", "ManfDescId")).getValue();
@@ -299,19 +285,19 @@ sap.ui.define(
                         // this.getView().setBusy(false);
                     }.bind(this)
                 });
-            },       
+            },
             onDeleteAwaitConfirm: function (oInput) {
-                    this._oDelObjContext = oInput.getBindingContext();
-                    MessageBox.confirm("Do you want to delete the record?", {
-                        actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
-                        initialFocus: MessageBox.Action.CANCEL,
-                        onClose: function (sAction) {
-                            if (sAction === "YES") {
-                                this.onConfirmDelete(this._oDelObjContext);
-                            }
-                        }.bind(this),
-                    }
-                    );                               
+                this._oDelObjContext = oInput.getBindingContext();
+                MessageBox.confirm("Do you want to delete the record?", {
+                    actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
+                    initialFocus: MessageBox.Action.CANCEL,
+                    onClose: function (sAction) {
+                        if (sAction === "YES") {
+                            this.onConfirmDelete(this._oDelObjContext);
+                        }
+                    }.bind(this),
+                }
+                );
             },
             onConfirmDelete: function (oContext) {
                 var oModel = this.getOwnerComponent().getModel();
@@ -336,7 +322,7 @@ sap.ui.define(
                 });
             },
             onHistoryClick: function (oInput) {
-                var sPath=oInput.getBindingContext().getPath;
+                var sPath = oInput.getBindingContext().getPath;
                 if (!this._oDialog) {
                     this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorComments"), "com.ferrero.zmrouiapp.view.fragments.VendorCommentsData", this);
                     this.getView().addDependent(this._oDialog);
@@ -364,7 +350,11 @@ sap.ui.define(
             },
 
             onValueHelpDialogClose: function (oEvent) {
-                this.countryValueHelpClose(oEvent, "FrgAddVendorData", "idIpCountry", "idIpCountryDesc")
+                // this.countryValueHelpClose(oEvent, "FrgAddVendorData", "idIpCountry", "idIpCountryDesc")
+                var desc = oEvent.getParameter("selectedItem").getDescription();
+                var code = oEvent.getParameter("selectedItem").getTitle();
+                this.byId("idIpCountry").setValue(code);
+                this.byId("idIpCountryDesc").setText(desc);
             },
             onSearch: function (oEvent) {
                 var sValue = oEvent.getParameter("value");
@@ -377,6 +367,25 @@ sap.ui.define(
             },
             createFilter: function (key, operator, value, useToLower) {
                 return new Filter(useToLower ? "tolower(" + key + ")" : key, operator, useToLower ? "'" + value.toLowerCase() + "'" : value);
+            },
+            onOpenAddDialog: function () {
+                this.getView().byId("OpenDialog").open();
+            },
+            onCancelDialog: function (oEvent) {
+                oEvent.getSource().getParent().close();
+            },
+            onCreate: function () {
+                var oList = this.byId("idUiTab");
+                var oBinding = oList.getBinding("rows");
+                var oPayLoad = {
+                    "manufacturerCode": this.byId("idIpManf").getValue(),
+                    "manufacturerCodeDesc": this.byId("idIpManfDesc").getValue(),
+                    "localManufacturerCode": this.byId("idIpLocalManf").getValue(),
+                    "localManufacturerCodeDesc": this.byId("idIpLocalManfDesc").getValue(),
+                    "countryCode": this.byId("idIpCountry").getValue(),
+                    "countryDesc": this.byId("idIpCountryDesc").getText()
+                };
+                this.onSaveNewVendorData(oPayLoad);
             }
         });
     }

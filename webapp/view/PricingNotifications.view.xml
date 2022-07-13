@@ -47,6 +47,18 @@
                 initiallyVisibleFields="manufacturerCode, country"
                 ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
                 <t:Table id="idUiTabPricingNoti" visibleRowCount="10">
+                    <t:columns>
+                        <t:Column width="11rem" >
+                            <Label text="Manufacturer" id="idClMan" />
+                            <t:customData>
+                                <core:CustomData key="p13nData"
+                                    value='\{"columnKey": "idClMan", "autoColumnWidth": true, "maxLength": 5,"columnIndex":0}' />
+                            </t:customData>
+                            <t:template>
+                                <Text text="{Pricing_Conditions_manufacturerCode}" wrapping="false" />
+                            </t:template>
+                        </t:Column>
+                    </t:columns>
                 </t:Table> 
                 <smartTable:customToolbar>
                     <OverflowToolbar>
@@ -56,55 +68,6 @@
                     </OverflowToolbar>
                 </smartTable:customToolbar>
             </smartTable:SmartTable>
-			<!-- <Table
-				id="idTabPricingNoti"
-				inset="false"
-				showSeparators="Inner"
-				items="{
-					path: '/PricingNotifications',
-					sorter: {
-						path: 'createdAt'
-					}
-				}">
-				<columns>
-					<Column
-						width="12em">
-						<Text text="Manufacturer" />
-					</Column>
-					<Column
-						minScreenWidth="Tablet"
-						demandPopin="true">
-						<Text text="Country" />
-					</Column>
-					<Column
-						minScreenWidth="Desktop"
-						demandPopin="true"
-						hAlign="End">
-						<Text text="Status" />
-					</Column>
-					<Column
-						minScreenWidth="Desktop"
-						demandPopin="true"
-						hAlign="Center">
-						<Text text="Starting Date" />
-					</Column>
-					<Column
-						hAlign="End">
-						<Text text="Completion Date" />
-					</Column>
-				</columns>
-				<items>
-					<ColumnListItem>
-						<cells>
-							<Text text="{Pricing_Conditions_manufacturerCode}"/>
-							<Text text="{Pricing_Conditions_countryCode}" />
-							<Text text="{status}" />
-							<Text text="{createdAt}" />
-                            <Text text="{completionDate}" />
-						</cells>
-					</ColumnListItem>
-				</items>
-			</Table> -->
 		</content>
 	</IconTabBar>
 </mvc:View>
