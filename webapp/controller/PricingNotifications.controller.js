@@ -58,7 +58,7 @@ sap.ui.define(
                 // this.getModel("appView").setProperty("/layout", "OneColumn");
                 this.setSelKey("pricingNoti");
             },
-            onBeforeRebindTable: function (oEvent) {
+            onBeforeRebindTable: async function (oEvent) {
                 var mBindingParams = oEvent.getParameter("bindingParams"),
                     // oSmtFilter = this.getView().byId("idSTabPrcingNoti"),
                     oModel = this.getOwnerComponent().getModel(),
@@ -67,22 +67,23 @@ sap.ui.define(
                 var role = oUserModel.getData().role;
                 // var aTokens = oObjId.getTokens();
                 var sFieldName;
-                if (!role.role_role) {
-                    this.validateUser();
-                }
-                if (role.role_role) {
-                    if (role.role_role === "CDT" || role.role_role === "LDT") {
-                        sFieldName = "createdBy";
-                    } else {
-                        sFieldName = "approver"
+                if (!role) {
+                    await this.validateUser();
+                } else {
+                    if (role.role_role) {
+                        if (role.role_role === "CDT" || role.role_role === "LDT") {
+                            sFieldName = "createdBy";
+                        } else {
+                            sFieldName = "approver"
+                        }
+                        var aFilter = [];
+                        var newFilter = new Filter(sFieldName, FilterOperator.EQ, role.userid);
+                        // }
+                        mBindingParams.filters.push(newFilter);
                     }
-                    var aFilter = [];
-                    var newFilter = new Filter(sFieldName, FilterOperator.EQ, role.userid);
-                    // }
-                    mBindingParams.filters.push(newFilter);
-                }
-                if (sTabSelKey !== "All" && sTabSelKey !== "") {
-                    mBindingParams.filters.push(new Filter("status", FilterOperator.EQ, sTabSelKey));
+                    if (sTabSelKey !== "All" && sTabSelKey !== "") {
+                        mBindingParams.filters.push(new Filter("status", FilterOperator.EQ, sTabSelKey));
+                    }
                 }
                 oModel.attachRequestFailed(this._showError, this);
                 oModel.attachRequestCompleted(this._detach, this);
