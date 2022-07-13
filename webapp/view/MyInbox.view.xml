@@ -6,51 +6,7 @@
     xmlns:l="sap.ui.layout">
     <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
         <content>
-            <Table id="notificationData" alternateRowColors="true" items="{
-                path: 'notificationData>/notificationListData'
-                }" sticky="ColumnHeaders,HeaderToolbar">
-                <headerToolbar>
-                    <OverflowToolbar>
-                        <Title text="My Notifications" level="H1"/>
-                        <ToolbarSpacer/>
-                        <SearchField liveChange=".onSearch" width="20%" />
-                    </OverflowToolbar>
-                </headerToolbar>
-                <columns>
-                    <Column width="8em">
-                        <Text text="Author" />
-                    </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true">
-                        <Text text="Title" />
-                    </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true" wrapping="true">
-                        <Text text="Description" />
-                    </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true">
-                        <Text text="Priority" wrapping="true"/>
-                    </Column>
-                    <Column minScreenWidth="Tablet" demandPopin="true">
-                        <Text text="Created Time" />
-                    </Column>
-                    <Column width="7em">
-                        <Text text="Action" />
-                    </Column>
-                </columns>
-                <items>
-                    <ColumnListItem >
-                        <cells>
-                            <Text text="{notificationData>author}"/>
-                            <Text text="{notificationData>title}"/>
-                            <Text text="{notificationData>description}"/>
-                            <Text text="{notificationData>priority}"/>
-                            <Text text="{notificationData>dateTime}"/>
-                            <HBox>
-                                <core:Icon src="sap-icon://horizontal-grip" press="onNotificationAction" />
-                            </HBox>
-                        </cells>
-                    </ColumnListItem>
-                </items>
-            </Table>
+            
         </content>
     </Page>
 </mvc:View>

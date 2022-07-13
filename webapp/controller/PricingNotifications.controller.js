@@ -58,80 +58,54 @@ sap.ui.define(
                 // this.getModel("appView").setProperty("/layout", "OneColumn");
                 this.setSelKey("pricingNoti");
             },
-            handleResponsivePopoverPress: function (oEvent) {
-                var oButton = oEvent.getSource(),
-                    oView = this.getView();
-
-                if (!this._pPopover) {
-                    this._pPopover = Fragment.load({
-                        id: oView.getId(),
-                        name: "com.ferrero.zmrouiapp.fragments.Popover",
-                        controller: this,
-                    }).then(function (oPopover) {
-                        oView.addDependent(oPopover);
-                        // oPopover.bindElement("/ProductCollection/0");
-                        return oPopover;
-                    });
+            onBeforeRebindTable: function (oEvent) {
+                var mBindingParams = oEvent.getParameter("bindingParams"),
+                    // oSmtFilter = this.getView().byId("idSTabPrcingNoti"),
+                    oModel = this.getOwnerComponent().getModel(),
+                    sTabSelKey = this.getView().byId("idIconTabBar").getSelectedKey();
+                var oUserModel = this.getOwnerComponent().getModel("userModel");
+                var role = oUserModel.getData().role;
+                // var aTokens = oObjId.getTokens();
+                var sFieldName;
+                if (!role.role_role) {
+                    this.validateUser();
                 }
-                this._pPopover.then(function (oPopover) {
-                    oPopover.openBy(oButton);
-                });
+                if (role.role_role) {
+                    if (role.role_role === "CDT" || role.role_role === "LDT") {
+                        sFieldName = "createdBy";
+                    } else {
+                        sFieldName = "approver"
+                    }
+                    var aFilter = [];
+                    var newFilter = new Filter(sFieldName, FilterOperator.EQ, role.userid);
+                    // }
+                    mBindingParams.filters.push(newFilter);
+                }
+                if (sTabSelKey !== "All" && sTabSelKey !== "") {
+                    mBindingParams.filters.push(new Filter("status", FilterOperator.EQ, sTabSelKey));
+                }
+                oModel.attachRequestFailed(this._showError, this);
+                oModel.attachRequestCompleted(this._detach, this);
             },
-
-            handleCloseButton: function (oEvent) {
-                // note: We don't need to chain to the _pPopover promise, since this event-handler
-                // is only called from within the loaded dialog itself.
-                this.byId("myPopover").close();
+            _showError: function (oResponse) {
+                var oModel = this.getView().getModel(),
+                    oMsgs = oResponse.getSource().getMessagesByEntity("/PricingNotifications");
+                if (oMsgs[0]) {
+                    MessageBox.error(oMsgs[0].message);
+                    oModel.detachRequestFailed(this._showError, this);
+                }
             },
-            onLinksDownload: function (oEvent) {
-                var oInput = oEvent.getSource(),
-                    oBinding = oInput
-                        .getParent()
-                        .getBindingContext("vendorData")
-                        .getObject();
-                //   bEnDevelopment = oBinding.MyDevelopment === "X",
-                var oPopover = new sap.m.Popover({
-                    placement: "Bottom",
-                    showHeader: false,
-                    content: [
-                        new sap.m.HBox({
-                            items: [
-                                new sap.ui.core.Icon({
-                                    src: "sap-icon://edit",
-                                    size: "1.0rem",
-                                    //   color: "#BC9D61",
-                                }).addStyleClass("sapUiSmallMarginBeginEnd"),
-                                new sap.m.Link({
-                                    text: "Modify",
-                                    press: this.onModify.bind(this, oInput),
-                                    enabled: true,
-                                    wrapping: true,
-                                }),
-                            ],
-                        }).addStyleClass("sapUiSmallMarginTopBottom sapUiSmallMarginEnd"),
-                        new sap.m.HBox({
-                            items: [
-                                new sap.ui.core.Icon({
-                                    src: "sap-icon://delete",
-                                    size: "1.0rem"
-                                    //   ,
-                                    //   color: "#BC9D61",
-                                }).addStyleClass("sapUiSmallMarginBeginEnd"),
-                                new sap.m.Link({
-                                    text: "Delete",
-                                    enabled: true,
-                                    press: this.onDelete.bind(this, oEvent, oInput),
-                                    wrapping: true,
-                                }),
-                            ],
-                        }).addStyleClass("sapUiSmallMarginBottom"),
-                    ],
-                });
-
-                oPopover.openBy(oInput);
+            _detach: function (oEvent) {
+                var oModel = this.getView().getModel();
+                if (oEvent.getParameter("success") === true) {
+                    oModel.detachRequestFailed(this._showError, this);
+                }
+                oModel.detachRequestCompleted(this._detach, this);
             },
-            onModify: function () { },
-            onDelete: function () { },
+            onFilterSelect: function (oEvent) {
+                var sKey = oEvent.getParameter("key");
+                this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+            }
         });
     }
 );

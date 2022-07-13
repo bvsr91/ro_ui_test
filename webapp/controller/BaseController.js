@@ -187,6 +187,81 @@ sap.ui.define(
                     this.getOwnerComponent().getRouter().navTo("notFound");
                     // window.location.reload();
                 }
+            },
+            validateUser: async function () {
+                var oModel = this.getOwnerComponent().getModel();
+                const info = await $.get(oModel.sServiceUrl + '/CheckUserRole');
+                if (info.d.results) {
+                    var aData = info.d.results;
+                    this.prepareUserModel();
+                    if (aData.length === 0) {
+                        this.showNotFound();
+                    } else {
+                        this.getModel("userModel").setProperty("/isExpanded", true);
+                        if (this.getOwnerComponent().getRouter().getHashChanger().getHash() === "notFound") {
+                            this.getOwnerComponent().getRouter().navTo("search");
+                        }
+                        var role = aData[0].role_role;
+                        var sRoute;
+                        var aSideNav = this.getModel("userModel").getProperty("/navigation");
+                        if (role === "LDT") {
+                            aSideNav = aSideNav.filter(a => a.key !== "vendorList");
+                            sRoute = "pricingCond";
+                        } else if (role === "GCM" || role === "LP") {
+                            sRoute = "myInbox";
+                            aSideNav = aSideNav.filter(a => a.key === "myInbox");
+                        } else {
+                            sRoute = "vendorList";
+                        }
+                        this.getOwnerComponent().getModel("userModel").setProperty("/role", aData[0]);
+                        this.getOwnerComponent().getModel("userModel").setProperty("/navigation", aSideNav);
+                        this.getOwnerComponent().getRouter().navTo(sRoute);
+                    }
+                } else {
+                    this.showNotFound();
+                }
+            },
+            prepareUserModel: function () {
+                var oObj = {
+                    "selectedKey": "",
+                    "navigation": [
+                        {
+                            "titleI18nKey": "scVendListTab",
+                            "icon": "sap-icon://building",
+                            "expanded": false,
+                            "key": "vendorList"
+                        },
+                        {
+                            "titleI18nKey": "scPriceConTab",
+                            "icon": "sap-icon://money-bills",
+                            "expanded": false,
+                            "key": "pricingCond"
+                        },
+                        {
+                            "titleI18nKey": "scMyInbox",
+                            "icon": "sap-icon://inbox",
+                            "expanded": true,
+                            "key": "myInbox",
+                            "items": [
+                                {
+                                    "title": "Vendor Notifications",
+                                    "key": "vendNoti"
+                                },
+                                {
+                                    "title": "Pricing Notifications",
+                                    "key": "pricingNoti"
+                                }
+                            ]
+                        }
+                    ]
+                };
+                this.getOwnerComponent().getModel("userModel").setData(oObj);
+            },
+            showNotFound: function () {
+                // sap.ui.getCore().byId("idSN").setExpanded(false);
+                this.getOwnerComponent().getModel("userModel").setProperty("/isExpanded", false);
+                this.getOwnerComponent().getModel("side").setProperty("/navigation", []);
+                this.getOwnerComponent().getRouter().navTo("notFound");
             }
         });
     }

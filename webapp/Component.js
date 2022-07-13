@@ -28,61 +28,76 @@ sap.ui.define([
                 this.prepareUserModel();
                 this.validateUser();
             },
-            validateUser: function () {
+            validateUser: async function () {
                 var oModel = this.getModel();
-                oModel.read("/CheckUserRole", {
-                    success: function (oData) {
-                        console.log("odata: ", oData);
-                        this.prepareUserModel();
-                        if (oData.results.length === 0) {
-                            this.showNotFound();
-                        } else {
-                            this.getModel("userModel").setProperty("/isExpanded", true);
-                            if (this.getRouter().getHashChanger().getHash() === "notFound") {
-                                this.getRouter().navTo("search");
-                            }
-                            var role = oData.results[0].role_role;
-                            var sRoute;
-                            var aSideNav = this.getModel("userModel").getProperty("/navigation");
-                            if (role === "LDT") {
-                                aSideNav = aSideNav.filter(a => a.key !== "vendorList");
-                                sRoute = "pricingCond";
-                            } else if (role === "GCM" || role === "LP") {
-                                sRoute = "myInbox";
-                                aSideNav = aSideNav.filter(a => a.key === "myInbox");
-                            } else {
-                                sRoute = "vendorList";
-                            }
-                            this.getModel("userModel").setProperty("/role", oData.results[0]);
-                            this.getModel("userModel").setProperty("/navigation", aSideNav);
-                            this.getRouter().navTo(sRoute);
-                        }
-                    }.bind(this),
-                    error: function (error) {
+                const info = await $.get(oModel.sServiceUrl + '/CheckUserRole');
+                if (info.d.results) {
+                    var aData = info.d.results;
+                    this.prepareUserModel();
+                    if (aData.length === 0) {
                         this.showNotFound();
-                    }.bind(this)
-                });
+                    } else {
+                        this.getModel("userModel").setProperty("/isExpanded", true);
+                        if (this.getRouter().getHashChanger().getHash() === "notFound") {
+                            this.getRouter().navTo("search");
+                        }
+                        var role = aData[0].role_role;
+                        var sRoute;
+                        var aSideNav = this.getModel("userModel").getProperty("/navigation");
+                        if (role === "LDT") {
+                            aSideNav = aSideNav.filter(a => a.key !== "vendorList");
+                            sRoute = "pricingCond";
+                        } else if (role === "GCM" || role === "LP") {
+                            sRoute = "myInbox";
+                            aSideNav = aSideNav.filter(a => a.key === "myInbox");
+                        } else {
+                            sRoute = "vendorList";
+                        }
+                        this.getModel("userModel").setProperty("/role", aData[0]);
+                        this.getModel("userModel").setProperty("/navigation", aSideNav);
+                        this.getRouter().navTo(sRoute);
+                    }
+                } else {
+                    this.showNotFound();
+                }
+                // await oModel.read("/CheckUserRole", {
+                //     success: function (oData) {
+                //         console.log("odata: ", oData);
+                //         this.prepareUserModel();
+                // if (oData.results.length === 0) {
+                //     this.showNotFound();
+                // } else {
+                //     this.getModel("userModel").setProperty("/isExpanded", true);
+                //     if (this.getRouter().getHashChanger().getHash() === "notFound") {
+                //         this.getRouter().navTo("search");
+                //     }
+                //     var role = oData.results[0].role_role;
+                //     var sRoute;
+                //     var aSideNav = this.getModel("userModel").getProperty("/navigation");
+                //     if (role === "LDT") {
+                //         aSideNav = aSideNav.filter(a => a.key !== "vendorList");
+                //         sRoute = "pricingCond";
+                //     } else if (role === "GCM" || role === "LP") {
+                //         sRoute = "myInbox";
+                //         aSideNav = aSideNav.filter(a => a.key === "myInbox");
+                //     } else {
+                //         sRoute = "vendorList";
+                //     }
+                //     this.getModel("userModel").setProperty("/role", oData.results[0]);
+                //     this.getModel("userModel").setProperty("/navigation", aSideNav);
+                //     this.getRouter().navTo(sRoute);
+                // }
+                //     }.bind(this),
+                //     error: function (error) {
+                //         this.showNotFound();
+                //     }.bind(this)
+                // });
             },
             showNotFound: function () {
                 // sap.ui.getCore().byId("idSN").setExpanded(false);
                 this.getModel("userModel").setProperty("/isExpanded", false);
                 this.getModel("side").setProperty("/navigation", []);
                 this.getRouter().navTo("notFound");
-                // var sPath = "com.ferre.mrouife.view.fragments.notFound";
-                // if (!this.NotFoundDialog) {
-                // 	this.NotFoundDialog = sap.ui.xmlfragment(sPath, this);
-                // 	//this.getView().addDependent(this.NotFoundDialog);
-                // }
-                // this.NotFoundDialog.open();
-                // this.NotFoundDialog.attachBrowserEvent("keydown", function (e) {
-                // 	if ((e.which === 27) || (e.which === 32)) {
-                // 		return false;
-                // 	}
-                // });
-                // var title = this.getModel("i18n").getResourceBundle().getText("notFound");
-                // sap.ui.getCore().byId("titleText").setText(title);
-                // var message = this.getModel("i18n").getResourceBundle().getText("notFound.text");
-                // sap.ui.getCore().byId("nameText").setText(message);
             },
             prepareUserModel: function () {
                 var oObj = {
