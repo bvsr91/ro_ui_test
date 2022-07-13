@@ -187,25 +187,20 @@ sap.ui.define(
             },
             handleActionPress: function (oEvent) {
                 this.onLinksDownload(oEvent);
-                // var oRecordCreator = oEvent.getParameter("row").getBindingContext().getObject().initiator;
-                // var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                // if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                //     var oRow = oEvent.getParameter("row");
-                //     var oItem = oEvent.getParameter("item");
-                //     if (oItem.getType() === "Delete") {
-                //         this.onDeleteAwaitConfirm(oEvent);
-                //     } else {
-                //         this.onEditVendorForm(oEvent);
-                //     }
-                // } else {
-                //     MessageBox.error("You can not edit/delete the record that was created by others");
-                // }
-                // // sap.m.MessageToast.show("Item " + (oItem.getText() || oItem.getType()) + " pressed for product with id " +
-                // //     oRow.getBindingContext().getObject().manufacturerCode);
             },
             onLinksDownload: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
-                //   bEnDevelopment = oBinding.MyDevelopment === "X",
+                var bEdit;
+                var bDelete;
+                var oRecordCreator = oInput.getBindingContext().getObject().initiator;
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                    bEdit=true;
+                    bDelete=true;
+                } else {
+                   bEdit=false;
+                   bDelete=false;
+                }                
                 var oPopover = new sap.m.Popover({
                     placement: "Bottom",
                     showHeader: false,
@@ -213,11 +208,11 @@ sap.ui.define(
                         new sap.m.VBox({
                             items: [
                                 new sap.m.Button({
-                                    text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem',
+                                    text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem',enabled:bEdit,
                                     press: this.onEditPricingForm.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
-                                    text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem',
+                                    text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem',enabled:bDelete,
                                     press: this.onDeleteAwaitConfirm.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
@@ -232,16 +227,10 @@ sap.ui.define(
             },
 
             onEditPricingForm: function (oInput) {
-                var oRecordCreator = oInput.getBindingContext().getObject().initiator;
-                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                    this._editObjContext = oInput.getBindingContext();
-                    this.open_Dialog(this._editObjContext);
-                } else {
-                    MessageBox.error("You can not edit/delete the record that was created by others");
-                }
-               
+                this._editObjContext = oInput.getBindingContext();
+                this.open_Dialog(this._editObjContext);               
             },
+
             open_Dialog: function (editObj) {
                 var oCtx = editObj.getObject();
                 var sPath = editObj.getPath();
@@ -303,9 +292,6 @@ sap.ui.define(
                 });
             },
             onDeleteAwaitConfirm: function (oInput) {
-                var oRecordCreator = oInput.getBindingContext().getObject().initiator;
-                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
                     this._oDelObjContext = oInput.getBindingContext();
                     MessageBox.confirm("Do you want to delete the record?", {
                         actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
@@ -316,11 +302,7 @@ sap.ui.define(
                             }
                         }.bind(this),
                     }
-                    );    
-                } else {
-                    MessageBox.error("You can not edit/delete the record that was created by others");
-                }
-                            
+                    );             
             },
             onConfirmDelete: function (oContext) {
                 var oModel = this.getOwnerComponent().getModel();
