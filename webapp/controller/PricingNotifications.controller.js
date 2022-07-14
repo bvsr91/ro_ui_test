@@ -174,6 +174,7 @@ sap.ui.define(
                                 }),
                                 new sap.m.Button({
                                     text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: !bEdit,
+                                    type: "Reject",
                                     // press: this.onDeleteAwaitConfirm.bind(this, oInput)
                                 }),
                                 new sap.m.Button({

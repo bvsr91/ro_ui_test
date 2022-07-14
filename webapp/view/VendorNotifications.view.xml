@@ -4,58 +4,30 @@
     xmlns:core="sap.ui.core"
     xmlns:f="sap.f"
     xmlns:l="sap.ui.layout"
-    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"	
+    xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     xmlns:smartTable="sap.ui.comp.smarttable"
     xmlns:t="sap.ui.table">
-    <IconTabBar
-		id="idIconTabBar"
-		select=".onFilterSelect"
-		class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
-		<items>
-			<IconTabFilter
-				showAll="true"
-				count="{/ProductCollectionStats/Counts/Total}"
-				text="Total"
-				key="All" />
-			<IconTabSeparator />
-			<IconTabFilter
-				icon="sap-icon://message-success"
-				iconColor="Positive"
-				count="{/ProductCollectionStats/Counts/Weight/Ok}"
-				text="Approved"
-				key="Approved" />
-			<IconTabFilter
-				icon="sap-icon://question-mark"
-				iconColor="Critical"
-				count="{/ProductCollectionStats/Counts/Weight/Heavy}"
-				text="Pending"
-				key="Pending" />
-			<IconTabFilter
-				icon="sap-icon://notification"
-				iconColor="Negative"
-				count="{/ProductCollectionStats/Counts/Weight/Overweight}"
-				text="Rejected"
-				key="Rejected" />
-		</items>
-		<content>
-            <smartTable:SmartTable entitySet="VendorNotifications" id="idSTabVendorNoti"
-                smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport"
-                useTablePersonalisation="true" header="Vendor Notifications"
-                showRowCount="true" useVariantManagement="false"
-                enableAutoBinding="true" class="sapUiResponsiveContentPadding"
-                tableType="Table" enableAutoColumnWidth="true" 
-                initiallyVisibleFields="manufacturerCode, country"
-                ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
+    <IconTabBar id="idIconTabBar" select=".onFilterSelect" class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
+        <items>
+            <IconTabFilter showAll="true" count="" text="Total" key="All" />
+            <IconTabSeparator />
+            <IconTabFilter icon="sap-icon://message-success" iconColor="Positive" count="" text="Approved" key="Approved" />
+            <IconTabFilter icon="sap-icon://question-mark" iconColor="Critical" count="" text="Pending" key="Pending" />
+            <IconTabFilter icon="sap-icon://notification" iconColor="Negative" count="" text="Rejected" key="Rejected" />
+        </items>
+        <content>
+            <smartTable:SmartTable entitySet="VendorNotifications" id="idSTabVendorNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" 
+            initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
                 <t:Table id="idUiTabVendorNoti" visibleRowCount="10">
-                </t:Table> 
+                </t:Table>
                 <smartTable:customToolbar>
                     <OverflowToolbar>
                         <ToolbarSpacer />
-                        <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" />
-                        <Button icon="sap-icon://decline" text="Reject" type="Reject" tooltip="Reject" press=".handleReject" />
+                        <!-- <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" />
+                        <Button icon="sap-icon://decline" text="Reject" type="Reject" tooltip="Reject" press=".handleReject" /> -->
                     </OverflowToolbar>
                 </smartTable:customToolbar>
             </smartTable:SmartTable>
-		</content>
-	</IconTabBar>
+        </content>
+    </IconTabBar>
 </mvc:View>

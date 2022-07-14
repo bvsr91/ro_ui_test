@@ -9,14 +9,28 @@ sap.ui.define(
         "sap/ui/Device",
         "sap/ui/core/Fragment",
         "../model/formatter",
+        "sap/ui/table/RowAction",
+        "sap/ui/table/RowActionItem",
+        "sap/ui/table/RowSettings",
+        "sap/m/MessageBox",
         "./modules/utilController",
-        "sap/m/MessageBox"
+        "sap/m/Dialog",
+        "sap/m/Button",
+        "sap/m/Label",
+        "sap/m/library",
+        "sap/m/MessageToast",
+        "sap/m/Text",
+        "sap/m/TextArea",
     ],
     function (
-        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device,
-        Fragment, formatter, utilController, MessageBox) {
+        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem,
+        Device, Fragment, formatter, RowAction, RowActionItem, RowSettings, MessageBox, utilController,
+        Dialog, Button, Label, mobileLibrary, MessageToast, Text, TextArea) {
         "use strict";
-
+        // shortcut for sap.m.ButtonType
+        var ButtonType = mobileLibrary.ButtonType;
+        // shortcut for sap.m.DialogType
+        var DialogType = mobileLibrary.DialogType;
         return BaseController.extend("com.ferrero.zmrouiapp.controller.VendorNotifications", {
             formatter: formatter,
 
@@ -35,7 +49,7 @@ sap.ui.define(
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
                     that.routeAuthValidation(oHashChanger.getHash());
                 });
-                // this.extendTable();
+                this.extendTable();
                 // this.getRouter().attachBypassed(this.onBypassed, this);
             },
 
@@ -61,6 +75,7 @@ sap.ui.define(
                 //Set the layout property of the FCL control to 'OneColumn'
                 // this.getModel("appView").setProperty("/layout", "OneColumn");
                 this.setSelKey("vendNoti");
+                this.getView().byId("idSTabVendorNoti").rebindTable(true);
             },
             onBeforeRebindTable: async function (oEvent) {
                 var mBindingParams = oEvent.getParameter("bindingParams"),
@@ -111,80 +126,247 @@ sap.ui.define(
                 var sKey = oEvent.getParameter("key");
                 this.getView().byId("idSTabVendorNoti").rebindTable(true);
             },
-            handleApprove: function (oEvent) {
-                var aSelIndices = this.getView().byId("idUiTabVendorNoti").getSelectedIndices();
-                var aRows = this.getView().byId("idUiTabVendorNoti").getRows();
-                var aUpdatPaths = [];
-                if (aSelIndices.length === 0) {
-                    MessageBox.warning("Please atleast one row");
-                } else {
-                    for (var a of aSelIndices) {
-                        aUpdatPaths.push(aRows[a].getBindingContext().sPath);
-                    }
-                    this.performBatchApprove(aUpdatPaths);
+            extendTable: function () {
+                var oTable = this.byId("idUiTabVendorNoti");
+                var fnPress = this.handleActionPress.bind(this);
+                var oTemplate = oTable.getRowActionTemplate();
+                if (oTemplate) {
+                    oTemplate.destroy();
+                    oTemplate = null;
                 }
-            },
-            performBatchApprove: function (aPaths) {
-                var oModel = this.getOwnerComponent().getModel();
-                // oModel.setUseBatch(true);
-                oModel.attachRequestSent(function () {
-                    sap.ui.core.BusyIndicator.show();
-                });
-                //hide busy
-                oModel.attachRequestCompleted(function () {
-                    sap.ui.core.BusyIndicator.hide();
-                });
-                //hide busy if request is failed
-                oModel.attachRequestFailed(function () {
-                    sap.ui.core.BusyIndicator.hide();
-                });
-                oModel.setUseBatch(true);
-                oModel.setDeferredGroups(["foo"]);
-                var mParameters = {
-                    groupId: "foo",
-                    success: function (odata, resp) {
-                        var dialog1 = new sap.m.BusyDialog();
-                        dialog1.open();
-                        console.log(resp);
-                        dialog1.close();
-                    },
-                    error: function (odata, resp) {
-                        console.log(resp);
-                    }
-                };
-                var operations = [];
-                for (var i of aPaths) {
-                    var oUpdatePayLoad = {
-                        status_code: "Approved"
-                    };
-                    var operation = oModel.update(i, oUpdatePayLoad, mParameters);
-                    operations.push(operation);
-                }
-                // oModel.addBatchChangeOperations(operations);
-                var successBatch = function (data) {
-                    console.log("Batch success!!!   ");
-                }
-                var errorBatch = function (err) {
-                    console.log("Batch error!!!   ");
-                }
-                oModel.submitChanges(mParameters);
-            },
-            handleReject: function (oEvent) {
-                var oInput = oEvent.getSource();
-                var oDialogRej = utilController.createDialog(oEvent);
-                oDialogRej.open();
-
-                MessageBox.confirm("Do you want to delete the record?", {
-                    actions: [MessageBox.Action.YES, MessageBox.Action.CANCEL],
-                    initialFocus: MessageBox.Action.CANCEL,
-                    onClose: function (sAction) {
-                        if (sAction === "YES") {
-                            this.onConfirmDelete(this._oDelObjContext);
+                var iCount;
+                this.modes = [
+                    {
+                        key: "Multi",
+                        text: "Multiple Actions",
+                        handler: function () {
+                            var oTemplate = new RowAction({
+                                items: [
+                                    new RowActionItem({ icon: "sap-icon://action", text: "Action", press: fnPress })
+                                ]
+                            });
+                            return [1, oTemplate];
                         }
-                    }.bind(this),
+                    }
+                ];
+                for (var i = 0; i < this.modes.length; i++) {
+                    if ("Multi" == this.modes[i].key) {
+                        var aRes = this.modes[i].handler();
+                        iCount = aRes[0];
+                        oTemplate = aRes[1];
+                        break;
+                    }
                 }
-                );
-            }
+                oTable.setRowActionTemplate(oTemplate);
+                oTable.setRowActionCount(iCount);
+            },
+            handleActionPress: function (oEvent) {
+                var oInput = oEvent.getSource().getParent();
+                var bEdit;
+                var bDelete;
+                var oRecordCreator = oInput.getBindingContext().getObject().createdBy;
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                    bEdit = true;
+                    bDelete = true;
+                } else {
+                    bEdit = false;
+                    bDelete = false
+                }
+                var oPopover = new sap.m.Popover({
+                    placement: "Auto",
+                    showHeader: false,
+                    content: [
+                        new sap.m.VBox({
+                            items: [
+                                new sap.m.Button({
+                                    text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
+                                    type: "Accept",
+                                    press: this.onPressApprove.bind(this, oInput)
+                                }),
+                                new sap.m.Button({
+                                    text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
+                                    type: "Reject",
+                                    press: this.onPressReject.bind(this, oInput)
+                                }),
+                                new sap.m.Button({
+                                    text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                                    // press: this.onHistoryClick.bind(this, oInput)
+                                })
+                            ]
+                        }).addStyleClass("sapUiTinyMargin"),
+                    ],
+                }).addStyleClass("sapUiResponsivePadding");
+                this._oPopover = oPopover;
+                oPopover.openBy(oInput);
+            },
+            onPressApprove: async function (oInput) {
+                var oModel = this.getOwnerComponent().getModel();
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                var oSelObj = oInput.getBindingContext().getObject();
+                var oActionUriParameters = {
+                    uuid: oSelObj.uuid,
+                    Vendor_List_manufacturerCode: oSelObj.Vendor_List_manufacturerCode,
+                    Vendor_List_countryCode: oSelObj.Vendor_List_countryCode,
+                    Vendor_List_localManufacturerCod: oSelObj.Vendor_List_localManufacturerCod,
+                    completionDate: new Date().toISOString(),
+                    approvedDate: new Date().toISOString(),
+                    approver: logOnUserObj.userid,
+                    status_code: "Approved"
+                };
+                var oPayLoadVL = {
+                    status_code: "Approved"
+                };
+                sap.ui.core.BusyIndicator.show();
+                var sVLPath = "/VendorList(manufacturerCode='" + oSelObj.Vendor_List_manufacturerCode +
+                    "',countryCode='" + oSelObj.Vendor_List_countryCode + "',localManufacturerCode='" + oSelObj.Vendor_List_localManufacturerCode + "')";
+                var oVLUpdate = await this.updateVendorRecord(oModel, sVLPath, oPayLoadVL);
+                if (oVLUpdate.status_code) {
+                    const info = await this.updateVendorRecord(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
+                    if (info.status_code) {
+                        MessageBox.success("Record Approved Successfully");
+                    }
+                    sap.ui.core.BusyIndicator.hide();
+                } else {
+                    MessageBox.error(oPCUpdate.responseText);
+                    sap.ui.core.BusyIndicator.hide();
+                }
+
+                // const info = await oModel.update(oInput.getBindingContext().sPath, oActionUriParameters, fSuccess, fError, false);
+                // console.log(info);
+                // oModel.update(oInput.getBindingContext().sPath, oActionUriParameters, {
+                //     success: function (oData) {
+                //         this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+                //         this._oPopover.close();
+                //         // debugger;
+                //     }.bind(this),
+                //     error: function (error) {
+                //         // debugger;
+                //     }
+                // });
+                // oModel.callFunction("/approvePricing", {
+                //     method: "POST",
+                //     urlParameters: oActionUriParameters,
+                //     success: function (oData) {
+                //         this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+                //         this._oPopover.close();
+                //         // debugger;
+                //     }.bind(this),
+                //     error: function (error) {
+                //         // debugger;
+                //     }
+                // });
+            },
+            updateVendorRecord: function (oModel, sPath, oPayLoad) {
+                return new Promise(function (resolve, reject) {
+                    oModel.update(sPath, oPayLoad, {
+                        success: function (oData) {
+                            this.getView().byId("idSTabVendorNoti").rebindTable(true);
+                            this._oPopover.close();
+                            resolve(oData);
+                        }.bind(this),
+                        error: function (error) {
+                            resolve(error);
+                        }
+                    });
+                }.bind(this));
+            },
+            onPressReject: function (oInput) {
+                var oDialogRej = this.createDialog(oInput);
+                oDialogRej.open();
+            },
+            createDialog: function (oInput) {
+                var oSelObj = oInput.getBindingContext().getObject();
+                if (this.oRejectDialog) {
+                    this.oRejectDialog.destroy();
+                    this.oRejectDialog = undefined;
+                }
+                if (!this.oRejectDialog) {
+                    this.oRejectDialog = new Dialog({
+                        title: "Reject",
+                        type: DialogType.Message,
+                        content: [
+                            new Label({
+                                text: "Do you want to reject " + oSelObj.Vendor_List_manufacturerCode + "?",
+                                labelFor: "rejectionNote",
+                            }),
+                            new TextArea("rejectionNote", {
+                                width: "100%",
+                                placeholder: "Add note (required)",
+                                liveChange: function (oEvent) {
+                                    var sText = oEvent.getParameter("value");
+                                    this.oRejectDialog
+                                        .getBeginButton()
+                                        .setEnabled(sText.length > 0);
+                                }.bind(this),
+                            }),
+                        ],
+                        beginButton: new Button({
+                            type: ButtonType.Emphasized,
+                            text: "Reject",
+                            enabled: false,
+                            press: this.onRejOk.bind(this, oInput),
+                        }),
+                        endButton: new Button({
+                            text: "Cancel",
+                            press: function () {
+                                this.oRejectDialog.close();
+                            }.bind(this),
+                        }),
+                    });
+                }
+                return this.oRejectDialog;
+
+            },
+            onRejOk: async function (oInput) {
+                var sText = sap.ui.getCore().byId("rejectionNote").getValue();
+                MessageToast.show("Note is: " + sText);
+                var oModel = this.getOwnerComponent().getModel();
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                var oSelObj = oInput.getBindingContext().getObject();
+                var oActionUriParameters = {
+                    uuid: oSelObj.uuid,
+                    Vendor_List_manufacturerCode: oSelObj.Vendor_List_manufacturerCode,
+                    Vendor_List_countryCode: oSelObj.Vendor_List_countryCode,
+                    Vendor_List_localManufacturerCod: oSelObj.Vendor_List_localManufacturerCod,
+                    completionDate: new Date().toISOString(),
+                    approvedDate: new Date().toISOString(),
+                    approver: logOnUserObj.userid,
+                    status_code: "Rejected"
+                };
+                var oPayLoadVL = {
+                    status_code: "Rejected"
+                };
+                sap.ui.core.BusyIndicator.show();
+                var sVLPath = "/VendorList(manufacturerCode='" + oSelObj.Vendor_List_manufacturerCode +
+                    "',countryCode='" + oSelObj.Vendor_List_countryCode + "',localManufacturerCode='" + oSelObj.Vendor_List_localManufacturerCode + "')";
+                var oVLUpdate = await this.updateVendorRecordData(oModel, sVLPath, oPayLoadVL);
+                if (oVLUpdate.status_code) {
+                    const info = await this.updateVendorRecordData(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
+                    if (info.status_code) {
+                        MessageBox.success("Record Rejected Successfully");
+                    }
+                    sap.ui.core.BusyIndicator.hide();
+                } else {
+                    MessageBox.error(oPCUpdate.responseText);
+                    sap.ui.core.BusyIndicator.hide();
+                }
+                this.oRejectDialog.close();
+            },
+            updateVendorRecordData: function (oModel, sPath, oPayLoad) {
+                return new Promise(function (resolve, reject) {
+                    oModel.update(sPath, oPayLoad, {
+                        success: function (oData) {
+                            this.getView().byId("idSTabVendorNoti").rebindTable(true);
+                            this._oPopover.close();
+                            resolve(oData);
+                        }.bind(this),
+                        error: function (error) {
+                            resolve(error);
+                        }
+                    });
+                }.bind(this));
+            },
         });
     }
 );

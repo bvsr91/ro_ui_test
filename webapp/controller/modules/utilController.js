@@ -15,7 +15,7 @@ sap.ui.define([
         // shortcut for sap.m.DialogType
         var DialogType = mobileLibrary.DialogType;
         return {
-            createDialog: function (oInput,oEvent) {
+            createDialog: function (oInput, oEvent) {
                 // this._RejObj = oEvent.getSource().getParent().getBindingContext().getObject();
                 if (this.oRejectDialog) {
                     this.oRejectDialog.destroy();
@@ -27,7 +27,7 @@ sap.ui.define([
                         type: DialogType.Message,
                         content: [
                             new Label({
-                                text: "Do you want to reject " +  "?",
+                                text: "Do you want to reject " + "?",
                                 labelFor: "rejectionNote",
                             }),
                             new TextArea("rejectionNote", {
