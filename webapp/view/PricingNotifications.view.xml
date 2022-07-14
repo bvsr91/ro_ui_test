@@ -7,37 +7,30 @@
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     xmlns:smartTable="sap.ui.comp.smarttable"
     xmlns:t="sap.ui.table">
-    <IconTabBar id="idIconTabBar" select=".onFilterSelect" class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
-        <items>
-            <IconTabFilter showAll="true" count="{=${PricingNotifications}.length}" text="Total" key="All" />
-            <IconTabSeparator />
-            <IconTabFilter icon="sap-icon://message-success" iconColor="Positive" count="" text="Approved" key="Approved" />
-            <IconTabFilter icon="sap-icon://question-mark" iconColor="Critical" count="" text="Pending" key="Pending" />
-            <IconTabFilter icon="sap-icon://notification" iconColor="Negative" count="" text="Rejected" key="Rejected" />
-        </items>
+    <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
         <content>
-            <smartTable:SmartTable entitySet="PricingNotifications" id="idSTabPrcingNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
-                <t:Table id="idUiTabPricingNoti" visibleRowCount="10">
-                    <!-- <t:columns>
-                        <t:Column width="11rem">
-                            <Label text="Manufacturer" id="idClMan" />
-                            <t:customData>
-                                <core:CustomData key="p13nData" value='\{"columnKey": "idClMan", "autoColumnWidth": true, "maxLength": 5,"columnIndex":0}' />
-                            </t:customData>
-                            <t:template>
-                                <Text text="{Pricing_Conditions_manufacturerCode}" wrapping="false" />
-                            </t:template>
-                        </t:Column>
-                    </t:columns> -->
-                </t:Table>
-                <smartTable:customToolbar>
-                    <OverflowToolbar>
-                        <ToolbarSpacer />
-                        <!-- <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" />
+            <IconTabBar id="idIconTabBar" select=".onFilterSelect" class="sapUiResponsivePadding--header sapUiResponsivePadding--content">
+                <items>
+                    <IconTabFilter showAll="true" count="{=${PricingNotifications}.length}" text="Total" key="All" />
+                    <IconTabSeparator />
+                    <IconTabFilter icon="sap-icon://message-success" iconColor="Positive" count="" text="Approved" key="Approved" />
+                    <IconTabFilter icon="sap-icon://question-mark" iconColor="Critical" count="" text="Pending" key="Pending" />
+                    <IconTabFilter icon="sap-icon://notification" iconColor="Negative" count="" text="Rejected" key="Rejected" />
+                </items>
+                <content>
+                    <smartTable:SmartTable entitySet="PricingNotifications" id="idSTabPrcingNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
+                        <t:Table id="idUiTabPricingNoti" visibleRowCount="8">
+                        </t:Table>
+                        <smartTable:customToolbar>
+                            <OverflowToolbar>
+                                <ToolbarSpacer />
+                                <!-- <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" />
                         <Button icon="sap-icon://decline" text="Reject" type="Reject" tooltip="Reject" press=".handleReject" /> -->
-                    </OverflowToolbar>
-                </smartTable:customToolbar>
-            </smartTable:SmartTable>
+                            </OverflowToolbar>
+                        </smartTable:customToolbar>
+                    </smartTable:SmartTable>
+                </content>
+            </IconTabBar>
         </content>
-    </IconTabBar>
+    </Page>
 </mvc:View>

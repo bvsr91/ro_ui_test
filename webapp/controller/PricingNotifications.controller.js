@@ -168,7 +168,7 @@ sap.ui.define(
                         new sap.m.VBox({
                             items: [
                                 new sap.m.Button({
-                                    text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: !bEdit,
+                                    text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
                                     type: "Accept",
                                     press: this.onPressApprove.bind(this, oInput)
                                 }),
@@ -205,19 +205,19 @@ sap.ui.define(
                     status_code: "Approved"
                 };
                 sap.ui.core.BusyIndicator.show();
-                var sPCPath = "/PricingConditions(manufacturerCode='" + oSelObj.Pricing_Conditions_manufacturerCode +
-                    "',countryCode='" + oSelObj.Pricing_Conditions_countryCode + "')";
-                var oPCUpdate = await this.updatePricingRecord(oModel, sPCPath, oPayLoadPC);
-                if (oPCUpdate.status_code) {
-                    const info = await this.updatePricingRecord(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
-                    if (info.status_code) {
-                        MessageBox.success("Record Approved Successfully");
-                    }
-                    sap.ui.core.BusyIndicator.hide();
-                } else {
-                    MessageBox.error(oPCUpdate.responseText);
-                    sap.ui.core.BusyIndicator.hide();
+                // var sPCPath = "/PricingConditions(manufacturerCode='" + oSelObj.Pricing_Conditions_manufacturerCode +
+                //     "',countryCode='" + oSelObj.Pricing_Conditions_countryCode + "')";
+                // var oPCUpdate = await this.updatePricingRecord(oModel, sPCPath, oPayLoadPC);
+                // if (oPCUpdate.status_code) {
+                const info = await this.updatePricingRecord(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
+                if (info.status_code) {
+                    MessageBox.success("Record Approved Successfully");
                 }
+                sap.ui.core.BusyIndicator.hide();
+                // } else {
+                //     MessageBox.error(oPCUpdate.responseText);
+                //     sap.ui.core.BusyIndicator.hide();
+                // }
 
                 // const info = await oModel.update(oInput.getBindingContext().sPath, oActionUriParameters, fSuccess, fError, false);
                 console.log(info);
