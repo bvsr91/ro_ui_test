@@ -5,25 +5,33 @@
     xmlns:core="sap.ui.core">
     <Dialog id="myDialog" title="New Pricing Record ..">
         <!-- <content> -->
-            <!-- <VBox class="sapUiSmallMargin"> -->
-            <form:SimpleForm editable="true" layout="ResponsiveGridLayout">
-                <form:content>
-                    <Label text="Manufacturer Code" required="true" />
-                    <Input id="idIpManf" change="onNameChange" />
-                    <Label text="Manufacturer Name" />
-                    <Input id="idIpManfDesc" rows="4" />
-                    <Label text="Local Manufacturer Number" />
-                    <Input id="idIpLocalManf" rows="4" />
-                    <Label text="Local Manufacturer Desc" />
-                    <Input id="idIpLocalManfDesc" rows="4" />
-                    <Label text="Country" />
-                    <Input  id="idIpCountry"  type="Text" placeholder="Enter Country ..."
-                        showValueHelp="true" valueHelpOnly="true"  valueHelpRequest=".onValueHelpRequestCountry"
-                        class="sapUiSmallMarginBottom" required="true"/>
-                    <Label text="Country Desc" />
-                    <Text id="idIpCountryDesc"/>
-                </form:content>
-            </form:SimpleForm>
+        <!-- <VBox class="sapUiSmallMargin"> -->
+        <form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+            <form:content>
+                <Label text="Manufacturer Code" required="true" />
+                <Input id="idIpManf" change="onNameChange" maxLength="" />
+                <Label text="Manufacturer Name" />
+                <Input id="idIpManfDesc" rows="4" />
+                <Label text="Country" />
+                <Input id="idIpCountry" type="Text" placeholder="Enter Country ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCountry" class="sapUiSmallMarginBottom" required="true"/>
+                <Label text="Country Desc" />
+                <Text id="idIpCountryDesc"/>
+                <!-- <Label text=""/> -->
+                <CheckBox id="localOwnershipId" text="Local Ownership"/>
+
+                <Label text="Local Currency"/>
+                <Input id="idIpLocCurr" maxLength="3" />
+                <Label text="Exchange Rate"/>
+                <Input id="idIpExchRate" type="Number" />
+                <Label text="Country Factor"/>
+                <Input id="idIpContFact" type="Number" />
+                <Label text="Validity Start"/>
+                <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy"/>
+                <Label text="Validity End"/>
+                <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy"/>
+
+            </form:content>
+        </form:SimpleForm>
         <!-- </content> -->
         <buttons>
             <Button text="Save" type="Emphasized" press=".onaddPricingData"/>

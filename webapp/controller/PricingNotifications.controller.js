@@ -11,11 +11,12 @@ sap.ui.define(
         "../model/formatter",
         "sap/ui/table/RowAction",
         "sap/ui/table/RowActionItem",
-        "sap/ui/table/RowSettings"
+        "sap/ui/table/RowSettings",
+        "sap/m/MessageBox"
     ],
     function (
         BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem,
-        Device, Fragment, formatter, RowAction, RowActionItem, RowSettings) {
+        Device, Fragment, formatter, RowAction, RowActionItem, RowSettings, MessageBox) {
         "use strict";
 
         return BaseController.extend("com.ferrero.zmrouiapp.controller.PricingNotifications", {
@@ -167,12 +168,12 @@ sap.ui.define(
                         new sap.m.VBox({
                             items: [
                                 new sap.m.Button({
-                                    text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
+                                    text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: !bEdit,
                                     type: "Accept",
                                     press: this.onPressApprove.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
-                                    text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
+                                    text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: !bEdit,
                                     // press: this.onDeleteAwaitConfirm.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
@@ -186,25 +187,49 @@ sap.ui.define(
                 this._oPopover = oPopover;
                 oPopover.openBy(oInput);
             },
-            onPressApprove: function (oInput) {
+            onPressApprove: async function (oInput) {
                 var oModel = this.getOwnerComponent().getModel();
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oActionUriParameters = {
                     uuid: oSelObj.uuid,
                     Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
-                    Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
+                    Pricing_Conditions_countryCode: oSelObj.Pricing_Conditions_countryCode,
+                    completionDate: new Date().toISOString(),
+                    approvedDate: new Date().toISOString(),
+                    approver: logOnUserObj.userid,
                     status_code: "Approved"
                 };
-                oModel.update(oInput.getBindingContext().sPath, oActionUriParameters, {
-                    success: function (oData) {
-                        this.getView().byId("idSTabPrcingNoti").rebindTable(true);
-                        this._oPopover.close();
-                        // debugger;
-                    }.bind(this),
-                    error: function (error) {
-                        // debugger;
+                var oPayLoadPC = {
+                    status_code: "Approved"
+                };
+                sap.ui.core.BusyIndicator.show();
+                var sPCPath = "/PricingConditions(manufacturerCode='" + oSelObj.Pricing_Conditions_manufacturerCode +
+                    "',countryCode='" + oSelObj.Pricing_Conditions_countryCode + "')";
+                var oPCUpdate = await this.updatePricingRecord(oModel, sPCPath, oPayLoadPC);
+                if (oPCUpdate.status_code) {
+                    const info = await this.updatePricingRecord(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
+                    if (info.status_code) {
+                        MessageBox.success("Record Approved Successfully");
                     }
-                });
+                    sap.ui.core.BusyIndicator.hide();
+                } else {
+                    MessageBox.error(oPCUpdate.responseText);
+                    sap.ui.core.BusyIndicator.hide();
+                }
+
+                // const info = await oModel.update(oInput.getBindingContext().sPath, oActionUriParameters, fSuccess, fError, false);
+                console.log(info);
+                // oModel.update(oInput.getBindingContext().sPath, oActionUriParameters, {
+                //     success: function (oData) {
+                //         this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+                //         this._oPopover.close();
+                //         // debugger;
+                //     }.bind(this),
+                //     error: function (error) {
+                //         // debugger;
+                //     }
+                // });
                 // oModel.callFunction("/approvePricing", {
                 //     method: "POST",
                 //     urlParameters: oActionUriParameters,
@@ -217,6 +242,20 @@ sap.ui.define(
                 //         // debugger;
                 //     }
                 // });
+            },
+            updatePricingRecord: function (oModel, sPath, oPayLoad) {
+                return new Promise(function (resolve, reject) {
+                    oModel.update(sPath, oPayLoad, {
+                        success: function (oData) {
+                            this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+                            this._oPopover.close();
+                            resolve(oData);
+                        }.bind(this),
+                        error: function (error) {
+                            resolve(error);
+                        }
+                    });
+                }.bind(this));
             }
         });
     }
