@@ -47,7 +47,7 @@
                 initiallyVisibleFields="manufacturerCode, country"
                 ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
                 <t:Table id="idUiTabPricingNoti" visibleRowCount="10">
-                    <t:columns>
+                    <!-- <t:columns>
                         <t:Column width="11rem" >
                             <Label text="Manufacturer" id="idClMan" />
                             <t:customData>
@@ -58,13 +58,13 @@
                                 <Text text="{Pricing_Conditions_manufacturerCode}" wrapping="false" />
                             </t:template>
                         </t:Column>
-                    </t:columns>
+                    </t:columns> -->
                 </t:Table> 
                 <smartTable:customToolbar>
                     <OverflowToolbar>
                         <ToolbarSpacer />
-                        <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" />
-                        <Button icon="sap-icon://decline" text="Reject" type="Reject" tooltip="Reject" press=".handleReject" />
+                        <!-- <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" />
+                        <Button icon="sap-icon://decline" text="Reject" type="Reject" tooltip="Reject" press=".handleReject" /> -->
                     </OverflowToolbar>
                 </smartTable:customToolbar>
             </smartTable:SmartTable>

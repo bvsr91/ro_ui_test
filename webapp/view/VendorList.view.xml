@@ -17,13 +17,19 @@
                         entitySet="VendorList" />
                 </content>
             </Panel>
-
-            <smartTable:SmartTable entitySet="VendorList" id="vendSmartTab"
-                smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport"
-                useTablePersonalisation="true" header="Vendor List Items"
-                showRowCount="true" useVariantManagement="false"
-                enableAutoBinding="true" class="sapUiResponsiveContentPadding"
-                tableType="Table" enableAutoColumnWidth="true" 
+            <smartTable:SmartTable entitySet="VendorList" 
+                id="vendSmartTab"
+                smartFilterId="smartFilterBar" 
+                useExportToExcel="true" 
+                beforeExport="onBeforeExport"
+                useTablePersonalisation="true" 
+                header="Vendor List Items"
+                showRowCount="true" 
+                useVariantManagement="false"
+                enableAutoBinding="true" 
+                class="sapUiResponsiveContentPadding"
+                tableType="Table" 
+                enableAutoColumnWidth="true" 
                 initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
                     country,countryDesc"
                 ignoredFields="uuid" requestAtLeastFields="uuid">
@@ -41,7 +47,7 @@
                     <OverflowToolbar>
                         <content>                        
                             <ToolbarSpacer />
-                            <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" />
+                            <!-- <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" /> -->
                             <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="true" press="onOpenAddDialog"/>
                         </content>
                         <dependents>

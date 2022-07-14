@@ -30,9 +30,7 @@ sap.ui.define(
              * @public
              */
             onInit: function () {
-                this.getRouter()
-                    .getRoute("vendorList")
-                    .attachPatternMatched(this._onRouteMatched, this);
+                this.getRouter().getRoute("vendorList").attachPatternMatched(this._onRouteMatched, this);
                 // this.getRouter().attachBypassed(this.onBypassed, this);
                 // var oModel = this.getOwnerComponent().getModel("mrosrv_v2")
                 // this.getView().setModel(oModel);

@@ -38,7 +38,7 @@
 				key="Rejected" />
 		</items>
 		<content>
-        <smartTable:SmartTable entitySet="VendorNotifications" id="idSTabVendorNoti"
+            <smartTable:SmartTable entitySet="VendorNotifications" id="idSTabVendorNoti"
                 smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport"
                 useTablePersonalisation="true" header="Vendor Notifications"
                 showRowCount="true" useVariantManagement="false"
@@ -56,55 +56,6 @@
                     </OverflowToolbar>
                 </smartTable:customToolbar>
             </smartTable:SmartTable>
-			<!-- <Table
-				id="idTabPricingNoti"
-				inset="false"
-				showSeparators="Inner"
-				items="{
-					path: '/PricingNotifications',
-					sorter: {
-						path: 'createdAt'
-					}
-				}">
-				<columns>
-					<Column
-						width="12em">
-						<Text text="Manufacturer" />
-					</Column>
-					<Column
-						minScreenWidth="Tablet"
-						demandPopin="true">
-						<Text text="Country" />
-					</Column>
-					<Column
-						minScreenWidth="Desktop"
-						demandPopin="true"
-						hAlign="End">
-						<Text text="Status" />
-					</Column>
-					<Column
-						minScreenWidth="Desktop"
-						demandPopin="true"
-						hAlign="Center">
-						<Text text="Starting Date" />
-					</Column>
-					<Column
-						hAlign="End">
-						<Text text="Completion Date" />
-					</Column>
-				</columns>
-				<items>
-					<ColumnListItem>
-						<cells>
-							<Text text="{Pricing_Conditions_manufacturerCode}"/>
-							<Text text="{Pricing_Conditions_countryCode}" />
-							<Text text="{status}" />
-							<Text text="{createdAt}" />
-                            <Text text="{completionDate}" />
-						</cells>
-					</ColumnListItem>
-				</items>
-			</Table> -->
 		</content>
 	</IconTabBar>
 </mvc:View>

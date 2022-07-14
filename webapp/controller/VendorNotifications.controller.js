@@ -9,10 +9,12 @@ sap.ui.define(
         "sap/ui/Device",
         "sap/ui/core/Fragment",
         "../model/formatter",
-        "./modules/utilController"
+        "./modules/utilController",
+        "sap/m/MessageBox"
     ],
     function (
-        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Fragment, formatter,utilController) {
+        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device,
+        Fragment, formatter, utilController, MessageBox) {
         "use strict";
 
         return BaseController.extend("com.ferrero.zmrouiapp.controller.VendorNotifications", {
@@ -33,6 +35,7 @@ sap.ui.define(
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
                     that.routeAuthValidation(oHashChanger.getHash());
                 });
+                // this.extendTable();
                 // this.getRouter().attachBypassed(this.onBypassed, this);
             },
 
@@ -109,21 +112,65 @@ sap.ui.define(
                 this.getView().byId("idSTabVendorNoti").rebindTable(true);
             },
             handleApprove: function (oEvent) {
-                // var oInput= oEvent.getSource().getSelectedItem().getBindingContext().getObject();
-                // var oTable = this.getView().byId("idSTabVendorNoti");          //Get hold of table
-                // var oRowsBinding = oTable.getBinding("rows");
-                // oRowsBinding.attachChange(function(){
-                //      var oLength = oRowsBinding.getLength();
-                //      console.log(oLength);          //Gets you the rows length
-                // var oTable=oEvent.getParameter("selectedItem");
-                var oTable=this.getView().byId("idUiTabVendorNoti").getTable.getBinding();
-                var path=oTable.sPath;
-                this.byId("idSTabVendorNoti").getTable().getBinding().sPath;
-            
-
+                var aSelIndices = this.getView().byId("idUiTabVendorNoti").getSelectedIndices();
+                var aRows = this.getView().byId("idUiTabVendorNoti").getRows();
+                var aUpdatPaths = [];
+                if (aSelIndices.length === 0) {
+                    MessageBox.warning("Please atleast one row");
+                } else {
+                    for (var a of aSelIndices) {
+                        aUpdatPaths.push(aRows[a].getBindingContext().sPath);
+                    }
+                    this.performBatchApprove(aUpdatPaths);
+                }
             },
-            handleReject:function(oEvent) {
-                var oInput=oEvent.getSource();
+            performBatchApprove: function (aPaths) {
+                var oModel = this.getOwnerComponent().getModel();
+                // oModel.setUseBatch(true);
+                oModel.attachRequestSent(function () {
+                    sap.ui.core.BusyIndicator.show();
+                });
+                //hide busy
+                oModel.attachRequestCompleted(function () {
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                //hide busy if request is failed
+                oModel.attachRequestFailed(function () {
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                oModel.setUseBatch(true);
+                oModel.setDeferredGroups(["foo"]);
+                var mParameters = {
+                    groupId: "foo",
+                    success: function (odata, resp) {
+                        var dialog1 = new sap.m.BusyDialog();
+                        dialog1.open();
+                        console.log(resp);
+                        dialog1.close();
+                    },
+                    error: function (odata, resp) {
+                        console.log(resp);
+                    }
+                };
+                var operations = [];
+                for (var i of aPaths) {
+                    var oUpdatePayLoad = {
+                        status_code: "Approved"
+                    };
+                    var operation = oModel.update(i, oUpdatePayLoad, mParameters);
+                    operations.push(operation);
+                }
+                // oModel.addBatchChangeOperations(operations);
+                var successBatch = function (data) {
+                    console.log("Batch success!!!   ");
+                }
+                var errorBatch = function (err) {
+                    console.log("Batch error!!!   ");
+                }
+                oModel.submitChanges(mParameters);
+            },
+            handleReject: function (oEvent) {
+                var oInput = oEvent.getSource();
                 var oDialogRej = utilController.createDialog(oEvent);
                 oDialogRej.open();
 
@@ -136,7 +183,7 @@ sap.ui.define(
                         }
                     }.bind(this),
                 }
-                );   
+                );
             }
         });
     }

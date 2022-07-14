@@ -10,3 +10,5 @@ archive.zip
 .*_mta_build_tmp
 # auto generated wildcard
 mrobe/.env6
+# auto generated wildcard
+mrobe/.env1
