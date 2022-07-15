@@ -90,6 +90,7 @@ sap.ui.define(
                 var countryFact = this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).getValue();
                 var validityStartId = this.byId(Fragment.createId("FrgAddPricing", "validityStartId")).getValue();
                 var validityEndId = this.byId(Fragment.createId("FrgAddPricing", "validityEndId")).getValue();
+                var localCurreny = this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).getValue();
                 var exchageRate = this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).getValue();
                 var bLocalOwnerShip = this.byId(Fragment.createId("FrgAddPricing", "localOwnershipId")).getSelected();
                 var oPayLoad = {};
@@ -102,7 +103,13 @@ sap.ui.define(
                 oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? 0.0 : parseFloat(exchageRate);
                 oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
                 oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
+                oPayLoad.localCurrency = localCurreny;
                 oPayLoad.local_ownership = bLocalOwnerShip;
+                if (bLocalOwnerShip) {
+                    oPayLoad.countryFactor = null;
+                    oPayLoad.localCurrency = "";
+                    oPayLoad.exchangeRate = null;
+                }
                 var oModel = this.getOwnerComponent().getModel();
                 sap.ui.core.BusyIndicator.show();
                 // this.getView().setBusy(true);
@@ -335,8 +342,22 @@ sap.ui.define(
             },
             onHistoryClick: function (oInput) {
 
+            },
+            onSelectLocalOwnership: function (oEvent) {
+                var bSel = oEvent.getParameter("selected");
+                if (bSel) {
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setValue(null);
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).setValue("");
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).setValue(null);
+                } else {
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).setEnabled(!bSel);
+                }
             }
-
         });
     }
 );

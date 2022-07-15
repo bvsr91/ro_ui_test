@@ -17,7 +17,7 @@
                 <Label text="Country Desc" />
                 <Text id="idIpCountryDesc"/>
                 <!-- <Label text=""/> -->
-                <CheckBox id="localOwnershipId" text="Local Ownership"/>
+                <CheckBox id="localOwnershipId" text="Local Ownership" select="onSelectLocalOwnership"/>
 
                 <Label text="Local Currency"/>
                 <Input id="idIpLocCurr" maxLength="3" />
