@@ -184,12 +184,10 @@ sap.ui.define(
                             items: [
                                 new sap.m.Button({
                                     text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
-                                    type: "Accept",
                                     press: this.onPressApprove.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
                                     text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
-                                    type: "Reject",
                                     press: this.onPressReject.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
@@ -302,24 +300,20 @@ sap.ui.define(
             },
             onRejOk: async function (oInput) {
                 var sText = sap.ui.getCore().byId("rejectionNote").getValue();
-                MessageToast.show("Note is: " + sText);
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oActionUriParameters = {
-                    uuid: oSelObj.uuid,
+                    pricing_Notif_uuid: oSelObj.uuid,
                     Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
                     Pricing_Conditions_countryCode: oSelObj.Pricing_Conditions_countryCode,
-                    completionDate: new Date().toISOString(),
-                    approvedDate: new Date().toISOString(),
-                    approver: logOnUserObj.userid,
-                    status_code: "Rejected"
+                    Comment: sText
                 };
                 var oPayLoadVL = {
                     status_code: "Rejected"
                 };
                 sap.ui.core.BusyIndicator.show();
-                const info = await this.updatePricingRecordData(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
+                const info = await this.createPricingComment(oModel, "/PricingComments", oActionUriParameters);
                 if (info.status_code) {
                     MessageBox.success("Record Rejected Successfully");
                 }
@@ -329,6 +323,20 @@ sap.ui.define(
             updatePricingRecordData: function (oModel, sPath, oPayLoad) {
                 return new Promise(function (resolve, reject) {
                     oModel.update(sPath, oPayLoad, {
+                        success: function (oData) {
+                            this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+                            this._oPopover.close();
+                            resolve(oData);
+                        }.bind(this),
+                        error: function (error) {
+                            resolve(error);
+                        }
+                    });
+                }.bind(this));
+            },
+            createPricingComment: function (oModel, sPath, oPayLoad) {
+                return new Promise(function (resolve, reject) {
+                    oModel.create(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabPrcingNoti").rebindTable(true);
                             this._oPopover.close();

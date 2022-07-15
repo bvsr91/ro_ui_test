@@ -19,7 +19,7 @@
                 </items>
                 <content>
                     <smartTable:SmartTable entitySet="VendorNotifications" id="idSTabVendorNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
-                        <t:Table id="idUiTabVendorNoti" visibleRowCount="10">
+                        <t:Table id="idUiTabVendorNoti" visibleRowCount="8">
                         </t:Table>
                         <smartTable:customToolbar>
                             <OverflowToolbar>
