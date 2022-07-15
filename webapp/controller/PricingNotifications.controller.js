@@ -12,12 +12,26 @@ sap.ui.define(
         "sap/ui/table/RowAction",
         "sap/ui/table/RowActionItem",
         "sap/ui/table/RowSettings",
-        "sap/m/MessageBox"
+        "sap/m/MessageBox",
+        "sap/m/Dialog",
+        "sap/m/Button",
+        "sap/m/Label",
+        "sap/m/library",
+        "sap/m/MessageToast",
+        "sap/m/Text",
+        "sap/m/TextArea",
     ],
     function (
         BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem,
-        Device, Fragment, formatter, RowAction, RowActionItem, RowSettings, MessageBox) {
+        Device, Fragment, formatter, RowAction, RowActionItem, RowSettings, MessageBox,
+        Dialog, Button, Label, mobileLibrary, MessageToast, Text, TextArea) {
+
         "use strict";
+
+        // shortcut for sap.m.ButtonType
+        var ButtonType = mobileLibrary.ButtonType;
+        // shortcut for sap.m.DialogType
+        var DialogType = mobileLibrary.DialogType;
 
         return BaseController.extend("com.ferrero.zmrouiapp.controller.PricingNotifications", {
             formatter: formatter,
@@ -176,7 +190,7 @@ sap.ui.define(
                                 new sap.m.Button({
                                     text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
                                     type: "Reject",
-                                    // press: this.onDeleteAwaitConfirm.bind(this, oInput)
+                                    press: this.onPressReject.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
                                     text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
@@ -206,32 +220,12 @@ sap.ui.define(
                     status_code: "Approved"
                 };
                 sap.ui.core.BusyIndicator.show();
-                // var sPCPath = "/PricingConditions(manufacturerCode='" + oSelObj.Pricing_Conditions_manufacturerCode +
-                //     "',countryCode='" + oSelObj.Pricing_Conditions_countryCode + "')";
-                // var oPCUpdate = await this.updatePricingRecord(oModel, sPCPath, oPayLoadPC);
-                // if (oPCUpdate.status_code) {
                 const info = await this.updatePricingRecord(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
                 if (info.status_code) {
                     MessageBox.success("Record Approved Successfully");
                 }
                 sap.ui.core.BusyIndicator.hide();
-                // } else {
-                //     MessageBox.error(oPCUpdate.responseText);
-                //     sap.ui.core.BusyIndicator.hide();
-                // }
 
-                // const info = await oModel.update(oInput.getBindingContext().sPath, oActionUriParameters, fSuccess, fError, false);
-                console.log(info);
-                // oModel.update(oInput.getBindingContext().sPath, oActionUriParameters, {
-                //     success: function (oData) {
-                //         this.getView().byId("idSTabPrcingNoti").rebindTable(true);
-                //         this._oPopover.close();
-                //         // debugger;
-                //     }.bind(this),
-                //     error: function (error) {
-                //         // debugger;
-                //     }
-                // });
                 // oModel.callFunction("/approvePricing", {
                 //     method: "POST",
                 //     urlParameters: oActionUriParameters,
@@ -258,7 +252,94 @@ sap.ui.define(
                         }
                     });
                 }.bind(this));
-            }
+            },
+            onPressReject: function (oInput) {
+                var oDialogRej = this.createDialog(oInput);
+                oDialogRej.open();
+            },
+            createDialog: function (oInput) {
+                var oSelObj = oInput.getBindingContext().getObject();
+                if (this.oRejectDialog) {
+                    this.oRejectDialog.destroy();
+                    this.oRejectDialog = undefined;
+                }
+                if (!this.oRejectDialog) {
+                    this.oRejectDialog = new Dialog({
+                        title: "Reject",
+                        type: DialogType.Message,
+                        content: [
+                            new Label({
+                                text: "Do you want to reject " + oSelObj.Pricing_Conditions_manufacturerCode + "?",
+                                labelFor: "rejectionNote",
+                            }),
+                            new TextArea("rejectionNote", {
+                                width: "100%",
+                                placeholder: "Add note (required)",
+                                liveChange: function (oEvent) {
+                                    var sText = oEvent.getParameter("value");
+                                    this.oRejectDialog
+                                        .getBeginButton()
+                                        .setEnabled(sText.length > 0);
+                                }.bind(this),
+                            }),
+                        ],
+                        beginButton: new Button({
+                            type: ButtonType.Emphasized,
+                            text: "Reject",
+                            enabled: false,
+                            press: this.onRejOk.bind(this, oInput),
+                        }),
+                        endButton: new Button({
+                            text: "Cancel",
+                            press: function () {
+                                this.oRejectDialog.close();
+                            }.bind(this),
+                        }),
+                    });
+                }
+                return this.oRejectDialog;
+
+            },
+            onRejOk: async function (oInput) {
+                var sText = sap.ui.getCore().byId("rejectionNote").getValue();
+                MessageToast.show("Note is: " + sText);
+                var oModel = this.getOwnerComponent().getModel();
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                var oSelObj = oInput.getBindingContext().getObject();
+                var oActionUriParameters = {
+                    uuid: oSelObj.uuid,
+                    Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
+                    Pricing_Conditions_countryCode: oSelObj.Pricing_Conditions_countryCode,
+                    completionDate: new Date().toISOString(),
+                    approvedDate: new Date().toISOString(),
+                    approver: logOnUserObj.userid,
+                    status_code: "Rejected"
+                };
+                var oPayLoadVL = {
+                    status_code: "Rejected"
+                };
+                sap.ui.core.BusyIndicator.show();
+                const info = await this.updatePricingRecordData(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
+                if (info.status_code) {
+                    MessageBox.success("Record Rejected Successfully");
+                }
+                sap.ui.core.BusyIndicator.hide();
+                this.oRejectDialog.close();
+            },
+            updatePricingRecordData: function (oModel, sPath, oPayLoad) {
+                return new Promise(function (resolve, reject) {
+                    oModel.update(sPath, oPayLoad, {
+                        success: function (oData) {
+                            this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+                            this._oPopover.close();
+                            resolve(oData);
+                        }.bind(this),
+                        error: function (error) {
+                            resolve(error);
+                        }
+                    });
+                }.bind(this));
+            },
         });
     }
 );
