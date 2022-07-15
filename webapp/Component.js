@@ -37,6 +37,7 @@ sap.ui.define([
                     if (aData.length === 0) {
                         this.showNotFound();
                     } else {
+                        this.buttonVisibility(aData[0].role_role);
                         this.getModel("userModel").setProperty("/isExpanded", true);
                         if (this.getRouter().getHashChanger().getHash() === "notFound") {
                             this.getRouter().navTo("search");
@@ -44,12 +45,19 @@ sap.ui.define([
                         var role = aData[0].role_role;
                         var sRoute;
                         var aSideNav = this.getModel("userModel").getProperty("/navigation");
-                        if (role === "LDT") {
+                        if (role === "LDT" || role === "LP") {
                             aSideNav = aSideNav.filter(a => a.key !== "vendorList");
+                            aSideNav = aSideNav.map(function (a) {
+                                if (a.key === "myInbox") {
+                                    a.items.splice(0, 1);
+                                }
+                                return a;
+                            });
                             sRoute = "pricingCond";
-                        } else if (role === "GCM" || role === "LP") {
+                        }
+                        else if (role === "GCM") {
                             sRoute = "myInbox";
-                            aSideNav = aSideNav.filter(a => a.key === "myInbox");
+                            // aSideNav = aSideNav.filter(a => a.key === "myInbox");
                         } else {
                             sRoute = "vendorList";
                         }
@@ -60,38 +68,6 @@ sap.ui.define([
                 } else {
                     this.showNotFound();
                 }
-                // await oModel.read("/CheckUserRole", {
-                //     success: function (oData) {
-                //         console.log("odata: ", oData);
-                //         this.prepareUserModel();
-                // if (oData.results.length === 0) {
-                //     this.showNotFound();
-                // } else {
-                //     this.getModel("userModel").setProperty("/isExpanded", true);
-                //     if (this.getRouter().getHashChanger().getHash() === "notFound") {
-                //         this.getRouter().navTo("search");
-                //     }
-                //     var role = oData.results[0].role_role;
-                //     var sRoute;
-                //     var aSideNav = this.getModel("userModel").getProperty("/navigation");
-                //     if (role === "LDT") {
-                //         aSideNav = aSideNav.filter(a => a.key !== "vendorList");
-                //         sRoute = "pricingCond";
-                //     } else if (role === "GCM" || role === "LP") {
-                //         sRoute = "myInbox";
-                //         aSideNav = aSideNav.filter(a => a.key === "myInbox");
-                //     } else {
-                //         sRoute = "vendorList";
-                //     }
-                //     this.getModel("userModel").setProperty("/role", oData.results[0]);
-                //     this.getModel("userModel").setProperty("/navigation", aSideNav);
-                //     this.getRouter().navTo(sRoute);
-                // }
-                //     }.bind(this),
-                //     error: function (error) {
-                //         this.showNotFound();
-                //     }.bind(this)
-                // });
             },
             showNotFound: function () {
                 // sap.ui.getCore().byId("idSN").setExpanded(false);
@@ -134,6 +110,20 @@ sap.ui.define([
                     ]
                 };
                 this.getModel("userModel").setData(oObj);
+            },
+            buttonVisibility: function (role) {
+                var oUserModel = this.getModel("userModel");
+                var bVisiblePricingAddBtn = false,
+                    bPricingVendorAddBtn = false;
+                if (role === "CDT") {
+                    bVisiblePricingAddBtn = true;
+                    bPricingVendorAddBtn = true;
+                } else {
+                    bVisiblePricingAddBtn = false;
+                    bPricingVendorAddBtn = false;
+                }
+                oUserModel.setProperty("/bVisiblePricingAddBtn", bVisiblePricingAddBtn);
+                oUserModel.setProperty("/bPricingVendorAddBtn", bPricingVendorAddBtn);
             }
         });
     }

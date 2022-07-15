@@ -33,7 +33,7 @@
                         <content>
                             <ToolbarSpacer />
                             <!-- <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" /> -->
-                            <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="true" press="onOpenAddDialog"/>
+                            <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="{userModel>/bPricingVendorAddBtn}" press="onOpenAddDialog"/>
                         </content>
                         <dependents>
                             <Dialog id="OpenDialog" title="Create New Vendor">

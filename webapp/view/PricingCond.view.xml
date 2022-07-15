@@ -31,7 +31,7 @@
                 <smartTable:customToolbar>
                     <OverflowToolbar>
                         <ToolbarSpacer />
-                        <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddPricing" />
+                        <Button icon="sap-icon://add-document" tooltip="Add new record" press=".handleAddPricing" visible="{userModel>/bPricingVendorAddBtn}"/>
                     </OverflowToolbar>
                 </smartTable:customToolbar>
             </smartTable:SmartTable>
