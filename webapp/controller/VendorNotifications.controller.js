@@ -308,7 +308,7 @@ sap.ui.define(
                     vendor_Notif_uuid: oSelObj.uuid,
                     Vendor_List_manufacturerCode: oSelObj.Vendor_List_manufacturerCode,
                     Vendor_List_countryCode: oSelObj.Vendor_List_countryCode,
-                    Vendor_List_localManufacturerCod: oSelObj.Vendor_List_localManufacturerCod,
+                    Vendor_List_localManufacturerCode: oSelObj.Vendor_List_localManufacturerCode,
                     Comment: sText
                 };
                 var oPayLoadVL = {
