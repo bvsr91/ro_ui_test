@@ -153,8 +153,9 @@ sap.ui.define(
                 var bEdit;
                 var bDelete;
                 var oRecordCreator = oInput.getBindingContext().getObject().createdBy;
+                var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
                     bEdit = true;
                     bDelete = true;
                 } else {
@@ -173,7 +174,7 @@ sap.ui.define(
                                     press: this.onPressApprove.bind(this, oInput)
                                 }),
                                 new sap.m.Button({
-                                    text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: !bEdit,
+                                    text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
                                     type: "Reject",
                                     // press: this.onDeleteAwaitConfirm.bind(this, oInput)
                                 }),

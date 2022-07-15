@@ -165,13 +165,14 @@ sap.ui.define(
                 var bEdit;
                 var bDelete;
                 var oRecordCreator = oInput.getBindingContext().getObject().createdBy;
+                var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
                     bEdit = true;
-                    bDelete = true;
+                    // bDelete = true;
                 } else {
                     bEdit = false;
-                    bDelete = false
+                    // bDelete = false
                 }
                 var oPopover = new sap.m.Popover({
                     placement: "Auto",
