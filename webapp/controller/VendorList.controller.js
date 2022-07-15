@@ -319,16 +319,15 @@ sap.ui.define(
                     }.bind(this)
                 });
             },
-            onHistoryClick: function (oInput) {
+            onHistoryClick: async function (oInput) {
                 var sPath = oInput.getBindingContext().getPath;
+                var oModel = this.getOwnerComponent().getModel();
+                // const info = await $.get(oModel.sServiceUrl + '/VendorComments?');
                 if (!this._oDialog) {
                     this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorComments"), "com.ferrero.zmrouiapp.view.fragments.VendorCommentsData", this);
                     this.getView().addDependent(this._oDialog);
                 }
-                // this.byId(
-                //     sap.ui.core.Fragment.createId("FrgVendorComments", "commentsList")).bindElement({
-                //         path: sPath,
-                //     });
+
                 this._oDialog.open();
             },
             onCloseCommentsData: function () {
