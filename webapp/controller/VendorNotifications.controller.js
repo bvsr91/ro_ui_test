@@ -168,11 +168,14 @@ sap.ui.define(
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                    bEdit = true;
-                    // bDelete = true;
+                    if (oInput.getBindingContext().getObject().status_code === "Approved") {
+                        bEdit = false;
+                    } else {
+                        bEdit = true;
+                    }
+
                 } else {
                     bEdit = false;
-                    // bDelete = false
                 }
                 var oPopover = new sap.m.Popover({
                     placement: "Auto",
