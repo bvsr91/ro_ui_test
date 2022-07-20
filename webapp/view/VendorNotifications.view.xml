@@ -13,9 +13,9 @@
                 <items>
                     <IconTabFilter showAll="true" count="" text="Total" key="All" />
                     <IconTabSeparator />
-                    <IconTabFilter icon="sap-icon://message-success" iconColor="Positive" count="" text="Approved" key="Approved" />
-                    <IconTabFilter icon="sap-icon://question-mark" iconColor="Critical" count="" text="Pending" key="Pending" />
-                    <IconTabFilter icon="sap-icon://notification" iconColor="Negative" count="" text="Rejected" key="Rejected" />
+                    <IconTabFilter icon="sap-icon://accept" iconColor="Positive" count="" text="Approved" key="Approved" />
+                    <IconTabFilter icon="sap-icon://pending" iconColor="Critical" count="" text="Pending" key="Pending" />
+                    <IconTabFilter icon="sap-icon://decline" iconColor="Negative" count="" text="Rejected" key="Rejected" />
                 </items>
                 <content>
                     <smartTable:SmartTable entitySet="VendorNotifications_U" id="idSTabVendorNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">

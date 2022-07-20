@@ -107,7 +107,31 @@ sap.ui.define(
                     // mBindingParams.filters.push(newFilter);
                 }
                 if (sTabSelKey !== "All" && sTabSelKey !== "") {
-                    mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                    if (role.role_role === "CDT") {
+                        var aFilter = [];
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
+                        aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                        var oFilter = new Filter({
+                            filters: aFilter,
+                            and: true,
+                        });
+                        mBindingParams.filters.push(oFilter);
+                    } else {
+                        mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                    }
+                } else {
+                    if (role.role_role === "CDT") {
+                        var aFilter = [];
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
+                        // aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                        var oFilter = new Filter({
+                            filters: aFilter,
+                            and: true,
+                        });
+                        mBindingParams.filters.push(oFilter);
+                    }
                 }
 
                 oModel.attachRequestFailed(this._showError, this);
@@ -168,57 +192,42 @@ sap.ui.define(
             },
             handleActionPress: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
-                var bEdit;
-                var bDelete;
-                var oRecordCreator = oInput.getBindingContext().getObject().createdBy;
+                var bEdit, bDelete, bAccept;
+                var oSelObj = oInput.getBindingContext().getObject();
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
-                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                var oObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                if (oObj.userid && oRecordApprover.toLowerCase() === oObj.userid.toLowerCase()) {
                     bEdit = true;
                     bDelete = true;
                 } else {
                     bEdit = false;
                     bDelete = false
                 }
+                if (oSelObj.status_code === "Forwarded") {
+                    bAccept = true;
+                } else {
+                    bAccept = false;
+                }
                 var oActionSheet = new sap.m.ActionSheet({
                     buttons: [
                         new sap.m.Button({
-                            text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            text: 'Accept', type: 'Transparent', width: '6rem', visible: bAccept,
+                            press: this.onPressAccept.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'Approve', type: 'Transparent', width: '6rem', enabled: bEdit,
                             press: this.onPressApprove.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            text: 'Reject', type: 'Transparent', width: '6rem', enabled: bEdit,
                             press: this.onPressReject.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                            text: 'History', type: 'Transparent', width: '6rem',
                             // press: this.onHistoryClick.bind(this, oInput)
                         })
-                    ]                    
+                    ]
                 });
-                // var oPopover = new sap.m.Popover({
-                //     placement: "Auto",
-                //     showHeader: false,
-                //     content: [
-                //         new sap.m.VBox({
-                //             items: [
-                //                 new sap.m.Button({
-                //                     text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
-                //                     press: this.onPressApprove.bind(this, oInput)
-                //                 }),
-                //                 new sap.m.Button({
-                //                     text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
-                //                     press: this.onPressReject.bind(this, oInput)
-                //                 }),
-                //                 new sap.m.Button({
-                //                     text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
-                //                     // press: this.onHistoryClick.bind(this, oInput)
-                //                 })
-                //             ]
-                //         }).addStyleClass("sapUiTinyMargin"),
-                //     ],
-                // }).addStyleClass("sapUiResponsivePadding");
-                // this._oPopover = oPopover;
                 oActionSheet.openBy(oInput);
             },
             onPressApprove: async function (oInput) {
@@ -270,6 +279,29 @@ sap.ui.define(
                         }
                     });
                 }.bind(this));
+            },
+            onPressAccept: function (oEvent) {
+                var oModel = this.getOwnerComponent().getModel();
+                var oObj = oEvent.getBindingContext().getObject();
+                var oPayLoad = {
+                    uuid: oObj.uuid,
+                    manufacturerCode: oObj.Pricing_Conditions_manufacturerCode,
+                    countryCode: oObj.Pricing_Conditions_countryCode
+                };
+                sap.ui.core.BusyIndicator.show();
+
+                oModel.callFunction("/acceptPricingCond", {
+                    method: "POST",
+                    urlParameters: oPayLoad,
+                    success: function (oData) {
+                        this.getOwnerComponent().getModel().refresh();
+                        sap.ui.core.BusyIndicator.hide();
+                    }.bind(this),
+                    error: function (error) {
+                        // debugger;
+                        sap.ui.core.BusyIndicator.hide();
+                    }
+                });
             },
             onPressReject: function (oInput) {
                 var oDialogRej = this.createDialog(oInput);
