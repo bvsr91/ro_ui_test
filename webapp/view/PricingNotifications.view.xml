@@ -18,7 +18,7 @@
                     <IconTabFilter icon="sap-icon://notification" iconColor="Negative" count="" text="Rejected" key="Rejected" />
                 </items>
                 <content>
-                    <smartTable:SmartTable entitySet="PricingNotifications" id="idSTabPrcingNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
+                    <smartTable:SmartTable entitySet="PricingNotifications_U" id="idSTabPrcingNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
                         <t:Table id="idUiTabPricingNoti" visibleRowCount="8">
                         </t:Table>
                         <smartTable:customToolbar>

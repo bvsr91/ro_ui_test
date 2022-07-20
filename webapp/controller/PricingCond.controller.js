@@ -82,7 +82,7 @@ sap.ui.define(
                     this._DialogAddPricing = undefined;
                 }
             },
-            onaddPricingData: function () {
+            onAddPricingData: function () {
                 var manufacturerCode = this.byId(Fragment.createId("FrgAddPricing", "idIpManf")).getValue();
                 var manufacturerCodeDesc = this.byId(Fragment.createId("FrgAddPricing", "idIpManfDesc")).getValue();
                 var country = this.byId(Fragment.createId("FrgAddPricing", "idIpCountry")).getValue();
@@ -99,8 +99,8 @@ sap.ui.define(
                 oPayLoad.countryCode = country === "" ? null : country;
                 oPayLoad.countryDesc = countryDesc;
                 oPayLoad.manufacturerCodeDesc = manufacturerCodeDesc;
-                oPayLoad.countryFactor = isNaN(parseInt(countryFact)) && countryFact === "" ? 0.0 : parseFloat(countryFact);
-                oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? 0.0 : parseFloat(exchageRate);
+                oPayLoad.countryFactor = isNaN(parseInt(countryFact)) && countryFact === "" ? null : parseFloat(countryFact);
+                oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? null : parseFloat(exchageRate);
                 oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
                 oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
                 oPayLoad.localCurrency = localCurreny;
@@ -110,6 +110,7 @@ sap.ui.define(
                     oPayLoad.localCurrency = "";
                     oPayLoad.exchangeRate = null;
                 }
+                oPayLoad.p_notif = {};
                 var oModel = this.getOwnerComponent().getModel();
                 sap.ui.core.BusyIndicator.show();
                 // this.getView().setBusy(true);
@@ -208,29 +209,45 @@ sap.ui.define(
                     bEdit = false;
                     bDelete = false;
                 }
-                var oPopover = new sap.m.Popover({
-                    placement: "Bottom",
-                    showHeader: false,
-                    content: [
-                        new sap.m.VBox({
-                            items: [
-                                new sap.m.Button({
-                                    text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
-                                    press: this.onEditPricingForm.bind(this, oInput)
-                                }),
-                                new sap.m.Button({
-                                    text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
-                                    press: this.onDeleteAwaitConfirm.bind(this, oInput)
-                                }),
-                                new sap.m.Button({
-                                    text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
-                                    press: this.onHistoryClick.bind(this, oInput)
-                                })
-                            ]
-                        }).addStyleClass("sapUiTinyMargin"),
-                    ],
-                }).addStyleClass("sapUiResponsivePadding");
-                oPopover.openBy(oInput);
+                var oActionSheet = new sap.m.ActionSheet({
+                    buttons: [
+                        new sap.m.Button({
+                            text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            press: this.onEditPricingForm.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
+                            press: this.onDeleteAwaitConfirm.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                            press: this.onHistoryClick.bind(this, oInput)
+                        })
+                    ]
+                });
+                // var oPopover = new sap.m.Popover({
+                //     placement: "Bottom",
+                //     showHeader: false,
+                //     content: [
+                //         new sap.m.VBox({
+                //             items: [
+                //                 new sap.m.Button({
+                //                     text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
+                //                     press: this.onEditPricingForm.bind(this, oInput)
+                //                 }),
+                //                 new sap.m.Button({
+                //                     text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
+                //                     press: this.onDeleteAwaitConfirm.bind(this, oInput)
+                //                 }),
+                //                 new sap.m.Button({
+                //                     text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                //                     press: this.onHistoryClick.bind(this, oInput)
+                //                 })
+                //             ]
+                //         }).addStyleClass("sapUiTinyMargin"),
+                //     ],
+                // }).addStyleClass("sapUiResponsivePadding");
+                oActionSheet.openBy(oInput);
             },
 
             onEditPricingForm: function (oInput) {
@@ -257,53 +274,6 @@ sap.ui.define(
                     this._oDialog.destroy();
                     this._oDialog = undefined;
                 }
-            },
-            onSavePricingData: function (oInput) {
-                var oModel = this.getOwnerComponent().getModel();
-                var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
-                var manufacturerDesc = this.byId(Fragment.createId("FrgPricingData", "idIpManfDesc")).getValue();
-                var exchageRate = this.byId(Fragment.createId("FrgPricingData", "idExchRate")).getValue();
-                var countryFactor = this.byId(Fragment.createId("FrgPricingData", "idContFactor")).getValue();
-                var validityStartId = this.byId(Fragment.createId("FrgPricingData", "validityStartId")).getValue();
-                var validityEndId = this.byId(Fragment.createId("FrgPricingData", "validityEndId")).getValue();
-                var bLocalOwnerShip = this.byId(Fragment.createId("FrgPricingData", "localOwnershipId")).getSelected();
-                var localCurrency = this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).getValue();
-                var oPayLoad = {};
-                oPayLoad.manufacturerCodeDesc = manufacturerDesc;
-                oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? 0.0 : parseFloat(countryFactor);
-                oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? 0.0 : parseFloat(exchageRate);
-                oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
-                oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
-                oPayLoad.local_ownership = bLocalOwnerShip;
-                oPayLoad.localCurrency = localCurrency;
-                if (bLocalOwnerShip) {
-                    oPayLoad.countryFactor = null;
-                    oPayLoad.localCurrency = "";
-                    oPayLoad.exchageRate = null;
-                }
-                var oModel = this.getOwnerComponent().getModel();
-                // this.getView().setBusy(true);
-                sap.ui.core.BusyIndicator.show();
-                oModel.update(sPath, oPayLoad, {
-                    success: function (oData) {
-                        console.log(oData);
-                        this.onClosePricingData();
-                        // this.getView().setBusy(false);
-                        sap.ui.core.BusyIndicator.hide();
-                        MessageBox.success("Record updated successfully");
-                    }.bind(this),
-                    error: function (error) {
-                        console.log(error);
-                        sap.ui.core.BusyIndicator.hide();
-                        var errorObj1 = JSON.parse(error.responseText).error.message;
-                        MessageBox.show(
-                            errorObj1.value,
-                            sap.m.MessageBox.Icon.ERROR,
-                            "Error In Update Operation"
-                        );
-                        // this.getView().setBusy(false);
-                    }.bind(this)
-                });
             },
             onDeleteAwaitConfirm: function (oInput) {
                 this._oDelObjContext = oInput.getBindingContext();

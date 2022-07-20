@@ -32,6 +32,8 @@
                     <OverflowToolbar>
                         <content>
                             <ToolbarSpacer />
+                            <u:FileUploader id="fileUploader" name="myFileUpload" fileAllowed="onAllowedFile" tooltip="{i18>uploadTooltip}" uploadComplete="handleUploadComplete" change="handleValueChange" typeMissmatch="handleTypeMissmatch" fileType="xlsx" buttonText="{i18n>upload}" icon="sap-icon://upload" sameFilenameAllowed="true" class="uploadButton" />
+
                             <!-- <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" /> -->
                             <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="{userModel>/bPricingVendorAddBtn}" press="onOpenAddDialog"/>
                         </content>

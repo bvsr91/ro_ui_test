@@ -86,32 +86,36 @@ sap.ui.define(
                     sTabSelKey = this.getView().byId("idIconTabBar").getSelectedKey();
                 var oUserModel = this.getOwnerComponent().getModel("userModel");
                 var role = oUserModel.getData().role;
-                // var aTokens = oObjId.getTokens();
+                this._sEntitySet;
                 var sFieldName;
                 if (!role) {
                     await this.validateUser();
-                } else {
-                    if (role.role_role) {
-                        if (role.role_role === "CDT" || role.role_role === "LDT") {
-                            sFieldName = "createdBy";
-                        } else {
-                            sFieldName = "approver"
-                        }
-                        var aFilter = [];
-                        var newFilter = new Filter(sFieldName, FilterOperator.EQ, role.userid);
-                        // }
-                        mBindingParams.filters.push(newFilter);
-                    }
-                    if (sTabSelKey !== "All" && sTabSelKey !== "") {
-                        mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
-                    }
                 }
+                if (role.role_role) {
+                    if (role.role_role === "CDT" || role.role_role === "LDT") {
+                        // sFieldName = "createdBy";
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNotifications_U");
+                        this._sEntitySet = "PricingNotifications_U";
+                    } else {
+                        // sFieldName = "approver"
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNotifications_A");
+                        this._sEntitySet = "PricingNotifications_A";
+                    }
+                    // var aFilter = [];
+                    // var newFilter = new Filter(sFieldName, FilterOperator.EQ, role.userid);
+                    // // }
+                    // mBindingParams.filters.push(newFilter);
+                }
+                if (sTabSelKey !== "All" && sTabSelKey !== "") {
+                    mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                }
+
                 oModel.attachRequestFailed(this._showError, this);
                 oModel.attachRequestCompleted(this._detach, this);
             },
             _showError: function (oResponse) {
                 var oModel = this.getView().getModel(),
-                    oMsgs = oResponse.getSource().getMessagesByEntity("/PricingNotifications");
+                    oMsgs = oResponse.getSource().getMessagesByEntity("/" + this._sEntitySet);
                 if (oMsgs[0]) {
                     MessageBox.error(oMsgs[0].message);
                     oModel.detachRequestFailed(this._showError, this);
@@ -176,30 +180,46 @@ sap.ui.define(
                     bEdit = false;
                     bDelete = false
                 }
-                var oPopover = new sap.m.Popover({
-                    placement: "Auto",
-                    showHeader: false,
-                    content: [
-                        new sap.m.VBox({
-                            items: [
-                                new sap.m.Button({
-                                    text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
-                                    press: this.onPressApprove.bind(this, oInput)
-                                }),
-                                new sap.m.Button({
-                                    text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
-                                    press: this.onPressReject.bind(this, oInput)
-                                }),
-                                new sap.m.Button({
-                                    text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
-                                    // press: this.onHistoryClick.bind(this, oInput)
-                                })
-                            ]
-                        }).addStyleClass("sapUiTinyMargin"),
-                    ],
-                }).addStyleClass("sapUiResponsivePadding");
-                this._oPopover = oPopover;
-                oPopover.openBy(oInput);
+                var oActionSheet = new sap.m.ActionSheet({
+                    buttons: [
+                        new sap.m.Button({
+                            text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            press: this.onPressApprove.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            press: this.onPressReject.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                            // press: this.onHistoryClick.bind(this, oInput)
+                        })
+                    ]                    
+                });
+                // var oPopover = new sap.m.Popover({
+                //     placement: "Auto",
+                //     showHeader: false,
+                //     content: [
+                //         new sap.m.VBox({
+                //             items: [
+                //                 new sap.m.Button({
+                //                     text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
+                //                     press: this.onPressApprove.bind(this, oInput)
+                //                 }),
+                //                 new sap.m.Button({
+                //                     text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
+                //                     press: this.onPressReject.bind(this, oInput)
+                //                 }),
+                //                 new sap.m.Button({
+                //                     text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                //                     // press: this.onHistoryClick.bind(this, oInput)
+                //                 })
+                //             ]
+                //         }).addStyleClass("sapUiTinyMargin"),
+                //     ],
+                // }).addStyleClass("sapUiResponsivePadding");
+                // this._oPopover = oPopover;
+                oActionSheet.openBy(oInput);
             },
             onPressApprove: async function (oInput) {
                 var oModel = this.getOwnerComponent().getModel();

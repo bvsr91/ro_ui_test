@@ -125,9 +125,12 @@ sap.ui.define(
                 oPayLoad.manufacturerCode = oPayLoad.manufacturerCode === "" ? null : oPayLoad.manufacturerCode;
                 oPayLoad.localManufacturerCode = oPayLoad.localManufacturerCode === "" ? null : oPayLoad.localManufacturerCode;
                 oPayLoad.countryCode = oPayLoad.countryCode === "" ? null : oPayLoad.countryCode;
+                oPayLoad.v_notif = {};
                 // oPayLoad.countryDesc = countryDesc;
                 // oPayLoad.manufacturerCodeDesc = manufacturerDesc;
                 // oPayLoad.localManufacturerCodeDesc = localDealerMaufacturerDesc;
+
+
 
                 var oModel = this.getOwnerComponent().getModel();
                 // this.getView().setBusy(true);
@@ -204,29 +207,34 @@ sap.ui.define(
                     bEdit = false;
                     bDelete = false
                 }
-                var oPopover = new sap.m.Popover({
-                    placement: "Bottom",
-                    showHeader: false,
-                    content: [
-                        new sap.m.VBox({
-                            items: [
-                                new sap.m.Button({
-                                    text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
-                                    press: this.onEditVendorForm.bind(this, oInput)
-                                }),
-                                new sap.m.Button({
-                                    text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
-                                    press: this.onDeleteAwaitConfirm.bind(this, oInput)
-                                }),
-                                new sap.m.Button({
-                                    text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
-                                    press: this.onHistoryClick.bind(this, oInput)
-                                })
-                            ]
-                        }).addStyleClass("sapUiTinyMargin"),
-                    ],
-                }).addStyleClass("sapUiResponsivePadding");
-                oPopover.openBy(oInput);
+                var oActionSheet = new sap.m.ActionSheet({
+                    buttons: [
+                        new sap.m.Button({
+                            text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            press: this.onEditVendorForm.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
+                            press: this.onDeleteAwaitConfirm.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                            press: this.onHistoryClick.bind(this, oInput)
+                        })
+                    ]
+                });
+                // var oPopover = new sap.m.Popover({
+                //     placement: "Bottom",
+                //     showHeader: false,
+                //     content: [
+                //         new sap.m.VBox({
+                //             items: [
+
+                //             ]
+                //         }).addStyleClass("sapUiTinyMargin"),
+                //     ],
+                // }).addStyleClass("sapUiResponsivePadding");
+                oActionSheet.openBy(oInput);
             },
             onEditVendorForm: function (oInput) {
                 this._editObjContext = oInput.getBindingContext();

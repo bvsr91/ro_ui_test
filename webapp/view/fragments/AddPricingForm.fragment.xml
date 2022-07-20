@@ -34,7 +34,7 @@
         </form:SimpleForm>
         <!-- </content> -->
         <buttons>
-            <Button text="Save" type="Emphasized" press=".onaddPricingData"/>
+            <Button text="Save" type="Emphasized" press=".onAddPricingData"/>
             <Button text="Cancel" press="onClosePricing" type="Emphasized"/>
         </buttons>
     </Dialog>
