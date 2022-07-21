@@ -181,17 +181,18 @@ sap.ui.define(
                     bEdit = false;
                 }
                 var oActionSheet = new sap.m.ActionSheet({
+                    placement: "VerticalPreferredBottom",
                     buttons: [
                         new sap.m.Button({
-                            text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            text: 'Approve', type: 'Transparent', width: '6rem', enabled: bEdit,
                             press: this.onPressApprove.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            text: 'Reject', type: 'Transparent', width: '6rem', enabled: bEdit,
                             press: this.onPressReject.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                            text: 'History', type: 'Transparent', width: '6rem',
                             // press: this.onHistoryClick.bind(this, oInput)
                         })
                     ]
@@ -238,8 +239,9 @@ sap.ui.define(
                 var oPayLoadVL = {
                     status_code: "Approved"
                 };
+                var sPath = "/VendorNotifications(guid'" + oSelObj.uuid + "')";
                 sap.ui.core.BusyIndicator.show();
-                const info = await this.updateVendorRecord(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
+                const info = await this.updateVendorRecord(oModel, sPath, oActionUriParameters);
                 if (info.status_code) {
                     MessageBox.success("Record Approved Successfully");
                 }
@@ -263,7 +265,7 @@ sap.ui.define(
                     oModel.update(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabVendorNoti").rebindTable(true);
-                            this._oPopover.close();
+                            // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
@@ -347,7 +349,7 @@ sap.ui.define(
                     oModel.create(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabVendorNoti").rebindTable(true);
-                            this._oPopover.close();
+                            // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
@@ -356,6 +358,14 @@ sap.ui.define(
                     });
                 }.bind(this));
             },
+            onRowlSelChange: function (oEvent) {
+                var oSelObj = oEvent.getParameter("rowContext").getObject();
+                var oRole = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                if (oSelObj.approver !== oRole.userid || oSelObj.status_code !== "Pending") {
+                    var iIndex = oEvent.getSource().getSelectedIndices().indexOf(oEvent.getSource().getSelectedIndex());
+                    oEvent.getSource().getSelectedIndices().splice(iIndex, 1);
+                }
+            }
         });
     }
 );

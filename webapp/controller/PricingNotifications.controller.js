@@ -247,8 +247,9 @@ sap.ui.define(
                 var oPayLoadPC = {
                     status_code: "Approved"
                 };
+                var sPath = "/PricingNotifications(guid'" + oSelObj.uuid + "')";
                 sap.ui.core.BusyIndicator.show();
-                const info = await this.updatePricingRecord(oModel, oInput.getBindingContext().sPath, oActionUriParameters);
+                const info = await this.updatePricingRecord(oModel, sPath, oActionUriParameters);
                 if (info.status_code) {
                     MessageBox.success("Record Approved Successfully");
                 }
@@ -401,6 +402,9 @@ sap.ui.define(
                     });
                 }.bind(this));
             },
+            onRowlSelChange: function (oEvent) {
+
+            }
         });
     }
 );

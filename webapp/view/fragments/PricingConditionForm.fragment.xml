@@ -1,73 +1,37 @@
 <core:FragmentDefinition xmlns="sap.m"
-    xmlns:f="sap.ui.layout.form"
+    xmlns:form="sap.ui.layout.form"
     xmlns:semantic="sap.f.semantic"
     xmlns:footerbar="sap.ushell.ui.footerbar"
     xmlns:core="sap.ui.core">
-    <Dialog id="myDialog" title="Edit Pricing Record .." contentHeight="38%" contentWidth="62%">
-        <content>
-            <!-- <VBox class="sapUiSmallMargin"> -->
-                <f:Form id="SimpleFormToolbarPricingDisplay"  binding="{$Parameter}" editable="true">
-                    <f:layout>
-                        <f:ResponsiveGridLayout labelSpanXL="4" labelSpanL="6" labelSpanM="6" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="2" singleContainerFullSize="false" />
-                    </f:layout>
-                    <f:formContainers>
-                        <f:FormContainer>
-                            <f:formElements>
-                                <f:FormElement label="Manufacturer Code">
-                                    <f:fields>
-                                        <Text id="idIpManf" text="{manufacturerCode}"/>
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="Manufacturer Code Desc">
-                                    <f:fields>
-                                        <Input id="idIpManfDesc" value="{manufacturerCodeDesc}" />
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="Country">
-                                    <f:fields>
-                                        <Text  id="idIpCountry" text="{countryCode}"/>
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="Country Desc">
-                                    <f:fields>
-                                        <Text id="idIpCountryDesc"  text="{countryDesc}"/>
-                                    </f:fields>
-                                </f:FormElement>
-                            </f:formElements>
-                        </f:FormContainer>
-                        <f:FormContainer>
-                            <f:formElements>
-                                <f:FormElement label="Exchange Rate">
-                                    <f:fields>
-                                        <Input id="idExchRate" type="Number" value="{exchangeRate}" />
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="Country Factor">
-                                    <f:fields>
-                                        <Input id="idContFactor"  type="Number" value="{countryFactor}"/>
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="Validity Start">
-                                    <f:fields>
-                                        <DatePicker  id="validityStartId"  valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityStart', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="Validity End">
-                                    <f:fields>
-                                        <DatePicker  id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityEnd', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
-                                    </f:fields>
-                                </f:FormElement>
-                                <f:FormElement label="Local Ownership">
-                                    <f:fields>
-                                        <CheckBox selected="{local_ownership}" id="localOwnershipId"/>
-                                    </f:fields>
-                                </f:FormElement>
-                            </f:formElements>
-                        </f:FormContainer>
-                    </f:formContainers>
-                </f:Form>
-            <!-- </VBox> -->
-        </content>
+    <Dialog id="myDialog" title="Edit Pricing Record ..">
+        <!-- <content> -->
+        <!-- <VBox class="sapUiSmallMargin"> -->
+        <form:SimpleForm editable="true" layout="ResponsiveGridLayout" id="SimpleFormToolbarPricingDisplay">
+            <form:content>
+                <Label text="Manufacturer Code"/>
+                <Text id="idIpManf" text="{manufacturerCode}"/>
+                <Label text="Manufacturer Code Desc"/>
+                <Input id="idIpManfDesc" value="{manufacturerCodeDesc}" />
+                <Label text="Country"/>
+                <Text id="idIpCountry" text="{countryCode_code}"/>
+                <Label text="Country Desc"/>
+                <Text id="idIpCountryDesc" text="{countryDesc}"/>
+                <Label text="Local Currency"/>
+                <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom" enabled="{= ${local_ownership} === true ? false: true}"/>
+                <Label text="Exchange Rate"/>
+                <Input id="idExchRate" type="Number" value="{exchangeRate}" />
+                <Label text="Country Factor"/>
+                <Input id="idContFactor" type="Number" value="{countryFactor}"/>
+                <Label text="Validity Start"/>
+                <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityStart', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
+                <Label text="Validity End"/>
+                <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityEnd', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
+                <Label text="Local Ownership"/>
+                <CheckBox selected="{local_ownership}" id="localOwnershipId"/>
+            </form:content>
+        </form:SimpleForm>
+        <!-- </VBox> -->
+        <!-- </content> -->
         <buttons>
             <Button text="Save" type="Emphasized" press=".onSavePricingData"/>
             <Button text="Cancel" press="onClosePricingData" type="Emphasized"/>

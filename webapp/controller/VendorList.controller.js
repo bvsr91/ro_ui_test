@@ -191,17 +191,18 @@ sap.ui.define(
                     bDelete = false
                 }
                 var oActionSheet = new sap.m.ActionSheet({
+                    placement: "VerticalPreferredBottom",
                     buttons: [
                         new sap.m.Button({
-                            text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            text: 'Edit', type: 'Transparent', width: '6rem', enabled: bEdit,
                             press: this.onEditVendorForm.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
+                            text: 'Delete', type: 'Transparent', width: '6rem', enabled: bDelete,
                             press: this.onDeleteAwaitConfirm.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                            text: 'History', type: 'Transparent', width: '6rem',
                             press: this.onHistoryClick.bind(this, oInput)
                         })
                     ]

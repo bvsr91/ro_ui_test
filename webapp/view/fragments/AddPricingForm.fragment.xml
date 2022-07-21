@@ -20,7 +20,8 @@
                 <CheckBox id="localOwnershipId" text="Local Ownership" select="onSelectLocalOwnership"/>
 
                 <Label text="Local Currency"/>
-                <Input id="idIpLocCurr" maxLength="3" />
+                <Input id="idIpLocCurr" placeholder="Enter Currency ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom"/>
+                <!-- <Input id="idIpLocCurr" maxLength="3" /> -->
                 <Label text="Exchange Rate"/>
                 <Input id="idIpExchRate" type="Number" />
                 <Label text="Country Factor"/>
@@ -29,7 +30,6 @@
                 <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy"/>
                 <Label text="Validity End"/>
                 <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy"/>
-
             </form:content>
         </form:SimpleForm>
         <!-- </content> -->

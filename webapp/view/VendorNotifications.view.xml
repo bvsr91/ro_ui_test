@@ -19,13 +19,13 @@
                 </items>
                 <content>
                     <smartTable:SmartTable entitySet="VendorNotifications_U" id="idSTabVendorNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
-                        <t:Table id="idUiTabVendorNoti" visibleRowCount="8">
+                        <t:Table id="idUiTabVendorNoti" visibleRowCount="8" rowSelectionChange="onRowlSelChange">
                         </t:Table>
                         <smartTable:customToolbar>
                             <OverflowToolbar>
                                 <ToolbarSpacer />
-                                <!-- <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" />
-                        <Button icon="sap-icon://decline" text="Reject" type="Reject" tooltip="Reject" press=".handleReject" /> -->
+                                <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" />
+                                <Button icon="sap-icon://decline" text="Reject" type="Reject" tooltip="Reject" press=".handleReject" />
                             </OverflowToolbar>
                         </smartTable:customToolbar>
                     </smartTable:SmartTable>

@@ -103,11 +103,11 @@ sap.ui.define(
                 oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? null : parseFloat(exchageRate);
                 oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
                 oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
-                oPayLoad.localCurrency = localCurreny;
+                oPayLoad.localCurrency_code = localCurreny;
                 oPayLoad.local_ownership = bLocalOwnerShip;
                 if (bLocalOwnerShip) {
                     oPayLoad.countryFactor = null;
-                    oPayLoad.localCurrency = "";
+                    oPayLoad.localCurrency_code = "";
                     oPayLoad.exchangeRate = null;
                 }
                 oPayLoad.p_notif = {};
@@ -228,41 +228,19 @@ sap.ui.define(
                     placement: "VerticalPreferredBottom",
                     buttons: [
                         new sap.m.Button({
-                            text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
+                            text: 'Edit', type: 'Transparent', width: '6rem', enabled: bEdit,
                             press: this.onEditPricingForm.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
+                            text: 'Delete', type: 'Transparent', width: '6rem', enabled: bDelete,
                             press: this.onDeleteAwaitConfirm.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
+                            text: 'History', type: 'Transparent', width: '6rem',
                             press: this.onHistoryClick.bind(this, oInput)
                         })
                     ]
                 });
-                // var oPopover = new sap.m.Popover({
-                //     placement: "Bottom",
-                //     showHeader: false,
-                //     content: [
-                //         new sap.m.VBox({
-                //             items: [
-                //                 new sap.m.Button({
-                //                     text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,
-                //                     press: this.onEditPricingForm.bind(this, oInput)
-                //                 }),
-                //                 new sap.m.Button({
-                //                     text: 'Delete', icon: 'sap-icon://delete', type: 'Transparent', width: '6rem', enabled: bDelete,
-                //                     press: this.onDeleteAwaitConfirm.bind(this, oInput)
-                //                 }),
-                //                 new sap.m.Button({
-                //                     text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
-                //                     press: this.onHistoryClick.bind(this, oInput)
-                //                 })
-                //             ]
-                //         }).addStyleClass("sapUiTinyMargin"),
-                //     ],
-                // }).addStyleClass("sapUiResponsivePadding");
                 oActionSheet.openBy(oInput);
             },
 
@@ -343,6 +321,48 @@ sap.ui.define(
                     this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).setEnabled(!bSel);
                     this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).setEnabled(!bSel);
                 }
+            },
+            onValueHelpRequestCurrency: function (oEvent) {
+                var oView = this.getView();
+                if (!this._currencyVHDialog) {
+                    this._currencyVHDialog = Fragment.load({
+                        id: oView.getId(),
+                        name: "com.ferrero.zmrouiapp.view.fragments.CurrencyVH",
+                        controller: this
+                    }).then(function (oValueHelpDialog) {
+                        oView.addDependent(oValueHelpDialog);
+                        return oValueHelpDialog;
+                    });
+                }
+                this._currencyVHDialog.then(function (oValueHelpDialog) {
+                    this._configValueHelpDialog();
+                    oValueHelpDialog.open();
+                }.bind(this));
+            },
+            _configValueHelpDialog: function () {
+                // var sInputValue = this.byId("idIpCountry").getValue();
+                // this.byId(sap.ui.core.Fragment.createId("FrgAddVendorData", "idIpCountry")).getValue();
+            },
+
+            onValueHelpDialogCurrencyClose: function (oEvent) {
+                var oSelectedItem = oEvent.getParameter("selectedItem"),
+                    oInput = this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", "idIpLocCurr"));
+                if (!oSelectedItem) {
+                    oInput.resetProperty("value");
+                    // this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", sTextID)).setText("");
+                    return;
+                }
+                oInput.setValue(oSelectedItem.getTitle());
+                // this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", sTextID)).setText(oSelectedItem.getDescription());
+            },
+            onSearch: function (oEvent) {
+                var sValue = oEvent.getParameter("value");
+                // var oFilter = new Filter("desc", FilterOperator.Contains, sValue, true);
+                var aFilters = [];
+                aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
+
+                var oBinding = oEvent.getParameter("itemsBinding");
+                oBinding.filter(aFilters);
             }
         });
     }
