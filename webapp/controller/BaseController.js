@@ -272,7 +272,7 @@ sap.ui.define(
             showNotFound: function () {
                 // sap.ui.getCore().byId("idSN").setExpanded(false);
                 this.getOwnerComponent().getModel("userModel").setProperty("/isExpanded", false);
-                this.getOwnerComponent().getModel("side").setProperty("/navigation", []);
+                this.getOwnerComponent().getModel("userModel").setProperty("/navigation", []);
                 this.getOwnerComponent().getRouter().navTo("notFound");
             },
             buttonVisibility: function (role) {

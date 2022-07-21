@@ -31,11 +31,8 @@ sap.ui.define(
              */
             onInit: function () {
                 this.getRouter().getRoute("vendorList").attachPatternMatched(this._onRouteMatched, this);
-                // this.getRouter().attachBypassed(this.onBypassed, this);
-                // var oModel = this.getOwnerComponent().getModel("mrosrv_v2")
-                // this.getView().setModel(oModel);
-                // this.getView().byId("vendSmartTab").rebindTable();
-                // this.createRecord();
+                var oMessageManager = sap.ui.getCore().getMessageManager();
+                this.getView().setModel(oMessageManager.getMessageModel(), "message");
                 this.extendTable();
                 var that = this;
                 var oHashChanger = new sap.ui.core.routing.HashChanger.getInstance();
@@ -114,24 +111,10 @@ sap.ui.define(
                 }
             },
             onSaveNewVendorData: function (oPayLoad) {
-                // var manufacturerCode = this.byId(Fragment.createId("FrgAddVendorData", "idIpManf")).getValue();
-                // var manufacturerDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpManfDesc")).getValue();
-                // var localDealerManufacturerCode = this.byId(Fragment.createId("FrgAddVendorData", "idIpLocalManf")).getValue();
-                // var localDealerMaufacturerDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpLocalManfDesc")).getValue();
-                // var country = this.byId(Fragment.createId("FrgAddVendorData", "idIpCountry")).getValue();
-                // var countryDesc = this.byId(Fragment.createId("FrgAddVendorData", "idIpCountryDesc")).getText();
-
-                // var oPayLoad = {};
                 oPayLoad.manufacturerCode = oPayLoad.manufacturerCode === "" ? null : oPayLoad.manufacturerCode;
                 oPayLoad.localManufacturerCode = oPayLoad.localManufacturerCode === "" ? null : oPayLoad.localManufacturerCode;
-                oPayLoad.countryCode = oPayLoad.countryCode === "" ? null : oPayLoad.countryCode;
+                oPayLoad.countryCode_code = oPayLoad.countryCode_code === "" ? null : oPayLoad.countryCode_code;
                 oPayLoad.v_notif = {};
-                // oPayLoad.countryDesc = countryDesc;
-                // oPayLoad.manufacturerCodeDesc = manufacturerDesc;
-                // oPayLoad.localManufacturerCodeDesc = localDealerMaufacturerDesc;
-
-
-
                 var oModel = this.getOwnerComponent().getModel();
                 // this.getView().setBusy(true);
                 sap.ui.core.BusyIndicator.show();
@@ -223,17 +206,6 @@ sap.ui.define(
                         })
                     ]
                 });
-                // var oPopover = new sap.m.Popover({
-                //     placement: "Bottom",
-                //     showHeader: false,
-                //     content: [
-                //         new sap.m.VBox({
-                //             items: [
-
-                //             ]
-                //         }).addStyleClass("sapUiTinyMargin"),
-                //     ],
-                // }).addStyleClass("sapUiResponsivePadding");
                 oActionSheet.openBy(oInput);
             },
             onEditVendorForm: function (oInput) {
@@ -387,10 +359,148 @@ sap.ui.define(
                     "manufacturerCodeDesc": this.byId("idIpManfDesc").getValue(),
                     "localManufacturerCode": this.byId("idIpLocalManf").getValue(),
                     "localManufacturerCodeDesc": this.byId("idIpLocalManfDesc").getValue(),
-                    "countryCode": this.byId("idIpCountry").getValue(),
-                    "countryDesc": this.byId("idIpCountryDesc").getText()
+                    "countryCode_code": this.byId("idIpCountry").getValue()
+                    // ,
+                    // "countryDesc": this.byId("idIpCountryDesc").getText()
                 };
                 this.onSaveNewVendorData(oPayLoad);
+            },
+            handleValueChange: function (oEvent) {
+                this._import(oEvent.getParameter("files") && oEvent.getParameter("files")[0]);
+            },
+            _import: function (file, sBindProperty, aActualFields) {
+                var json_object = {};
+                var that = this;
+                if (file && window.FileReader) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var sheetData = [];
+                        var data = e.target.result;
+                        try {
+                            var workbook = XLSX.read(data, {
+                                type: 'binary'
+                            });
+                        } catch (err) {
+                            sap.m.MessageToast.show(err);
+                        }
+                        workbook.SheetNames.forEach(function (sheetName) {
+                            // sheetData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+
+                            // if (sheetName === "List") {
+                            var sheet = workbook.Sheets[sheetName];
+                            var roa = XLSX.utils.sheet_to_row_object_array(sheet);
+
+                            sheetData = XLSX.utils.sheet_to_json(sheet);
+                            // }
+                        });
+                        // var aDealerTabData = that.getOwnerComponent().getModel("globalTab").getProperty("/aDealerTab");
+                        if (sheetData.length > 0) {
+                            that.massCreateData(sheetData);
+                            // that.batchCreateData(sheetData);
+                        } else {
+                            sap.m.MessageBox.error("Please maintain data in the template");
+                        }
+                    }
+                    reader.readAsBinaryString(file);
+                }
+            },
+            massCreateData: function (aData) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
+                var that = this;
+                var oModel = this.getOwnerComponent().getModel();
+                var objectLastRes;
+                var isSuccess = true;
+                sap.ui.core.BusyIndicator.show();
+                oModel.setUseBatch(true);
+                oModel.attachBatchRequestCompleted(function (dataBatch) {
+                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
+                    that.getView().byId("idUiTab").setBusy(false);
+                    // that.getView().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                oModel.attachBatchRequestFailed(function (e) {
+                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
+                    that.getView().byId("idUiTab").setBusy(false);
+                    // that.getView().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                for (var a of aData) {
+                    a.v_notif = {};
+                    oModel.create("/VendorList", a, {
+                        method: "POST",
+                        success: function (dataRes) {
+                            objectLastRes = dataRes;
+                            //jQuery.sap.log.info("create - success");
+                        },
+                        error: function (e) {
+                            jQuery.sap.log.error("create - error");
+                            var textMsg = e.statusText;
+                            textMsg = textMsg.split("|").join("\n");
+                            // that.makeResultDialog("Error", "Error", textMsg).open();
+                            isSuccess = false;
+                        }
+                    });
+                }
+            },
+            onMessagePopoverPress: function (oEvent) {
+                var oSourceControl = oEvent.getSource();
+                this._getMessagePopover().then(function (oMessagePopover) {
+                    oMessagePopover.openBy(oSourceControl);
+                });
+            },
+
+            _getMessagePopover: function () {
+                var oView = this.getView();
+
+                // create popover lazily (singleton)
+                if (!this._pMessagePopover) {
+                    this._pMessagePopover = Fragment.load({
+                        id: oView.getId(),
+                        name: "com.ferrero.zmrouiapp.view.fragments.MessagePopover"
+                    }).then(function (oMessagePopover) {
+                        oView.addDependent(oMessagePopover);
+                        return oMessagePopover;
+                    });
+                }
+                return this._pMessagePopover;
+            },
+            batchCreateData: function (aData) {
+                // sap.ui.getCore().getMessageManager().removeAllMessages();
+                var that = this;
+                var oModel = this.getOwnerComponent().getModel();
+                var objectLastRes;
+                var isSuccess = true;
+                sap.ui.core.BusyIndicator.show();
+                oModel.setUseBatch(true);
+                oModel.attachBatchRequestCompleted(function (dataBatch) {
+                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
+                    that.getView().byId("idUiTab").setBusy(false);
+                    // that.getView().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                oModel.attachBatchRequestFailed(function (e) {
+                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
+                    that.getView().byId("idUiTab").setBusy(false);
+                    // that.getView().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                for (var a of aData) {
+                    a.v_notif = {};
+                    oModel.create("/VendorList", a, {
+                        method: "POST",
+                        success: function (dataRes) {
+                            objectLastRes = dataRes;
+                            //jQuery.sap.log.info("create - success");
+                        },
+                        error: function (e) {
+                            jQuery.sap.log.error("create - error");
+                            var textMsg = e.statusText;
+                            textMsg = textMsg.split("|").join("\n");
+                            // that.makeResultDialog("Error", "Error", textMsg).open();
+                            isSuccess = false;
+                        }
+                    });
+                }
             }
         });
     }

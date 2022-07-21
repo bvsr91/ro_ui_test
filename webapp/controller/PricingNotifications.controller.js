@@ -209,6 +209,7 @@ sap.ui.define(
                     bAccept = false;
                 }
                 var oActionSheet = new sap.m.ActionSheet({
+                    placement: "VerticalPreferredBottom",
                     buttons: [
                         new sap.m.Button({
                             text: 'Accept', type: 'Transparent', width: '6rem', visible: bAccept,
@@ -237,7 +238,7 @@ sap.ui.define(
                 var oActionUriParameters = {
                     uuid: oSelObj.uuid,
                     Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
-                    Pricing_Conditions_countryCode: oSelObj.Pricing_Conditions_countryCode,
+                    Pricing_Conditions_countryCode_code: oSelObj.Pricing_Conditions_countryCode_code,
                     completionDate: new Date().toISOString(),
                     approvedDate: new Date().toISOString(),
                     approver: logOnUserObj.userid,
@@ -286,7 +287,7 @@ sap.ui.define(
                 var oPayLoad = {
                     uuid: oObj.uuid,
                     manufacturerCode: oObj.Pricing_Conditions_manufacturerCode,
-                    countryCode: oObj.Pricing_Conditions_countryCode
+                    countryCode_code: oObj.Pricing_Conditions_countryCode_code
                 };
                 sap.ui.core.BusyIndicator.show();
 
@@ -358,7 +359,7 @@ sap.ui.define(
                 var oActionUriParameters = {
                     pricing_Notif_uuid: oSelObj.uuid,
                     Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
-                    Pricing_Conditions_countryCode: oSelObj.Pricing_Conditions_countryCode,
+                    Pricing_Conditions_countryCode_code: oSelObj.Pricing_Conditions_countryCode_code,
                     Comment: sText
                 };
                 var oPayLoadVL = {

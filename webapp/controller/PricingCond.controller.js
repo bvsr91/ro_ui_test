@@ -96,8 +96,8 @@ sap.ui.define(
                 var oPayLoad = {};
                 oPayLoad.manufacturerCode = manufacturerCode === "" ? null : manufacturerCode;
                 // oPayLoad.localManufacturerCode = localDealerManufacturerCode;
-                oPayLoad.countryCode = country === "" ? null : country;
-                oPayLoad.countryDesc = countryDesc;
+                oPayLoad.countryCode_code = country === "" ? null : country;
+                // oPayLoad.countryDesc = countryDesc;
                 oPayLoad.manufacturerCodeDesc = manufacturerCodeDesc;
                 oPayLoad.countryFactor = isNaN(parseInt(countryFact)) && countryFact === "" ? null : parseFloat(countryFact);
                 oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? null : parseFloat(exchageRate);
@@ -200,16 +200,32 @@ sap.ui.define(
                 var oInput = oEvent.getSource().getParent();
                 var bEdit;
                 var bDelete;
-                var oRecordCreator = oInput.getBindingContext().getObject().initiator;
+                var oRecordCreator;
+                var oSelObj = oInput.getBindingContext().getObject();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                    bEdit = true;
-                    bDelete = true;
+                if (logOnUserObj.role_role === "LDT") {
+                    oRecordCreator = oInput.getBindingContext().getObject().ld_initiator;
+                    if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) &&
+                        oSelObj.status_code === "In Progress") {
+                        bEdit = true;
+                        bDelete = true;
+                    } else {
+                        bEdit = false;
+                        bDelete = false;
+                    }
                 } else {
-                    bEdit = false;
-                    bDelete = false;
+                    oRecordCreator = oInput.getBindingContext().getObject().initiator;
+                    if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
+                        && oSelObj.status_code === "Pending") {
+                        bEdit = true;
+                        bDelete = true;
+                    } else {
+                        bEdit = false;
+                        bDelete = false;
+                    }
                 }
                 var oActionSheet = new sap.m.ActionSheet({
+                    placement: "VerticalPreferredBottom",
                     buttons: [
                         new sap.m.Button({
                             text: 'Edit', icon: 'sap-icon://edit', type: 'Transparent', width: '6rem', enabled: bEdit,

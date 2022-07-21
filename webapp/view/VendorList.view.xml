@@ -8,31 +8,24 @@
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     xmlns:smartTable="sap.ui.comp.smarttable"
     xmlns:t="sap.ui.table"
-    xmlns:form="sap.ui.layout.form">
+    xmlns:form="sap.ui.layout.form" height="100%">
+    <!-- <VBox fitContainer="true"> -->
     <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
         <content>
-            <Panel expandable="true" headerText="Filter Bar" class="sapUiNoContentPadding">
-                <content>
-                    <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="VendorList" />
-                </content>
-            </Panel>
+            <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="VendorList">
+                <smartFilterBar:layoutData>
+                    <FlexItemData shrinkFactor="0" />
+                </smartFilterBar:layoutData>
+            </smartFilterBar:SmartFilterBar>
             <smartTable:SmartTable entitySet="VendorList" id="vendSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor List Items" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
-                    country,countryDesc" ignoredFields="uuid" requestAtLeastFields="uuid">
-                <t:Table id="idUiTab" visibleRowCount="10">
-                    <!-- <t:columns>
-
-                    </t:columns>
-                    <t:rowActionTemplate>
-                        <t:RowAction>
-                            <t:RowActionItem press="onSelectPriceGroup" type="Navigation" icon="sap-icon://feeder-arrow" />
-                        </t:RowAction>
-                    </t:rowActionTemplate> -->
-                </t:Table>
+                    country,countryDesc" ignoredFields="uuid, v_notif_uuid" requestAtLeastFields="uuid,v_notif_uuid">
+                <t:Table id="idUiTab" visibleRowCount="9"/>
                 <smartTable:customToolbar>
                     <OverflowToolbar>
                         <content>
                             <ToolbarSpacer />
-                            <u:FileUploader id="fileUploader" name="myFileUpload" fileAllowed="onAllowedFile" tooltip="{i18>uploadTooltip}" uploadComplete="handleUploadComplete" change="handleValueChange" typeMissmatch="handleTypeMissmatch" fileType="xlsx" buttonText="{i18n>upload}" icon="sap-icon://upload" sameFilenameAllowed="true" class="uploadButton" />
+                            <Button icon="sap-icon://alert" text="{=${message>/}.length}" visible="{=${message>/}.length > 0}" type="Emphasized" press="onMessagePopoverPress"/>
+                            <u:FileUploader id="fileUploader" buttonOnly="true" name="myFileUpload" fileAllowed="onAllowedFile" tooltip="{i18>uploadTooltip}" uploadComplete="handleUploadComplete" change="handleValueChange" typeMissmatch="handleTypeMissmatch" fileType="xlsx" buttonText="Upload" icon="sap-icon://upload" sameFilenameAllowed="true" class="uploadButton" visible="{= ${userModel>/role/role_role} === 'CDT' ? true: false}"/>
 
                             <!-- <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" /> -->
                             <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="{userModel>/bPricingVendorAddBtn}" press="onOpenAddDialog"/>
@@ -63,7 +56,11 @@
                         </dependents>
                     </OverflowToolbar>
                 </smartTable:customToolbar>
+                <smartTable:layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%" />
+                </smartTable:layoutData>
             </smartTable:SmartTable>
+            <!-- </VBox> -->
         </content>
     </Page>
 </mvc:View>

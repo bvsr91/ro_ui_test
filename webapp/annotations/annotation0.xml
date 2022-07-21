@@ -10,16 +10,16 @@
     </edmx:Reference>
     <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="zmro_ui.localService.annotation0.MroSrv">
-            <Annotations Target="Metadata.PricingConditions/countryCode">
+            <Annotations Target="Metadata.PricingConditions/countryCode_code">
                 <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="countryCode" />
+                        <PropertyValue Property="Label" String="countryCode_code" />
                         <PropertyValue Property="CollectionPath" String="CountriesCodeList" />
                         <PropertyValue Property="SearchSupported" Bool="true" />
                         <PropertyValue Property="Parameters">
                             <Collection>
                                 <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
-                                    <PropertyValue Property="LocalDataProperty" PropertyPath="countryCode" />
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="countryCode_code" />
                                     <PropertyValue Property="ValueListProperty" String="code" />
                                 </Record>
                                 <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
@@ -31,16 +31,16 @@
                 </Annotation>
                 <!--<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>-->
             </Annotations>
-            <Annotations Target="Metadata.VendorList/countryCode">
+            <Annotations Target="Metadata.VendorList/countryCode_code">
                 <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="countryCode" />
+                        <PropertyValue Property="Label" String="countryCode_code" />
                         <PropertyValue Property="CollectionPath" String="CountriesCodeList" />
                         <PropertyValue Property="SearchSupported" Bool="true" />
                         <PropertyValue Property="Parameters">
                             <Collection>
                                 <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
-                                    <PropertyValue Property="LocalDataProperty" PropertyPath="countryCode" />
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="countryCode_code" />
                                     <PropertyValue Property="ValueListProperty" String="code" />
                                 </Record>
                                 <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
