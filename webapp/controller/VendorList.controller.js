@@ -302,13 +302,19 @@ sap.ui.define(
             },
             onHistoryClick: async function (oInput) {
                 var sPath = oInput.getBindingContext().getPath;
+                var oSelObj = oInput.getBindingContext().getObject();
                 var oModel = this.getOwnerComponent().getModel();
                 // const info = await $.get(oModel.sServiceUrl + '/VendorComments?');
                 if (!this._oDialog) {
-                    this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorComments"), "com.ferrero.zmrouiapp.view.fragments.VendorCommentsData", this);
+                    this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorComments"), "com.ferrero.zmrouiapp.view.fragments.VendorHistory", this);
                     this.getView().addDependent(this._oDialog);
                 }
-
+                var oList = this.byId(Fragment.createId("FrgVendorComments", "idListVendComment"));
+                var aFilter = [];
+                aFilter.push(new Filter("Vendor_List_manufacturerCode", FilterOperator.EQ, oSelObj.manufacturerCode, true));
+                aFilter.push(new Filter("Vendor_List_localManufacturerCode", FilterOperator.EQ, oSelObj.localManufacturerCode, true));
+                aFilter.push(new Filter("Vendor_List_countryCode_code", FilterOperator.EQ, oSelObj.countryCode_code, true));
+                oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();
             },
             onCloseCommentsData: function () {

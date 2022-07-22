@@ -1,0 +1,17 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <!-- <List showSeparators="Inner" items="{/VendorComments}">
+        <FeedListItem sender="{modifiedBy}" icon="{AuthorPicUrl}" senderPress=
+        "onSenderPress" iconPress="onIconPress" iconDensityAware="false" info="{Type}" timestamp="{modifiedAt}" text="{Comment}" convertLinksToAnchorTags="All"/>
+    </List> -->
+    <Dialog id="myDialog" title="History Comments ..">
+        <content>
+            <List id="commentsList" showSeparators="Inner" items="{/PricingComments}">
+                <FeedListItem sender="{modifiedBy}" iconDensityAware="false" info="{Type}" timestamp="{modifiedAt}" text="{Comment}" convertLinksToAnchorTags="All"/>
+            </List>
+        </content>
+        <buttons>
+            <Button text="Cancel" press="onCloseCommentsData" type="Emphasized"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
