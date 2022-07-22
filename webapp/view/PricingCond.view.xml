@@ -10,15 +10,15 @@
     xmlns:t="sap.ui.table">
     <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
         <content>
-            <Panel expandable="true" headerText="Filter Bar" class="sapUiNoContentPadding">
-                <content>
-                    <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="PricingConditions" />
-                </content>
-            </Panel>
+            <!-- <Panel expandable="true" headerText="Filter Bar" class="sapUiNoContentPadding">
+                <content> -->
+            <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="PricingConditions" />
+            <!-- </content>
+            </Panel> -->
 
             <smartTable:SmartTable entitySet="PricingConditions" id="priceSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Conditions" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
                     country,countryDesc" ignoredFields="uuid" requestAtLeastFields="uuid">
-                <t:Table id="idPricingCondTab" visibleRowCount="10">
+                <t:Table id="idPricingCondTab" visibleRowCount="10" selectionMode="None">
                     <!-- <t:columns>
 
                     </t:columns>

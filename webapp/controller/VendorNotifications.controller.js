@@ -197,29 +197,6 @@ sap.ui.define(
                         })
                     ]
                 });
-                // var oPopover = new sap.m.Popover({
-                //     placement: "Auto",
-                //     showHeader: false,
-                //     content: [
-                //         new sap.m.VBox({
-                //             items: [
-                //                 new sap.m.Button({
-                //                     text: 'Approve', icon: 'sap-icon://accept', type: 'Transparent', width: '6rem', enabled: bEdit,
-                //                     press: this.onPressApprove.bind(this, oInput)
-                //                 }),
-                //                 new sap.m.Button({
-                //                     text: 'Reject', icon: 'sap-icon://decline', type: 'Transparent', width: '6rem', enabled: bEdit,
-                //                     press: this.onPressReject.bind(this, oInput)
-                //                 }),
-                //                 new sap.m.Button({
-                //                     text: 'History', icon: 'sap-icon://history', type: 'Transparent', width: '6rem',
-                //                     // press: this.onHistoryClick.bind(this, oInput)
-                //                 })
-                //             ]
-                //         }).addStyleClass("sapUiTinyMargin"),
-                //     ],
-                // }).addStyleClass("sapUiResponsivePadding");
-                // this._oPopover = oPopover;
                 oActionSheet.openBy(oInput);
             },
             onPressApprove: async function (oInput) {
@@ -359,11 +336,208 @@ sap.ui.define(
                 }.bind(this));
             },
             onRowlSelChange: function (oEvent) {
-                var oSelObj = oEvent.getParameter("rowContext").getObject();
+                // var oSelObj = oEvent.getParameter("rowContext").getObject();
                 var oRole = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (oSelObj.approver !== oRole.userid || oSelObj.status_code !== "Pending") {
-                    var iIndex = oEvent.getSource().getSelectedIndices().indexOf(oEvent.getSource().getSelectedIndex());
-                    oEvent.getSource().getSelectedIndices().splice(iIndex, 1);
+                var iIndex = oEvent.getParameter("rowIndex");
+                if (oEvent.getParameters().selectAll) {
+                    var aSelectedIndices = oEvent.getSource().getSelectedIndices();
+                    for (var a = 0; a < aSelectedIndices.length; a++) {
+                        if (oEvent.getSource().getContextByIndex(a).getObject()) {
+                            var oRowObj = oEvent.getSource().getContextByIndex(a).getObject();
+                            if (oRowObj.approver !== oRole.userid || oRowObj.status_code !== "Pending") {
+                                oEvent.getSource().removeSelectionInterval(a, a);
+                            }
+                        }
+                    }
+                } else {
+                    var aSelectedIndices = oEvent.getSource().getSelectedIndices();
+                    for (var a of aSelectedIndices) {
+                        if (oEvent.getSource().getContextByIndex(a).getObject()) {
+                            var oRowObj = oEvent.getSource().getContextByIndex(a).getObject();
+                            if (oRowObj.approver !== oRole.userid || oRowObj.status_code !== "Pending") {
+                                oEvent.getSource().removeSelectionInterval(a, a);
+                            }
+                        }
+                    }
+                    // if (oSelObj.approver !== oRole.userid || oSelObj.status_code !== "Pending") {
+                    //     // var iIndex = oEvent.getSource().getSelectedIndices().indexOf(oEvent.getSource().getSelectedIndex());
+                    //     // oEvent.getSource().getSelectedIndices().splice(iIndex, 1);
+                    //     oEvent.getSource().removeSelectionInterval(iIndex, iIndex);
+                    // }
+                }
+            },
+            handleApprove: function (oEvent) {
+                var oTable = this.getView().byId("idUiTabVendorNoti"),
+                    aSelectedIndices = oTable.getSelectedIndices(),
+                    aRows = oTable.getRows(),
+                    aPayLoad = [];
+                if (aSelectedIndices.length > 0) {
+                    for (var a of aSelectedIndices) {
+                        aPayLoad.push(oTable.getContextByIndex(a).getObject());
+                    }
+                    this.batchUpdateRecords(aPayLoad);
+                } else {
+                    MessageBox.warning("Please select atleast one Row");
+                    return;
+                }
+            },
+            batchUpdateRecords: function (aData) {
+                var oModel = this.getOwnerComponent().getModel();
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                sap.ui.core.BusyIndicator.show();
+                var that = this;
+                var iCounter = 1;
+                oModel.setUseBatch(true);
+                oModel.attachBatchRequestCompleted(function (dataBatch) {
+                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
+                    that.getView().byId("idUiTabVendorNoti").setBusy(false);
+                    if (iCounter === 1) {
+                        that.getOwnerComponent().getModel().refresh();
+                        iCounter += 1;
+                    }
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                oModel.attachBatchRequestFailed(function (e) {
+                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
+                    that.getView().byId("idUiTabVendorNoti").setBusy(false);
+                    that.getOwnerComponent().getModel().refresh();
+                    // that.getView().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                for (var a of aData) {
+                    var oActionUriParameters = {
+                        uuid: a.uuid,
+                        Vendor_List_manufacturerCode: a.Vendor_List_manufacturerCode,
+                        Vendor_List_countryCode_code: a.Vendor_List_countryCode_code,
+                        Vendor_List_localManufacturerCode: a.Vendor_List_localManufacturerCode,
+                        completionDate: new Date().toISOString(),
+                        approvedDate: new Date().toISOString(),
+                        approver: logOnUserObj.userid,
+                        status_code: "Approved"
+                    };
+                    oModel.update("/VendorNotifications(guid'" + a.uuid + "')", oActionUriParameters, {
+                        method: "PUT",
+                        success: function (dataRes) {
+                            // objectLastRes = dataRes;
+                            //jQuery.sap.log.info("create - success");
+                        },
+                        error: function (e) {
+                            jQuery.sap.log.error("create - error");
+                            var textMsg = e.statusText;
+                            textMsg = textMsg.split("|").join("\n");
+                            // that.makeResultDialog("Error", "Error", textMsg).open();
+                            isSuccess = false;
+                        }
+                    });
+                }
+            },
+            handleReject: function () {
+                // var oSelObj = oInput.getBindingContext().getObject();
+                var oTable = this.getView().byId("idUiTabVendorNoti"),
+                    aSelectedIndices = oTable.getSelectedIndices(),
+                    aRows = oTable.getRows(),
+                    aPayLoad = [];
+                if (aSelectedIndices.length > 0) {
+                    for (var a of aSelectedIndices) {
+                        aPayLoad.push(oTable.getContextByIndex(a).getObject());
+                    }
+                    // this.batchUpdateRecords(aPayLoad);
+                } else {
+                    MessageBox.warning("Please select atleast one Row");
+                    return;
+                }
+
+                if (this.oRejectDialog) {
+                    this.oRejectDialog.destroy();
+                    this.oRejectDialog = undefined;
+                }
+                if (!this.oRejectDialog) {
+                    this.oRejectDialog = new Dialog({
+                        title: "Reject",
+                        type: DialogType.Message,
+                        content: [
+                            new Label({
+                                text: "Do you want to reject ?",
+                                labelFor: "rejectionNote",
+                            }),
+                            new TextArea("rejectionNote", {
+                                width: "100%",
+                                placeholder: "Add note (required)",
+                                liveChange: function (oEvent) {
+                                    var sText = oEvent.getParameter("value");
+                                    this.oRejectDialog
+                                        .getBeginButton()
+                                        .setEnabled(sText.length > 0);
+                                }.bind(this),
+                            }),
+                        ],
+                        beginButton: new Button({
+                            type: ButtonType.Emphasized,
+                            text: "Reject",
+                            enabled: false,
+                            press: this.onBatchRejOk.bind(this, aPayLoad),
+                        }),
+                        endButton: new Button({
+                            text: "Cancel",
+                            press: function () {
+                                this.oRejectDialog.close();
+                            }.bind(this),
+                        }),
+                    });
+                }
+                this.oRejectDialog.open();
+            },
+            onBatchRejOk: function (aData) {
+                var sText = sap.ui.getCore().byId("rejectionNote").getValue();
+                var oModel = this.getOwnerComponent().getModel();
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                var that = this,
+                    iCounter = 1;
+                sap.ui.core.BusyIndicator.show();
+                oModel.setUseBatch(true);
+                oModel.attachBatchRequestCompleted(function (dataBatch) {
+                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
+                    that.getView().byId("idUiTabVendorNoti").setBusy(false);
+                    if (iCounter === 1) {
+                        that.getOwnerComponent().getModel().refresh();
+                        iCounter += 1;
+                    }
+                    that.oRejectDialog.close();
+                    // that.getView().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                oModel.attachBatchRequestFailed(function (e) {
+                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
+                    that.getView().byId("idUiTabVendorNoti").setBusy(false);
+                    if (iCounter === 1) {
+                        that.getOwnerComponent().getModel().refresh();
+                        iCounter += 1;
+                    }
+                    // that.getView().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                for (var a of aData) {
+                    var oActionUriParameters = {
+                        vendor_Notif_uuid: a.uuid,
+                        Vendor_List_manufacturerCode: a.Vendor_List_manufacturerCode,
+                        Vendor_List_countryCode_code: a.Vendor_List_countryCode_code,
+                        Vendor_List_localManufacturerCode: a.Vendor_List_localManufacturerCode,
+                        Comment: sText
+                    };
+                    oModel.create("/VendorComments", oActionUriParameters, {
+                        method: "PUT",
+                        success: function (dataRes) {
+                            // objectLastRes = dataRes;
+                            //jQuery.sap.log.info("create - success");
+                        },
+                        error: function (e) {
+                            jQuery.sap.log.error("create - error");
+                            var textMsg = e.statusText;
+                            textMsg = textMsg.split("|").join("\n");
+                            // that.makeResultDialog("Error", "Error", textMsg).open();
+                            isSuccess = false;
+                        }
+                    });
                 }
             }
         });
