@@ -171,7 +171,7 @@ sap.ui.define(
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                    if (oInput.getBindingContext().getObject().status_code === "Approved") {
+                    if (oInput.getBindingContext().getObject().status_code === "Approved" || oInput.getBindingContext().getObject().status_code === "Rejected") {
                         bEdit = false;
                     } else {
                         bEdit = true;
@@ -193,11 +193,36 @@ sap.ui.define(
                         }),
                         new sap.m.Button({
                             text: 'History', type: 'Transparent', width: '6rem',
-                            // press: this.onHistoryClick.bind(this, oInput)
+                            press: this.onHistoryClick.bind(this, oInput)
                         })
                     ]
                 });
                 oActionSheet.openBy(oInput);
+            },
+            onHistoryClick: async function (oInput) {
+                var sPath = oInput.getBindingContext().getPath;
+                var oSelObj = oInput.getBindingContext().getObject();
+                var oModel = this.getOwnerComponent().getModel();
+                // const info = await $.get(oModel.sServiceUrl + '/VendorComments?');
+                if (!this._oDialog) {
+                    this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorComments"), "com.ferrero.zmrouiapp.view.fragments.VendorHistory", this);
+                    this.getView().addDependent(this._oDialog);
+                }
+                var oList = this.byId(Fragment.createId("FrgVendorComments", "idListVendComment"));
+                var aFilter = [];
+                aFilter.push(new Filter("Vendor_List_manufacturerCode", FilterOperator.EQ, oSelObj.Vendor_List_manufacturerCode, true));
+                aFilter.push(new Filter("Vendor_List_localManufacturerCode", FilterOperator.EQ, oSelObj.Vendor_List_localManufacturerCode, true));
+                aFilter.push(new Filter("Vendor_List_countryCode_code", FilterOperator.EQ, oSelObj.Vendor_List_countryCode_code, true));
+                oList.getBinding("items").filter(aFilter);
+                this._oDialog.open();
+            },
+            onCloseCommentsData: function () {
+                if (this._oDialog) {
+                    this._oDialog.close();
+                    this._oDialog.destroy();
+                    this._oDialog = undefined;
+                }
+
             },
             onPressApprove: async function (oInput) {
                 var oModel = this.getOwnerComponent().getModel();

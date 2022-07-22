@@ -126,6 +126,7 @@ sap.ui.define(
                         this.getView().byId("OpenDialog").close();
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record created successfully");
+                        this.removePrePopulateData();
                     }.bind(this),
                     error: function (error) {
                         console.log(error);
@@ -139,6 +140,14 @@ sap.ui.define(
                         // this.getView().setBusy(false);
                     }.bind(this)
                 });
+            },
+            removePrePopulateData: function () {
+                this.byId("idIpManf").setValue(""),
+                this.byId("idIpManfDesc").setValue(""),
+                this.byId("idIpLocalManf").setValue(""),
+                this.byId("idIpLocalManfDesc").setValue(""),
+                this.byId("idIpCountry").setValue(""),
+                this.byId("idIpCountryDesc").setText("")
             },
             extendTable: function () {
                 var oTable = this.byId("idUiTab");

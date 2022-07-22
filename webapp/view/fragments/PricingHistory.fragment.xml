@@ -6,7 +6,7 @@
     </List> -->
     <Dialog id="myDialog" title="History Comments ..">
         <content>
-            <List id="commentsList" showSeparators="Inner" items="{/PricingComments}">
+            <List id="idListPricingComment" showSeparators="Inner" items="{/PricingComments}">
                 <FeedListItem sender="{modifiedBy}" iconDensityAware="false" info="{Type}" timestamp="{modifiedAt}" text="{Comment}" convertLinksToAnchorTags="All"/>
             </List>
         </content>

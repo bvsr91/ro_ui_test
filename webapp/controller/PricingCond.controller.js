@@ -103,11 +103,11 @@ sap.ui.define(
                 oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? null : parseFloat(exchageRate);
                 oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
                 oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
-                oPayLoad.localCurrency_code = localCurreny;
+                oPayLoad.localCurrency_code = localCurreny === "" ? null : localCurreny;
                 oPayLoad.local_ownership = bLocalOwnerShip;
                 if (bLocalOwnerShip) {
                     oPayLoad.countryFactor = null;
-                    oPayLoad.localCurrency_code = "";
+                    oPayLoad.localCurrency_code = null;
                     oPayLoad.exchangeRate = null;
                 }
                 oPayLoad.p_notif = {};
@@ -262,6 +262,53 @@ sap.ui.define(
                     });
                 this._oDialog.open();
             },
+            onSavePricingData: function (oInput) {
+                var oModel = this.getOwnerComponent().getModel();
+                var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
+                var manufacturerDesc = this.byId(Fragment.createId("FrgPricingData", "idIpManfDesc")).getValue();
+                var exchangeRate = this.byId(Fragment.createId("FrgPricingData", "idExchRate")).getValue();
+                var countryFactor = this.byId(Fragment.createId("FrgPricingData", "idContFactor")).getValue();
+                var validityStartId = this.byId(Fragment.createId("FrgPricingData", "validityStartId")).getValue();
+                var validityEndId = this.byId(Fragment.createId("FrgPricingData", "validityEndId")).getValue();
+                var bLocalOwnerShip = this.byId(Fragment.createId("FrgPricingData", "localOwnershipId")).getSelected();
+                var localCurreny = this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).getValue();
+                var oPayLoad = {};
+                oPayLoad.manufacturerCodeDesc = manufacturerDesc;
+                oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? null : parseFloat(countryFactor);
+                oPayLoad.exchangeRate = isNaN(parseInt(exchangeRate)) && exchangeRate === "" ? null : parseFloat(exchangeRate);
+                oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
+                oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
+                oPayLoad.local_ownership = bLocalOwnerShip;
+                oPayLoad.localCurrency_code = localCurreny === "" ? null : localCurreny;
+                if (bLocalOwnerShip) {
+                    oPayLoad.countryFactor = null;
+                    oPayLoad.localCurrency_code = null;
+                    oPayLoad.exchangeRate = null;
+                }
+                var oModel = this.getOwnerComponent().getModel();
+                // this.getView().setBusy(true);
+                sap.ui.core.BusyIndicator.show();
+                oModel.update(sPath, oPayLoad, {
+                    success: function (oData) {
+                        console.log(oData);
+                        this.onClosePricingData();
+                        // this.getView().setBusy(false);
+                        sap.ui.core.BusyIndicator.hide();
+                        MessageBox.success("Record updated successfully");
+                    }.bind(this),
+                    error: function (error) {
+                        console.log(error);
+                        sap.ui.core.BusyIndicator.hide();
+                        var errorObj1 = JSON.parse(error.responseText).error.message;
+                        MessageBox.show(
+                            errorObj1.value,
+                            sap.m.MessageBox.Icon.ERROR,
+                            "Error In Update Operation"
+                        );
+                        // this.getView().setBusy(false);
+                    }.bind(this)
+                });
+            },
             onClosePricingData: function () {
                 if (this._oDialog) {
                     this._oDialog.close();
@@ -305,6 +352,27 @@ sap.ui.define(
                 });
             },
             onHistoryClick: function (oInput) {
+                var sPath = oInput.getBindingContext().getPath;
+                var oSelObj = oInput.getBindingContext().getObject();
+                var oModel = this.getOwnerComponent().getModel();
+                // const info = await $.get(oModel.sServiceUrl + '/VendorComments?');
+                if (!this._oDialog) {
+                    this._oDialog = sap.ui.xmlfragment(this.createId("FrgPricingComments"), "com.ferrero.zmrouiapp.view.fragments.PricingHistory", this);
+                    this.getView().addDependent(this._oDialog);
+                }
+                var oList = this.byId(Fragment.createId("FrgPricingComments", "idListPricingComment"));
+                var aFilter = [];
+                aFilter.push(new Filter("Pricing_Conditions_manufacturerCode", FilterOperator.EQ, oSelObj.manufacturerCode, true));
+                aFilter.push(new Filter("Pricing_Conditions_countryCode_code", FilterOperator.EQ, oSelObj.countryCode_code, true));
+                oList.getBinding("items").filter(aFilter);
+                this._oDialog.open();
+            },
+            onCloseCommentsData: function () {
+                if (this._oDialog) {
+                    this._oDialog.close();
+                    this._oDialog.destroy();
+                    this._oDialog = undefined;
+                }
 
             },
             onSelectLocalOwnership: function (oEvent) {

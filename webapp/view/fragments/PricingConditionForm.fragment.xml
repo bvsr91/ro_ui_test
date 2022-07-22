@@ -14,8 +14,8 @@
                 <Input id="idIpManfDesc" value="{manufacturerCodeDesc}" />
                 <Label text="Country"/>
                 <Text id="idIpCountry" text="{countryCode_code}"/>
-                <Label text="Country Desc"/>
-                <Text id="idIpCountryDesc" text="{countryDesc}"/>
+                <!-- <Label text="Country Desc"/>
+                <Text id="idIpCountryDesc" text="{countryDesc}"/> -->
                 <Label text="Local Currency"/>
                 <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom" enabled="{= ${local_ownership} === true ? false: true}"/>
                 <Label text="Exchange Rate"/>
