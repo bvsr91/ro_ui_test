@@ -89,6 +89,7 @@ sap.ui.define(
 
                 var sFieldName;
                 if (!role) {
+                    this.getUserDetails().then();
                     await this.validateUser();
                 }
 
@@ -170,8 +171,10 @@ sap.ui.define(
                 var oRecordCreator = oInput.getBindingContext().getObject().createdBy;
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
-                    if (oInput.getBindingContext().getObject().status_code === "Approved" || oInput.getBindingContext().getObject().status_code === "Rejected") {
+                if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase() && (logOnUserObj.role_role === "GCM" ||
+                    logOnUserObj.role_role === "LP")) {
+                    if (oInput.getBindingContext().getObject().status_code === "Approved" ||
+                        oInput.getBindingContext().getObject().status_code === "Rejected") {
                         bEdit = false;
                     } else {
                         bEdit = true;

@@ -7,19 +7,24 @@
     xmlns:u="sap.ui.unified"
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     xmlns:smartTable="sap.ui.comp.smarttable"
-    xmlns:t="sap.ui.table">
-    <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
-        <content>
-            <!-- <Panel expandable="true" headerText="Filter Bar" class="sapUiNoContentPadding">
+    xmlns:t="sap.ui.table" height="100%">
+    <VBox fitContainer="true">
+        <!-- <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
+        <content> -->
+        <!-- <Panel expandable="true" headerText="Filter Bar" class="sapUiNoContentPadding">
                 <content> -->
-            <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="PricingConditions" />
-            <!-- </content>
+        <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="PricingConditions">
+            <smartFilterBar:layoutData>
+                <FlexItemData shrinkFactor="0" />
+            </smartFilterBar:layoutData>
+        </smartFilterBar:SmartFilterBar>
+        <!-- </content>
             </Panel> -->
 
-            <smartTable:SmartTable entitySet="PricingConditions" id="priceSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Conditions" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
+        <smartTable:SmartTable entitySet="PricingConditions" id="priceSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Conditions" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
                     country,countryDesc" ignoredFields="uuid" requestAtLeastFields="uuid">
-                <t:Table id="idPricingCondTab" visibleRowCount="10" selectionMode="None">
-                    <!-- <t:columns>
+            <t:Table id="idPricingCondTab" selectionMode="None" visibleRowCountMode="Auto">
+                <!-- <t:columns>
 
                     </t:columns>
                     <t:rowActionTemplate>
@@ -27,14 +32,18 @@
                             <t:RowActionItem press="onSelectPriceGroup" type="Navigation" icon="sap-icon://feeder-arrow" />
                         </t:RowAction>
                     </t:rowActionTemplate> -->
-                </t:Table>
-                <smartTable:customToolbar>
-                    <OverflowToolbar>
-                        <ToolbarSpacer />
-                        <Button icon="sap-icon://add-document" tooltip="Add new record" press=".handleAddPricing" visible="{userModel>/bPricingVendorAddBtn}"/>
-                    </OverflowToolbar>
-                </smartTable:customToolbar>
-            </smartTable:SmartTable>
-        </content>
-    </Page>
+            </t:Table>
+            <smartTable:customToolbar>
+                <OverflowToolbar>
+                    <ToolbarSpacer />
+                    <Button icon="sap-icon://add-document" tooltip="Add new record" press=".handleAddPricing" visible="{userModel>/bPricingVendorAddBtn}"/>
+                </OverflowToolbar>
+            </smartTable:customToolbar>
+            <smartTable:layoutData>
+                <FlexItemData growFactor="1" baseSize="0%" />
+            </smartTable:layoutData>
+        </smartTable:SmartTable>
+    </VBox>
+    <!-- </content>
+</Page> -->
 </mvc:View>

@@ -9,58 +9,59 @@
     xmlns:smartTable="sap.ui.comp.smarttable"
     xmlns:t="sap.ui.table"
     xmlns:form="sap.ui.layout.form" height="100%">
-    <!-- <VBox fitContainer="true"> -->
-    <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
-        <content>
-            <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="VendorList">
-                <smartFilterBar:layoutData>
-                    <FlexItemData shrinkFactor="0" />
-                </smartFilterBar:layoutData>
-            </smartFilterBar:SmartFilterBar>
-            <smartTable:SmartTable entitySet="VendorList" id="vendSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor List Items" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
+    <VBox fitContainer="true">
+        <!-- <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
+        <content> -->
+        <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="VendorList">
+            <smartFilterBar:layoutData>
+                <FlexItemData shrinkFactor="0" />
+            </smartFilterBar:layoutData>
+        </smartFilterBar:SmartFilterBar>
+        <smartTable:SmartTable entitySet="VendorList" id="vendSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor List Items" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
                     country,countryDesc" ignoredFields="uuid, v_notif_uuid" requestAtLeastFields="uuid,v_notif_uuid">
-                <t:Table id="idUiTab" visibleRowCount="9" selectionMode="None"/>
-                <smartTable:customToolbar>
-                    <OverflowToolbar>
-                        <content>
-                            <ToolbarSpacer />
-                            <Button icon="sap-icon://alert" text="{=${message>/}.length}" visible="{=${message>/}.length > 0}" type="Emphasized" press="onMessagePopoverPress"/>
-                            <u:FileUploader id="fileUploader" buttonOnly="true" name="myFileUpload" fileAllowed="onAllowedFile" tooltip="{i18>uploadTooltip}" uploadComplete="handleUploadComplete" change="handleValueChange" typeMissmatch="handleTypeMissmatch" fileType="xlsx" buttonText="Upload" icon="sap-icon://upload" sameFilenameAllowed="true" class="uploadButton" visible="{= ${userModel>/role/role_role} === 'CDT' ? true: false}"/>
+            <t:Table id="idUiTab" selectionMode="None" visibleRowCountMode="Auto"/>
+            <smartTable:customToolbar>
+                <OverflowToolbar>
+                    <content>
+                        <ToolbarSpacer />
+                        <Button icon="sap-icon://alert" text="{=${message>/}.length}" visible="{=${message>/}.length > 0}" type="Emphasized" press="onMessagePopoverPress"/>
+                        <Button icon="sap-icon://download" text="Template" type="Emphasized" press="onMessagePopoverPress"/>
+                        <u:FileUploader id="fileUploader" buttonOnly="true" name="myFileUpload" fileAllowed="onAllowedFile" tooltip="{i18>uploadTooltip}" uploadComplete="handleUploadComplete" change="handleValueChange" typeMissmatch="handleTypeMissmatch" fileType="xlsx" buttonText="Upload" icon="sap-icon://upload" sameFilenameAllowed="true" class="uploadButton" visible="{= ${userModel>/role/role_role} === 'CDT' ? true: false}"/>
 
-                            <!-- <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" /> -->
-                            <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="{userModel>/bPricingVendorAddBtn}" press="onOpenAddDialog"/>
-                        </content>
-                        <dependents>
-                            <Dialog id="OpenDialog" title="Create New Vendor">
-                                <buttons>
-                                    <Button id="confirmCreate" text="Create" press=".onCreate" type="Emphasized" />
-                                    <Button id="cancelCreate" text="Cancel" press="onCancelDialog" type="Transparent" />
-                                </buttons>
-                                <form:SimpleForm editable="true" layout="ResponsiveGridLayout">
-                                    <form:content>
-                                        <Label text="Manufacturer Code" required="true"/>
-                                        <Input id="idIpManf" change="onNameChange" maxLength="10"/>
-                                        <Label text="Manufacturer Desc" />
-                                        <Input id="idIpManfDesc" rows="4" maxLength="35"/>
-                                        <Label text="Local Manufacturer Code" required="true"/>
-                                        <Input id="idIpLocalManf" rows="4" maxLength="10"/>
-                                        <Label text="Local Manufacturer Desc" />
-                                        <Input id="idIpLocalManfDesc" rows="4" maxLength="35" />
-                                        <Label text="Country" required="true"/>
-                                        <Input id="idIpCountry" type="Text" placeholder="Enter Country ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCountry" class="sapUiSmallMarginBottom" required="true"/>
-                                        <Label text="Country Desc" />
-                                        <Text id="idIpCountryDesc"/>
-                                    </form:content>
-                                </form:SimpleForm>
-                            </Dialog>
-                        </dependents>
-                    </OverflowToolbar>
-                </smartTable:customToolbar>
-                <smartTable:layoutData>
-                    <FlexItemData growFactor="1" baseSize="0%" />
-                </smartTable:layoutData>
-            </smartTable:SmartTable>
-            <!-- </VBox> -->
-        </content>
-    </Page>
+                        <!-- <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" /> -->
+                        <Button id="createButton" icon="sap-icon://add-document" tooltip="Create" visible="{userModel>/bPricingVendorAddBtn}" press="onOpenAddDialog"/>
+                    </content>
+                    <dependents>
+                        <Dialog id="OpenDialog" title="Create New Vendor">
+                            <buttons>
+                                <Button id="confirmCreate" text="Create" press=".onCreate" type="Emphasized" />
+                                <Button id="cancelCreate" text="Cancel" press="onCancelDialog" type="Transparent" />
+                            </buttons>
+                            <form:SimpleForm editable="true" layout="ResponsiveGridLayout">
+                                <form:content>
+                                    <Label text="Manufacturer Code" required="true"/>
+                                    <Input id="idIpManf" change="onNameChange" maxLength="10"/>
+                                    <Label text="Manufacturer Desc" />
+                                    <Input id="idIpManfDesc" rows="4" maxLength="35"/>
+                                    <Label text="Local Manufacturer Code" required="true"/>
+                                    <Input id="idIpLocalManf" rows="4" maxLength="10"/>
+                                    <Label text="Local Manufacturer Desc" />
+                                    <Input id="idIpLocalManfDesc" rows="4" maxLength="35" />
+                                    <Label text="Country" required="true"/>
+                                    <Input id="idIpCountry" type="Text" placeholder="Enter Country ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCountry" class="sapUiSmallMarginBottom" required="true"/>
+                                    <Label text="Country Desc" />
+                                    <Text id="idIpCountryDesc"/>
+                                </form:content>
+                            </form:SimpleForm>
+                        </Dialog>
+                    </dependents>
+                </OverflowToolbar>
+            </smartTable:customToolbar>
+            <smartTable:layoutData>
+                <FlexItemData growFactor="1" baseSize="0%" />
+            </smartTable:layoutData>
+        </smartTable:SmartTable>
+    </VBox>
+    <!-- </content>
+    </Page> -->
 </mvc:View>

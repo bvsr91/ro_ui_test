@@ -196,7 +196,8 @@ sap.ui.define(
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var oObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (oObj.userid && oRecordApprover.toLowerCase() === oObj.userid.toLowerCase()) {
+                if (oObj.userid && oRecordApprover.toLowerCase() === oObj.userid.toLowerCase() && (oObj.role_role === "GCM" ||
+                    oObj.role_role === "LP")) {
                     if (oInput.getBindingContext().getObject().status_code === "Approved" || oInput.getBindingContext().getObject().status_code === "Rejected") {
                         bEdit = false;
                     } else {

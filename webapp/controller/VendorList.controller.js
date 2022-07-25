@@ -143,11 +143,11 @@ sap.ui.define(
             },
             removePrePopulateData: function () {
                 this.byId("idIpManf").setValue(""),
-                this.byId("idIpManfDesc").setValue(""),
-                this.byId("idIpLocalManf").setValue(""),
-                this.byId("idIpLocalManfDesc").setValue(""),
-                this.byId("idIpCountry").setValue(""),
-                this.byId("idIpCountryDesc").setText("")
+                    this.byId("idIpManfDesc").setValue(""),
+                    this.byId("idIpLocalManf").setValue(""),
+                    this.byId("idIpLocalManfDesc").setValue(""),
+                    this.byId("idIpCountry").setValue(""),
+                    this.byId("idIpCountryDesc").setText("")
             },
             extendTable: function () {
                 var oTable = this.byId("idUiTab");
