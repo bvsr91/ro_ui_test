@@ -117,8 +117,12 @@ sap.ui.define(
                             and: true,
                         });
                         mBindingParams.filters.push(oFilter);
-                    } else {
+                    } else if (role.role_role === "LDT") {
                         mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                        // mBindingParams.filters.push(new Filter("ld_initiator", FilterOperator.EQ, role.userid));
+                    }
+                    else {
+                        mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey))
                     }
                 } else {
                     if (role.role_role === "CDT") {

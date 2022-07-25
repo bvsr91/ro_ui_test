@@ -198,8 +198,7 @@ sap.ui.define(
             },
             onLinksDownload: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
-                var bEdit;
-                var bDelete;
+                var bEdit, bDelete;
                 var oRecordCreator;
                 var oSelObj = oInput.getBindingContext().getObject();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
@@ -265,7 +264,7 @@ sap.ui.define(
             onSavePricingData: function (oInput) {
                 var oModel = this.getOwnerComponent().getModel();
                 var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
-                var manufacturerDesc = this.byId(Fragment.createId("FrgPricingData", "idIpManfDesc")).getValue();
+                var manufacturerDesc = this.byId(Fragment.createId("FrgPricingData", "idIpManfDesc")).getValue().trim();
                 var exchangeRate = this.byId(Fragment.createId("FrgPricingData", "idExchRate")).getValue();
                 var countryFactor = this.byId(Fragment.createId("FrgPricingData", "idContFactor")).getValue();
                 var validityStartId = this.byId(Fragment.createId("FrgPricingData", "validityStartId")).getValue();
@@ -273,7 +272,12 @@ sap.ui.define(
                 var bLocalOwnerShip = this.byId(Fragment.createId("FrgPricingData", "localOwnershipId")).getSelected();
                 var localCurreny = this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).getValue();
                 var oPayLoad = {};
-                oPayLoad.manufacturerCodeDesc = manufacturerDesc;
+                var oObj = oInput.getSource().getParent().getParent().getController()._editObjContext.getObject();
+                oPayLoad.manufacturerCodeDesc = manufacturerDesc.trim();
+                oPayLoad.ld_initiator = oObj.ld_initiator;
+                oPayLoad.countryCode_code = oObj.countryCode_code;
+                oPayLoad.p_notif_uuid = oObj.p_notif_uuid;
+                // oPayLoad.status_code = "Pending";
                 oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? null : parseFloat(countryFactor);
                 oPayLoad.exchangeRate = isNaN(parseInt(exchangeRate)) && exchangeRate === "" ? null : parseFloat(exchangeRate);
                 oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
@@ -281,9 +285,9 @@ sap.ui.define(
                 oPayLoad.local_ownership = bLocalOwnerShip;
                 oPayLoad.localCurrency_code = localCurreny === "" ? null : localCurreny;
                 if (bLocalOwnerShip) {
-                    oPayLoad.countryFactor = null;
-                    oPayLoad.localCurrency_code = null;
-                    oPayLoad.exchangeRate = null;
+                    oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? null : parseFloat(countryFactor);
+                    oPayLoad.localCurrency_code = localCurreny.trim() === "" ? null : localCurreny;
+                    oPayLoad.exchangeRate = isNaN(parseInt(exchangeRate)) && exchangeRate === "" ? null : parseFloat(exchangeRate);
                 }
                 var oModel = this.getOwnerComponent().getModel();
                 // this.getView().setBusy(true);
