@@ -13,9 +13,10 @@ sap.ui.define(
         "sap/ui/table/RowActionItem",
         "sap/ui/table/RowSettings",
         "../model/formatter",
+        "sap/ui/export/Spreadsheet"
     ],
     function (
-        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Fragment, MessageBox, RowAction, RowActionItem, RowSettings, formatter) {
+        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Fragment, MessageBox, RowAction, RowActionItem, RowSettings, formatter, Spreadsheet) {
         "use strict";
 
         return BaseController.extend("com.ferrero.zmrouiapp.controller.VendorList", {
@@ -39,6 +40,13 @@ sap.ui.define(
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
                     that.routeAuthValidation(oHashChanger.getHash());
                 });
+
+                var oModel = this.getOwnerComponent().getModel();
+
+                oModel.attachMetadataLoaded(null, function () {
+                    var oMetadata = oModel.getServiceMetadata();
+                    console.log(oMetadata);
+                }, null);
             },
             createRecord: function () {
                 var oPayLoad = {};
@@ -517,6 +525,36 @@ sap.ui.define(
                         }
                     });
                 }
+            },
+            exportTemplate: function (tabName) {
+                var aFields = ["manufacturerCode", "manufacturerCodeDesc", "localManufacturerCode", "localManufacturerCodeDesc", "countryCode_code"];
+                var oModel = this.getOwnerComponent().getModel();
+                var aCols = [];
+                var oData = {};
+                for (var a of aFields) {
+                    aCols.push({
+                        label: a,
+                        property: a,
+                        type: 'string'
+                    });
+                    oData.a = "";
+                }
+                var aDataSource = [];
+                aDataSource.push(oData);
+                var oSettings = {
+                    workbook: { columns: aCols },
+                    dataSource: aDataSource,
+                    fileName: "Vendor Template.xlsx"
+                };
+
+                var oSheet = new Spreadsheet(oSettings);
+                oSheet.build()
+                    .then(function () {
+                        MessageToast.show('Spreadsheet export has finished');
+                    })
+                    .finally(function () {
+                        oSheet.destroy();
+                    });
             }
         });
     }
