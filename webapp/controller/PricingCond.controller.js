@@ -330,19 +330,20 @@ sap.ui.define(
                     initialFocus: MessageBox.Action.CANCEL,
                     onClose: function (sAction) {
                         if (sAction === "YES") {
-                            this.onConfirmDelete(this._oDelObjContext);
+                            this.onConfirmDelete(oInput);
                         }
                     }.bind(this),
                 }
                 );
             },
-            onConfirmDelete: function (oContext) {
+            onConfirmDelete: function (oInput) {
                 var oModel = this.getOwnerComponent().getModel();
 
                 var oPayLoad = {};
                 oPayLoad.status_code = "Deleted";
+                oPayLoad.p_notif_uuid = oInput.getBindingContext().getProperty("p_notif_uuid");
                 sap.ui.core.BusyIndicator.show();
-                oModel.update(oContext.sPath, oPayLoad, {
+                oModel.update(oInput.getBindingContext().getPath(), oPayLoad, {
                     success: function (oData) {
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record Deleted successfully");
