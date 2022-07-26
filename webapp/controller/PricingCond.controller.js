@@ -12,10 +12,11 @@ sap.ui.define(
         "../model/formatter",
         "sap/ui/table/RowAction",
         "sap/ui/table/RowActionItem",
-        "sap/ui/table/RowSettings"
+        "sap/ui/table/RowSettings",
+        "sap/ui/export/Spreadsheet"
     ],
     function (
-        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Fragment, MessageBox, formatter, RowAction, RowActionItem, RowSettings) {
+        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Fragment, MessageBox, formatter, RowAction, RowActionItem, RowSettings, Spreadsheet) {
         "use strict";
 
         return BaseController.extend("com.ferrero.zmrouiapp.controller.PricingCond", {
@@ -31,6 +32,8 @@ sap.ui.define(
              */
             onInit: function () {
                 this.getRouter().getRoute("pricingCond").attachPatternMatched(this._onRouteMatched, this);
+                var oMessageManager = sap.ui.getCore().getMessageManager();
+                this.getView().setModel(oMessageManager.getMessageModel(), "message");
                 // this.getRouter().attachBypassed(this.onBypassed, this);
                 // var oModel = this.getOwnerComponent().getModel("mrosrv_v2")
                 // this.getView().setModel(oModel);
@@ -435,6 +438,164 @@ sap.ui.define(
 
                 var oBinding = oEvent.getParameter("itemsBinding");
                 oBinding.filter(aFilters);
+            },
+            handleValueChange: function (oEvent) {
+                this._import(oEvent.getParameter("files") && oEvent.getParameter("files")[0]);
+            },
+            _import: function (file, sBindProperty, aActualFields) {
+                var json_object = {};
+                var that = this;
+                if (file && window.FileReader) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        var sheetData = [];
+                        var data = e.target.result;
+                        try {
+                            var workbook = XLSX.read(data, {
+                                type: 'binary'
+                            });
+                        } catch (err) {
+                            sap.m.MessageToast.show(err);
+                        }
+                        workbook.SheetNames.forEach(function (sheetName) {
+                            var sheet = workbook.Sheets[sheetName];
+                            var roa = XLSX.utils.sheet_to_row_object_array(sheet);
+
+                            sheetData = XLSX.utils.sheet_to_json(sheet);
+                            // }
+                        });
+                        if (sheetData.length > 0) {
+                            that.massCreateData(sheetData);
+                        } else {
+                            sap.m.MessageBox.error("Please maintain data in the template");
+                        }
+                    }
+                    reader.readAsBinaryString(file);
+                }
+            },
+            massCreateData: function (aData) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
+                var that = this;
+                var oModel = this.getOwnerComponent().getModel();
+                var objectLastRes;
+                var isSuccess = true;
+                sap.ui.core.BusyIndicator.show();
+                oModel.setUseBatch(true);
+                oModel.attachBatchRequestCompleted(function (dataBatch) {
+                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
+                    that.getView().byId("idPricingCondTab").setBusy(false);
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                oModel.attachBatchRequestFailed(function (e) {
+                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
+                    that.getView().byId("idPricingCondTab").setBusy(false);
+                    sap.ui.core.BusyIndicator.hide();
+                });
+                for (var a of aData) {
+                    a.p_notif = {};
+                    if (a.manufacturerCode === "") {
+                        a.manufacturerCode = null;
+                    }
+                    if (a.countryCode_code === "") {
+                        a.countryCode_code = null;
+                    }
+                    if (a.countryFactor) {
+                        a.countryFactor = isNaN(parseInt(a.countryFactor)) && a.countryFactor === "" ? null : parseFloat(a.countryFactor);
+                    }
+                    if (a.exchangeRate) {
+                        a.exchangeRate = isNaN(parseInt(a.exchangeRate)) && a.exchangeRate === "" ? null : parseFloat(a.exchangeRate);
+                    }
+                    if (a.validityStart) {
+                        if (a.validityStart !== "") {
+                            // var newData = a.validityStart.replace(/(\d+[/])(\d+[/])/, '$2$1');
+                            var date1 = a.validityStart.split("/");
+                            var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
+                            a.validityStart = d.toISOString();
+                        }
+                        else {
+                            a.validityStart = null;
+                        }
+                    }
+                    if (a.validityEnd) {
+                        if (a.validityEnd !== "") {
+                            var date1 = a.validityEnd.split("/");
+                            var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
+                            a.validityEnd = d.toISOString();
+                        } else {
+                            a.validityEnd = null;
+                        }
+                    }
+                    if (a.local_ownership === "X" || a.local_ownership === "x") {
+                        a.local_ownership = true;
+                        a.exchangeRate = null;
+                        a.localCurrency_code = null;
+                        a.countryFactor = null;
+                    }
+                    oModel.create("/PricingConditions", a, {
+                        method: "POST",
+                        success: function (dataRes) {
+                            objectLastRes = dataRes;
+                        },
+                        error: function (e) {
+                            jQuery.sap.log.error("create - error");
+                            var textMsg = e.statusText;
+                            textMsg = textMsg.split("|").join("\n");
+                            isSuccess = false;
+                        }
+                    });
+                }
+            },
+            onMessagePopoverPress: function (oEvent) {
+                var oSourceControl = oEvent.getSource();
+                this._getMessagePopover().then(function (oMessagePopover) {
+                    oMessagePopover.openBy(oSourceControl);
+                });
+            },
+            _getMessagePopover: function () {
+                var oView = this.getView();
+
+                // create popover lazily (singleton)
+                if (!this._pMessagePopover) {
+                    this._pMessagePopover = Fragment.load({
+                        id: oView.getId(),
+                        name: "com.ferrero.zmrouiapp.view.fragments.MessagePopover"
+                    }).then(function (oMessagePopover) {
+                        oView.addDependent(oMessagePopover);
+                        return oMessagePopover;
+                    });
+                }
+                return this._pMessagePopover;
+            },
+            exportTemplate: function () {
+                var aFields = ["manufacturerCode", "manufacturerCodeDesc", "countryCode_code", "localCurrency_code",
+                    "exchangeRate", "countryFactor", "local_ownership", "validityStart", "validityEnd"];
+                var oModel = this.getOwnerComponent().getModel();
+                var aCols = [];
+                var oData = {};
+                for (var a of aFields) {
+                    aCols.push({
+                        label: a,
+                        property: a,
+                        type: 'string'
+                    });
+                    oData.a = "";
+                }
+                var aDataSource = [];
+                aDataSource.push(oData);
+                var oSettings = {
+                    workbook: { columns: aCols },
+                    dataSource: aDataSource,
+                    fileName: "Pricing Template.xlsx"
+                };
+
+                var oSheet = new Spreadsheet(oSettings);
+                oSheet.build()
+                    .then(function () {
+                        MessageToast.show('Spreadsheet export has finished');
+                    })
+                    .finally(function () {
+                        oSheet.destroy();
+                    });
             }
         });
     }

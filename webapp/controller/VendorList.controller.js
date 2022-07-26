@@ -450,6 +450,15 @@ sap.ui.define(
                 });
                 for (var a of aData) {
                     a.v_notif = {};
+                    if (a.manufacturerCode === "") {
+                        a.manufacturerCode = null;
+                    }
+                    if (a.localManufacturerCode === "") {
+                        a.localManufacturerCode = null;
+                    }
+                    if (a.countryCode_code === "") {
+                        a.countryCode_code = null;
+                    }
                     oModel.create("/VendorList", a, {
                         method: "POST",
                         success: function (dataRes) {

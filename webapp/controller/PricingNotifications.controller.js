@@ -112,14 +112,16 @@ sap.ui.define(
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
                         aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                        // aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
                         var oFilter = new Filter({
                             filters: aFilter,
                             and: true,
                         });
                         mBindingParams.filters.push(oFilter);
-                    } else if (role.role_role === "LDT") {
+                    }
+                    else if (role.role_role === "LDT") {
                         mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
-                        // mBindingParams.filters.push(new Filter("ld_initiator", FilterOperator.EQ, role.userid));
+                        mBindingParams.filters.push(new Filter("user", FilterOperator.EQ, role.userid));
                     }
                     else {
                         mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey))
@@ -135,6 +137,8 @@ sap.ui.define(
                             and: true,
                         });
                         mBindingParams.filters.push(oFilter);
+                    } else if (role.role_role === "LDT") {
+                        mBindingParams.filters.push(new Filter("user", FilterOperator.EQ, role.userid));
                     }
                 }
 
