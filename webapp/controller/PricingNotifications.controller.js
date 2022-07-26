@@ -120,8 +120,16 @@ sap.ui.define(
                         mBindingParams.filters.push(oFilter);
                     }
                     else if (role.role_role === "LDT") {
-                        mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
-                        mBindingParams.filters.push(new Filter("user", FilterOperator.EQ, role.userid));
+                        var aFilter = [];
+                        // aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
+                        aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                        var oFilter = new Filter({
+                            filters: aFilter,
+                            and: false,
+                        });
+                        mBindingParams.filters.push(oFilter);
+                        // mBindingParams.filters.push();
+                        // mBindingParams.filters.push(new Filter("user", FilterOperator.EQ, role.userid));
                     }
                     else {
                         mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey))
@@ -138,7 +146,14 @@ sap.ui.define(
                         });
                         mBindingParams.filters.push(oFilter);
                     } else if (role.role_role === "LDT") {
-                        mBindingParams.filters.push(new Filter("user", FilterOperator.EQ, role.userid));
+                        var aFilter = [];
+                        aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
+                        aFilter.push(new Filter("status_code", FilterOperator.EQ, "Forwarded"));
+                        var oFilter = new Filter({
+                            filters: aFilter,
+                            and: false,
+                        });
+                        mBindingParams.filters.push(oFilter);
                     }
                 }
 
@@ -284,7 +299,7 @@ sap.ui.define(
                     oModel.update(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabPrcingNoti").rebindTable(true);
-                            this._oPopover.close();
+                            // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
@@ -415,7 +430,7 @@ sap.ui.define(
                     oModel.update(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabPrcingNoti").rebindTable(true);
-                            this._oPopover.close();
+                            // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
@@ -429,7 +444,7 @@ sap.ui.define(
                     oModel.create(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabPrcingNoti").rebindTable(true);
-                            this._oPopover.close();
+                            // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
