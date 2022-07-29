@@ -1,7 +1,11 @@
 sap.ui.define(
-    ["sap/ui/core/mvc/Controller", "sap/ui/core/routing/History",
-        "sap/ui/core/Fragment"],
-    function (Controller, History, Fragment) {
+    [
+        "sap/ui/core/mvc/Controller",
+        "sap/ui/core/routing/History",
+        "sap/ui/core/Fragment",
+        "sap/m/MessageBox"
+    ],
+    function (Controller, History, Fragment, MessageBox) {
         "use strict";
 
         return Controller.extend("com.ferrero.zmrouiapp.controller.BaseController", {
@@ -288,6 +292,64 @@ sap.ui.define(
                 }
                 oUserModel.setProperty("/bVisiblePricingAddBtn", bVisiblePricingAddBtn);
                 oUserModel.setProperty("/bPricingVendorAddBtn", bPricingVendorAddBtn);
+            },
+            errorHandling: function (responseBody) {
+                try {
+                    // if (responseBody.statusCode === 404) {
+                    //     MessageBox.error(responseBody.responseText);
+                    // }
+                    // else {
+                    var body = JSON.parse(responseBody.responseText);
+                    var errorDetails = body.error.innererror.errordetails;
+                    if (errorDetails) {
+                        if (errorDetails.length > 0) {
+                            var sMsg = "";
+                            for (var i = 0; i < errorDetails.length; i++) {
+                                if (sMsg === "") {
+                                    sMsg = errorDetails[i].message;
+                                } else {
+                                    sMsg = sMsg + ", " + errorDetails[i].message;
+                                }
+                            }
+                            if (typeof (responseBody) === "object") {
+                                MessageBox.error(sMsg.value);
+                            } else {
+                                MessageBox.error(sMsg);
+                            }
+                        } else
+                            MessageBox.error(body.error.message.value);
+                    } else
+                        MessageBox.error(body.error.message.value);
+                    // }
+                } catch (err) {
+                    try {
+                        //the error is in xml format. Technical error by framework
+                        switch (typeof responseBody) {
+                            case "string": // XML or simple text
+                                if (responseBody.indexOf("<?xml") > -1) {
+                                    var oXML = jQuery.parseXML(responseBody);
+                                    var oXMLMsg = oXML.querySelector("message");
+                                    if (oXMLMsg)
+                                        MessageBox.error(oXMLMsg.textContent);
+                                } else
+                                    MessageBox.error(responseBody);
+
+                                break;
+                            case "object": // Exception
+                                var oXML = jQuery.parseXML(responseBody.responseText);
+                                var oXMLMsg = oXML.querySelector("message");
+                                if (oXMLMsg) {
+                                    MessageBox.error(oXMLMsg.textContent);
+                                } else {
+                                    MessageBox.error(responseBody);
+                                }
+                                break;
+                        }
+                    } catch (err) {
+                        MessageBox.error(JSON.stringify(responseBody));
+                    }
+
+                }
             }
         });
     }

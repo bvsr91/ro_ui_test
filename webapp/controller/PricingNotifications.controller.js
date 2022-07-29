@@ -74,8 +74,7 @@ sap.ui.define(
             /* =========================================================== */
 
             _onRouteMatched: function () {
-                //Set the layout property of the FCL control to 'OneColumn'
-                // this.getModel("appView").setProperty("/layout", "OneColumn");
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("pricingNoti");
                 this.getView().byId("idSTabPrcingNoti").rebindTable(true);
             },
@@ -278,6 +277,8 @@ sap.ui.define(
                 const info = await this.updatePricingRecord(oModel, sPath, oActionUriParameters);
                 if (info.status_code) {
                     MessageBox.success("Record Approved Successfully");
+                } else {
+                    this.errorHandling(info);
                 }
                 sap.ui.core.BusyIndicator.hide();
 
@@ -350,10 +351,9 @@ sap.ui.define(
                         sap.ui.core.BusyIndicator.hide();
                     }.bind(this),
                     error: function (error) {
-                        // debugger;
-                        MessageBox.show(error);
                         sap.ui.core.BusyIndicator.hide();
-                    }
+                        this.errorHandling(error);
+                    }.bind(this)
                 });
             },
             onPressReject: function (oInput) {
@@ -421,6 +421,8 @@ sap.ui.define(
                 const info = await this.createPricingComment(oModel, "/PricingComments", oActionUriParameters);
                 if (info.status_code) {
                     MessageBox.success("Record Rejected Successfully");
+                } else {
+                    this.errorHandling(info);
                 }
                 sap.ui.core.BusyIndicator.hide();
                 this.oRejectDialog.close();

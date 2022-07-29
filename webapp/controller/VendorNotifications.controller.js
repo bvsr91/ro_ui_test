@@ -72,8 +72,7 @@ sap.ui.define(
             /* =========================================================== */
 
             _onRouteMatched: function () {
-                //Set the layout property of the FCL control to 'OneColumn'
-                // this.getModel("appView").setProperty("/layout", "OneColumn");
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("vendNoti");
                 this.getView().byId("idSTabVendorNoti").rebindTable(true);
             },
@@ -249,6 +248,8 @@ sap.ui.define(
                 const info = await this.updateVendorRecord(oModel, sPath, oActionUriParameters);
                 if (info.status_code) {
                     MessageBox.success("Record Approved Successfully");
+                } else {
+                    this.errorHandling(info);
                 }
                 sap.ui.core.BusyIndicator.hide();
 
@@ -344,6 +345,8 @@ sap.ui.define(
                 const info = await this.createVendorComment(oModel, "/VendorComments", oActionUriParameters);
                 if (info.status_code) {
                     MessageBox.success("Record Rejected Successfully");
+                } else {
+                    this.errorHandling(info);
                 }
                 sap.ui.core.BusyIndicator.hide();
 

@@ -66,15 +66,9 @@ sap.ui.define(
                         MessageBox.success("Record created successfully");
                     }.bind(this),
                     error: function (error) {
-                        console.log(error);
                         sap.ui.core.BusyIndicator.hide();
-                        var errorObj1 = JSON.parse(error.responseText).error.message;
-                        MessageBox.show(
-                            errorObj1.value,
-                            sap.m.MessageBox.Icon.ERROR,
-                            "Error In Create Operation"
-                        );
-                        // this.getView().setBusy(false);
+                        this.getView().byId("idUiTab").setBusy(false);
+                        this.errorHandling(error);
                     }.bind(this)
                 });
             },
@@ -98,8 +92,7 @@ sap.ui.define(
             /* =========================================================== */
 
             _onRouteMatched: function () {
-                //Set the layout property of the FCL control to 'OneColumn'
-                // this.getModel("appView").setProperty("/layout", "OneColumn");
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("vendorList");
                 this.routeAuthValidation("vendorList");
             },
@@ -139,13 +132,8 @@ sap.ui.define(
                     error: function (error) {
                         console.log(error);
                         sap.ui.core.BusyIndicator.hide();
-                        var errorObj1 = JSON.parse(error.responseText).error.message;
-                        MessageBox.show(
-                            errorObj1.value,
-                            sap.m.MessageBox.Icon.ERROR,
-                            "Error"
-                        );
-                        // this.getView().setBusy(false);
+                        this.getView().byId("idUiTab").setBusy(false);
+                        this.errorHandling(error);
                     }.bind(this)
                 });
             },
@@ -265,20 +253,14 @@ sap.ui.define(
                     success: function (oData) {
                         console.log(oData);
                         this.onCloseVendorData();
-                        // this.getView().setBusy(false);
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record updated successfully");
                     }.bind(this),
                     error: function (error) {
                         console.log(error);
                         sap.ui.core.BusyIndicator.hide();
-                        var errorObj1 = JSON.parse(error.responseText).error.message;
-                        MessageBox.show(
-                            errorObj1.value,
-                            sap.m.MessageBox.Icon.ERROR,
-                            "Error In Update Operation"
-                        );
-                        // this.getView().setBusy(false);
+                        this.getView().byId("idUiTab").setBusy(false);
+                        this.errorHandling(error);
                     }.bind(this)
                 });
             },
@@ -308,12 +290,8 @@ sap.ui.define(
                     }.bind(this),
                     error: function (error) {
                         sap.ui.core.BusyIndicator.hide();
-                        var errorObj1 = JSON.parse(error.responseText).error.message;
-                        MessageBox.show(
-                            errorObj1.value,
-                            sap.m.MessageBox.Icon.ERROR,
-                            "Error In Delete Operation"
-                        );
+                        this.getView().byId("idUiTab").setBusy(false);
+                        this.errorHandling(error);
                     }.bind(this)
                 });
             },

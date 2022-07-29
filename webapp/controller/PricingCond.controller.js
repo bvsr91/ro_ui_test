@@ -65,8 +65,7 @@ sap.ui.define(
             /* =========================================================== */
 
             _onRouteMatched: function () {
-                //Set the layout property of the FCL control to 'OneColumn'
-                // this.getModel("appView").setProperty("/layout", "OneColumn");
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("pricingCond");
                 this.routeAuthValidation("pricingCond");
             },
@@ -126,15 +125,9 @@ sap.ui.define(
                         MessageBox.success("Record created successfully");
                     }.bind(this),
                     error: function (error) {
-                        console.log(error);
                         sap.ui.core.BusyIndicator.hide();
-                        var errorObj1 = JSON.parse(error.responseText).error.message;
-                        MessageBox.show(
-                            errorObj1.value,
-                            sap.m.MessageBox.Icon.ERROR,
-                            "Error In Create Operation"
-                        );
-                        // this.getView().setBusy(false);
+                        this.getView().byId("idPricingCondTab").setBusy(false);
+                        this.errorHandling(error);
                     }.bind(this)
                 });
             },
@@ -304,15 +297,9 @@ sap.ui.define(
                         MessageBox.success("Record updated successfully");
                     }.bind(this),
                     error: function (error) {
-                        console.log(error);
                         sap.ui.core.BusyIndicator.hide();
-                        var errorObj1 = JSON.parse(error.responseText).error.message;
-                        MessageBox.show(
-                            errorObj1.value,
-                            sap.m.MessageBox.Icon.ERROR,
-                            "Error In Update Operation"
-                        );
-                        // this.getView().setBusy(false);
+                        this.errorHandling(error);
+                        this.getView().byId("idPricingCondTab").setBusy(false);
                     }.bind(this)
                 });
             },
@@ -350,12 +337,8 @@ sap.ui.define(
                     }.bind(this),
                     error: function (error) {
                         sap.ui.core.BusyIndicator.hide();
-                        var errorObj1 = JSON.parse(error.responseText).error.message;
-                        MessageBox.show(
-                            errorObj1.value,
-                            sap.m.MessageBox.Icon.ERROR,
-                            "Error In Delete Operation"
-                        );
+                        this.getView().byId("idPricingCondTab").setBusy(false);
+                        this.errorHandling(error);
                     }.bind(this)
                 });
             },
