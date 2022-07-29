@@ -227,6 +227,7 @@ sap.ui.define(
 
             },
             onPressApprove: async function (oInput) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var oSelObj = oInput.getBindingContext().getObject();
@@ -267,6 +268,7 @@ sap.ui.define(
                 // });
             },
             updateVendorRecord: function (oModel, sPath, oPayLoad) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 return new Promise(function (resolve, reject) {
                     oModel.update(sPath, oPayLoad, {
                         success: function (oData) {
@@ -353,6 +355,7 @@ sap.ui.define(
                 this.oRejectDialog.close();
             },
             createVendorComment: function (oModel, sPath, oPayLoad) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 return new Promise(function (resolve, reject) {
                     oModel.create(sPath, oPayLoad, {
                         success: function (oData) {
@@ -413,6 +416,7 @@ sap.ui.define(
                 }
             },
             batchUpdateRecords: function (aData) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 sap.ui.core.BusyIndicator.show();
@@ -519,6 +523,7 @@ sap.ui.define(
                 this.oRejectDialog.open();
             },
             onBatchRejOk: function (aData) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var sText = sap.ui.getCore().byId("rejectionNote").getValue();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");

@@ -85,6 +85,7 @@ sap.ui.define(
                 }
             },
             onAddPricingData: function () {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var manufacturerCode = this.byId(Fragment.createId("FrgAddPricing", "idIpManf")).getValue();
                 var manufacturerCodeDesc = this.byId(Fragment.createId("FrgAddPricing", "idIpManfDesc")).getValue();
                 var country = this.byId(Fragment.createId("FrgAddPricing", "idIpCountry")).getValue();
@@ -258,6 +259,7 @@ sap.ui.define(
                 this._oDialog.open();
             },
             onSavePricingData: function (oInput) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
                 var manufacturerDesc = this.byId(Fragment.createId("FrgPricingData", "idIpManfDesc")).getValue().trim();
@@ -325,7 +327,7 @@ sap.ui.define(
             },
             onConfirmDelete: function (oInput) {
                 var oModel = this.getOwnerComponent().getModel();
-
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oPayLoad = {};
                 oPayLoad.status_code = "Deleted";
                 oPayLoad.p_notif_uuid = oInput.getBindingContext().getProperty("p_notif_uuid");

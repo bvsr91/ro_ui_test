@@ -257,6 +257,7 @@ sap.ui.define(
                 oActionSheet.openBy(oInput);
             },
             onPressApprove: async function (oInput) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var oSelObj = oInput.getBindingContext().getObject();
@@ -296,6 +297,7 @@ sap.ui.define(
                 // });
             },
             updatePricingRecord: function (oModel, sPath, oPayLoad) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 return new Promise(function (resolve, reject) {
                     oModel.update(sPath, oPayLoad, {
                         success: function (oData) {
@@ -334,6 +336,7 @@ sap.ui.define(
 
             },
             onPressAccept: function (oEvent) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var oObj = oEvent.getBindingContext().getObject();
                 var oPayLoad = {
@@ -404,6 +407,7 @@ sap.ui.define(
 
             },
             onRejOk: async function (oInput) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var sText = sap.ui.getCore().byId("rejectionNote").getValue();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
@@ -428,6 +432,7 @@ sap.ui.define(
                 this.oRejectDialog.close();
             },
             updatePricingRecordData: function (oModel, sPath, oPayLoad) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 return new Promise(function (resolve, reject) {
                     oModel.update(sPath, oPayLoad, {
                         success: function (oData) {
@@ -442,6 +447,7 @@ sap.ui.define(
                 }.bind(this));
             },
             createPricingComment: function (oModel, sPath, oPayLoad) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 return new Promise(function (resolve, reject) {
                     oModel.create(sPath, oPayLoad, {
                         success: function (oData) {
@@ -502,6 +508,7 @@ sap.ui.define(
                 }
             },
             batchUpdateRecords: function (aData) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 sap.ui.core.BusyIndicator.show();
@@ -607,7 +614,9 @@ sap.ui.define(
                 this.oRejectDialog.open();
             },
             onBatchRejOk: function (aData) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var sText = sap.ui.getCore().byId("rejectionNote").getValue();
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var that = this,

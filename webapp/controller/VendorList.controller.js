@@ -49,6 +49,7 @@ sap.ui.define(
                 }, null);
             },
             createRecord: function () {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oPayLoad = {};
                 // oPayLoad.uuid_manufacturerCode = "55515";
                 oPayLoad.uuid = "5";
@@ -112,6 +113,7 @@ sap.ui.define(
                 }
             },
             onSaveNewVendorData: function (oPayLoad) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 oPayLoad.manufacturerCode = oPayLoad.manufacturerCode === "" ? null : oPayLoad.manufacturerCode;
                 oPayLoad.localManufacturerCode = oPayLoad.localManufacturerCode === "" ? null : oPayLoad.localManufacturerCode;
                 oPayLoad.countryCode_code = oPayLoad.countryCode_code === "" ? null : oPayLoad.countryCode_code;
@@ -239,6 +241,7 @@ sap.ui.define(
                 }
             },
             onSaveVendorData: function (oInput) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
                 var manufacturerDesc = this.byId(Fragment.createId("FrgVendorData", "ManfDescId")).getValue();
@@ -278,8 +281,8 @@ sap.ui.define(
                 );
             },
             onConfirmDelete: function (oContext) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
-
                 var oPayLoad = {};
                 oPayLoad.status_code = "Deleted";
                 sap.ui.core.BusyIndicator.show();
@@ -476,7 +479,7 @@ sap.ui.define(
                 return this._pMessagePopover;
             },
             batchCreateData: function (aData) {
-                // sap.ui.getCore().getMessageManager().removeAllMessages();
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var that = this;
                 var oModel = this.getOwnerComponent().getModel();
                 var objectLastRes;
