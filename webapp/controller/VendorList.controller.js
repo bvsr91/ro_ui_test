@@ -190,7 +190,8 @@ sap.ui.define(
                 var bDelete;
                 var oRecordCreator = oInput.getBindingContext().getObject().initiator;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) {
+                if ((logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
+                    && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "LDT")) {
                     bEdit = true;
                     bDelete = true;
                 } else {
