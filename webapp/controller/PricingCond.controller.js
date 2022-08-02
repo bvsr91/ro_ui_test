@@ -212,7 +212,7 @@ sap.ui.define(
                 } else {
                     oRecordCreator = oInput.getBindingContext().getObject().initiator;
                     if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
-                        && oSelObj.status_code === "Pending") {
+                        && oSelObj.status_code === "Pending" && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "LDT")) {
                         bEdit = true;
                         bDelete = true;
                     } else {
