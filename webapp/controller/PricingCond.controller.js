@@ -511,10 +511,19 @@ sap.ui.define(
                             a.validityEnd = null;
                         }
                     }
-                    if (a.local_ownership === "X" || a.local_ownership === "x") {
-                        a.local_ownership = true;
+                    // if (a.local_ownership === "X" || a.local_ownership === "x") {
+                    //     a.local_ownership = true;
+                    //     a.exchangeRate = null;
+                    //     a.localCurrency_code = null;
+                    //     a.countryFactor = null;
+                    // }
+                    if (a.lo_exchangeRate === "X" || a.lo_exchangeRate === "x") {
+                        a.lo_exchangeRate = true;
                         a.exchangeRate = null;
                         a.localCurrency_code = null;
+                    }
+                    if (a.lo_countryFactor === "X" || a.lo_countryFactor === "x") {
+                        a.lo_countryFactor = true;
                         a.countryFactor = null;
                     }
                     oModel.create("/PricingConditions", a, {
@@ -553,8 +562,8 @@ sap.ui.define(
                 return this._pMessagePopover;
             },
             exportTemplate: function () {
-                var aFields = ["manufacturerCode", "manufacturerCodeDesc", "countryCode_code", "localCurrency_code",
-                    "exchangeRate", "countryFactor", "local_ownership", "validityStart", "validityEnd"];
+                var aFields = ["manufacturerCode", "manufacturerCodeDesc", "countryCode_code",
+                    "lo_exchangeRate", "exchangeRate", "localCurrency_code", "lo_countryFactor", "countryFactor", "validityStart", "validityEnd"];
                 var oModel = this.getOwnerComponent().getModel();
                 var aCols = [];
                 var oData = {};
