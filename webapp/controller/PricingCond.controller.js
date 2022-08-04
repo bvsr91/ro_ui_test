@@ -95,7 +95,8 @@ sap.ui.define(
                 var validityEndId = this.byId(Fragment.createId("FrgAddPricing", "validityEndId")).getValue();
                 var localCurreny = this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).getValue();
                 var exchageRate = this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).getValue();
-                var bLocalOwnerShip = this.byId(Fragment.createId("FrgAddPricing", "localOwnershipId")).getSelected();
+                var bLocalOwnerShipER = this.byId(Fragment.createId("FrgAddPricing", "localOwnershipERId")).getSelected();
+                var bLocalOwnerShipCF = this.byId(Fragment.createId("FrgAddPricing", "localOwnershipCFId")).getSelected();
                 var oPayLoad = {};
                 oPayLoad.manufacturerCode = manufacturerCode === "" ? null : manufacturerCode;
                 // oPayLoad.localManufacturerCode = localDealerManufacturerCode;
@@ -107,11 +108,14 @@ sap.ui.define(
                 oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
                 oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
                 oPayLoad.localCurrency_code = localCurreny === "" ? null : localCurreny;
-                oPayLoad.local_ownership = bLocalOwnerShip;
-                if (bLocalOwnerShip) {
-                    oPayLoad.countryFactor = null;
+                oPayLoad.lo_exchangeRate = bLocalOwnerShipER;
+                oPayLoad.lo_countryFactor = bLocalOwnerShipCF;
+                if (bLocalOwnerShipER) {
                     oPayLoad.localCurrency_code = null;
                     oPayLoad.exchangeRate = null;
+                }
+                if (bLocalOwnerShipCF) {
+                    oPayLoad.countryFactor = null;
                 }
                 oPayLoad.p_notif = {};
                 var oModel = this.getOwnerComponent().getModel();
@@ -267,7 +271,8 @@ sap.ui.define(
                 var countryFactor = this.byId(Fragment.createId("FrgPricingData", "idContFactor")).getValue();
                 var validityStartId = this.byId(Fragment.createId("FrgPricingData", "validityStartId")).getValue();
                 var validityEndId = this.byId(Fragment.createId("FrgPricingData", "validityEndId")).getValue();
-                var bLocalOwnerShip = this.byId(Fragment.createId("FrgPricingData", "localOwnershipId")).getSelected();
+                var bLocalOwnerShipER = this.byId(Fragment.createId("FrgPricingData", "localOwnershipERId")).getSelected();
+                var bLocalOwnerShipCF = this.byId(Fragment.createId("FrgPricingData", "localOwnershipCFId")).getSelected();
                 var localCurreny = this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).getValue();
                 var oPayLoad = {};
                 var oObj = oInput.getSource().getParent().getParent().getController()._editObjContext.getObject();
@@ -280,12 +285,15 @@ sap.ui.define(
                 oPayLoad.exchangeRate = isNaN(parseInt(exchangeRate)) && exchangeRate === "" ? null : parseFloat(exchangeRate);
                 oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
                 oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
-                oPayLoad.local_ownership = bLocalOwnerShip;
+                oPayLoad.lo_exchangeRate = bLocalOwnerShipER;
+                oPayLoad.lo_countryFactor = bLocalOwnerShipCF;
                 oPayLoad.localCurrency_code = localCurreny === "" ? null : localCurreny;
-                if (bLocalOwnerShip) {
-                    oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? null : parseFloat(countryFactor);
+                if (bLocalOwnerShipER) {
                     oPayLoad.localCurrency_code = localCurreny.trim() === "" ? null : localCurreny;
                     oPayLoad.exchangeRate = isNaN(parseInt(exchangeRate)) && exchangeRate === "" ? null : parseFloat(exchangeRate);
+                }
+                if (bLocalOwnerShipCF) {
+                    oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? null : parseFloat(countryFactor);
                 }
                 var oModel = this.getOwnerComponent().getModel();
                 // this.getView().setBusy(true);
@@ -368,19 +376,26 @@ sap.ui.define(
                 }
 
             },
-            onSelectLocalOwnership: function (oEvent) {
+            onSelectLocalOwnershipER: function (oEvent) {
                 var bSel = oEvent.getParameter("selected");
                 if (bSel) {
-                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setEnabled(!bSel);
                     this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).setEnabled(!bSel);
                     this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).setEnabled(!bSel);
-                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setValue(null);
                     this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).setValue("");
                     this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).setValue(null);
                 } else {
-                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setEnabled(!bSel);
                     this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).setEnabled(!bSel);
                     this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).setEnabled(!bSel);
+                }
+            },
+            onSelectLocalOwnershipCF: function (oEvent) {
+                var bSel = oEvent.getParameter("selected");
+                if (bSel) {
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setValue(null);
+
+                } else {
+                    this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setEnabled(!bSel);
                 }
             },
             onValueHelpRequestCurrency: function (oEvent) {
@@ -407,7 +422,7 @@ sap.ui.define(
 
             onValueHelpDialogCurrencyClose: function (oEvent) {
                 var oSelectedItem = oEvent.getParameter("selectedItem"),
-                    oInput = this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", "idIpLocCurr"));
+                    oInput = this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", "idIpLocCurr")) ? this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", "idIpLocCurr")) : this.byId(sap.ui.core.Fragment.createId("FrgPricingData", "idIpLocCurr"));
                 if (!oSelectedItem) {
                     oInput.resetProperty("value");
                     // this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", sTextID)).setText("");

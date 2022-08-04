@@ -14,20 +14,19 @@
                 <Input id="idIpManfDesc" value="{manufacturerCodeDesc}" />
                 <Label text="Country"/>
                 <Text id="idIpCountry" text="{countryCode_code}"/>
-                <!-- <Label text="Country Desc"/>
-                <Text id="idIpCountryDesc" text="{countryDesc}"/> -->
+                <CheckBox selected="{lo_exchangeRate}" text="Local Ownership Exchange Rate" id="localOwnershipERId" enabled="{= ${userModel>/role/role_role} === 'LDT' ? false: true}"/>
                 <Label text="Local Currency"/>
-                <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom" enabled="{= ${local_ownership} === true ? false: true}"/>
+                <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom" />
                 <Label text="Exchange Rate"/>
-                <Input id="idExchRate" type="Number" value="{exchangeRate}" />
+                <Input id="idExchRate" type="Number" value="{exchangeRate}"/>
+                <CheckBox selected="{lo_countryFactor}" text="Local Ownership Country Factor" id="localOwnershipCFId" enabled="{= ${userModel>/role/role_role} === 'LDT' ? false: true}"/>
                 <Label text="Country Factor"/>
                 <Input id="idContFactor" type="Number" value="{countryFactor}"/>
                 <Label text="Validity Start"/>
                 <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityStart', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
                 <Label text="Validity End"/>
                 <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityEnd', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
-                <Label text="Local Ownership"/>
-                <CheckBox selected="{local_ownership}" id="localOwnershipId" enabled="{= ${userModel>/role/role_role} === 'LDT' ? false: true}"/>
+
             </form:content>
         </form:SimpleForm>
         <!-- </VBox> -->
