@@ -345,7 +345,7 @@ sap.ui.define(
                 };
                 sap.ui.core.BusyIndicator.show();
                 const info = await this.createVendorComment(oModel, "/VendorComments", oActionUriParameters);
-                if (info.status_code) {
+                if (info.vendor_Notif_uuid) {
                     MessageBox.success("Record Rejected Successfully");
                 } else {
                     this.errorHandling(info);

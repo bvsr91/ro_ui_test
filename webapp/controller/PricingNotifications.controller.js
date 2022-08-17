@@ -423,7 +423,7 @@ sap.ui.define(
                 };
                 sap.ui.core.BusyIndicator.show();
                 const info = await this.createPricingComment(oModel, "/PricingComments", oActionUriParameters);
-                if (info.status_code) {
+                if (info.pricing_Notif_uuid) {
                     MessageBox.success("Record Rejected Successfully");
                 } else {
                     this.errorHandling(info);
