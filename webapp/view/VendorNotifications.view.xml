@@ -25,6 +25,7 @@
                         <smartTable:customToolbar>
                             <OverflowToolbar>
                                 <ToolbarSpacer />
+                                <Button icon="sap-icon://alert" text="Logs ({=${message>/}.length})" visible="{=${message>/}.length > 0}" type="Emphasized" press="onMessagePopoverPress"/>
                                 <Button icon="sap-icon://accept" text="Approve" type="Accept" tooltip="Approve" press=".handleApprove" visible="{=${userModel>/role/role_role} === 'GCM' || ${userModel>/role/role_role} === 'LP'? true : false}"/>
                                 <Button icon="sap-icon://decline" text="Reject" type="Reject" tooltip="Reject" press=".handleReject" visible="{=${userModel>/role/role_role} === 'GCM' || ${userModel>/role/role_role} === 'LP'? true : false}"/>
                             </OverflowToolbar>

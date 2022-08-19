@@ -398,6 +398,28 @@ sap.ui.define(
                     this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).setEnabled(!bSel);
                 }
             },
+            onSelectLocalOwnershipEditER: function (oEvent) {
+                var bSel = oEvent.getParameter("selected");
+                if (bSel) {
+                    this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setEnabled(!bSel);
+                    // this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setValue("");
+                    // this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setValue(null);
+                } else {
+                    this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setEnabled(!bSel);
+                }
+            },
+            onSelectLocalOwnershipEditCF: function (oEvent) {
+                var bSel = oEvent.getParameter("selected");
+                if (bSel) {
+                    this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setEnabled(!bSel);
+                    // this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setValue(null);
+
+                } else {
+                    this.byId(Fragment.createId("FrgAddPricing", "idContFactor")).setEnabled(!bSel);
+                }
+            },
             onValueHelpRequestCurrency: function (oEvent) {
                 var oView = this.getView();
                 if (!this._currencyVHDialog) {

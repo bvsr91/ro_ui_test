@@ -44,6 +44,8 @@ sap.ui.define(
              */
             onInit: function () {
                 this.getRouter().getRoute("vendNoti").attachPatternMatched(this._onRouteMatched, this);
+                var oMessageManager = sap.ui.getCore().getMessageManager();
+                this.getView().setModel(oMessageManager.getMessageModel(), "message");
                 var that = this;
                 var oHashChanger = new sap.ui.core.routing.HashChanger.getInstance();
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
@@ -75,6 +77,28 @@ sap.ui.define(
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("vendNoti");
                 this.getView().byId("idSTabVendorNoti").rebindTable(true);
+            },
+            onMessagePopoverPress: function (oEvent) {
+                var oSourceControl = oEvent.getSource();
+                this._getMessagePopover().then(function (oMessagePopover) {
+                    oMessagePopover.openBy(oSourceControl);
+                });
+            },
+
+            _getMessagePopover: function () {
+                var oView = this.getView();
+
+                // create popover lazily (singleton)
+                if (!this._pMessagePopover) {
+                    this._pMessagePopover = Fragment.load({
+                        id: oView.getId(),
+                        name: "com.ferrero.zmrouiapp.view.fragments.MessagePopover"
+                    }).then(function (oMessagePopover) {
+                        oView.addDependent(oMessagePopover);
+                        return oMessagePopover;
+                    });
+                }
+                return this._pMessagePopover;
             },
             onBeforeRebindTable: async function (oEvent) {
                 var mBindingParams = oEvent.getParameter("bindingParams"),
@@ -330,6 +354,7 @@ sap.ui.define(
 
             },
             onRejOk: async function (oInput) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var sText = sap.ui.getCore().byId("rejectionNote").getValue();
                 var oModel = this.getOwnerComponent().getModel();
                 var oSelObj = oInput.getBindingContext().getObject();
@@ -372,7 +397,7 @@ sap.ui.define(
             onRowlSelChange: function (oEvent) {
                 // var oSelObj = oEvent.getParameter("rowContext").getObject();
                 var oRole = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                var iIndex = oEvent.getParameter("rowIndex");
+                // var iIndex = oEvent.getParameter("rowIndex");
                 if (oEvent.getParameters().selectAll) {
                     var aSelectedIndices = oEvent.getSource().getSelectedIndices();
                     for (var a = 0; a < aSelectedIndices.length; a++) {
@@ -409,21 +434,75 @@ sap.ui.define(
                     for (var a of aSelectedIndices) {
                         aPayLoad.push(oTable.getContextByIndex(a).getObject());
                     }
-                    this.batchUpdateRecords(aPayLoad);
+                    this.batchUpdateRecords(aPayLoad, oTable);
                 } else {
                     MessageBox.warning("Please select atleast one Row");
                     return;
                 }
             },
-            batchUpdateRecords: function (aData) {
+            batchUpdateRecords: function (aData, oTable) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 sap.ui.core.BusyIndicator.show();
                 var that = this;
                 var iCounter = 1;
-                oModel.setUseBatch(true);
-                oModel.attachBatchRequestCompleted(function (dataBatch) {
+                // oModel.setUseBatch(true);
+                // oModel.attachBatchRequestCompleted(function (dataBatch) {
+                //     jQuery.sap.log.info("attachBatchRequestCompleted - success");
+                //     that.getView().byId("idUiTabVendorNoti").setBusy(false);
+                //     if (iCounter === 1) {
+                //         that.getOwnerComponent().getModel().refresh();
+                //         iCounter += 1;
+                //     }
+                //     sap.ui.core.BusyIndicator.hide();
+                // });
+                // oModel.attachBatchRequestFailed(function (e) {
+                //     jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
+                //     that.getView().byId("idUiTabVendorNoti").setBusy(false);
+                //     that.getOwnerComponent().getModel().refresh();
+                //     // that.getView().getModel().refresh();
+                //     sap.ui.core.BusyIndicator.hide();
+                // });
+                var bError = false,
+                    oContext = {
+                        update: []
+                    };
+                oModel.setUseBatch(false);
+                var selectedValues = oTable.getSelectedIndices();
+                for (var a = 0; a < aData.length; a++) {
+                    var oActionUriParameters = {
+                        uuid: aData[a].uuid,
+                        Vendor_List_manufacturerCode: aData[a].Vendor_List_manufacturerCode,
+                        Vendor_List_countryCode_code: aData[a].Vendor_List_countryCode_code,
+                        Vendor_List_localManufacturerCode: aData[a].Vendor_List_localManufacturerCode,
+                        completionDate: new Date().toISOString(),
+                        approvedDate: new Date().toISOString(),
+                        approver: logOnUserObj.userid,
+                        status_code: "Approved"
+                    };
+
+                    oContext.update.push({
+                        "entityName": "/VendorNotifications(guid'" + aData[a].uuid + "')", "payload": oActionUriParameters, "iSelIndex": selectedValues[a] + 1
+                    })
+                    // oModel.update("/VendorNotifications(guid'" + a.uuid + "')", oActionUriParameters, {
+                    //     method: "PUT",
+                    //     success: function (dataRes) {
+
+                    //         if (dataRes.uuid === aData[aData.length - 1].uuid) {
+                    //             MessageBox.success("Record Approved Successfully");
+                    //             oTable.clearSelection();
+                    //         }
+                    //     },
+                    //     error: function (e) {
+                    //         if (!bError) {
+                    //             bError = true;
+                    //             MessageBox.error(JSON.parse(e.responseText).error.message.value);
+                    //         }
+                    //     }
+                    // });
+                }
+                this.myPromiseAll(oContext.update).then((oResponse) => {
                     jQuery.sap.log.info("attachBatchRequestCompleted - success");
                     that.getView().byId("idUiTabVendorNoti").setBusy(false);
                     if (iCounter === 1) {
@@ -431,40 +510,28 @@ sap.ui.define(
                         iCounter += 1;
                     }
                     sap.ui.core.BusyIndicator.hide();
-                });
-                oModel.attachBatchRequestFailed(function (e) {
-                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
+                    MessageBox.success("Record Approved Successfully");
+                    oTable.clearSelection();
+
+
+                }).catch((error) => {
+
+                    var selectedValues = oTable.getSelectedIndices();
+                    // (error || []).forEach((oError, index) => {
+                    //     if (oError.status === 'Success') {
+                    //         oTable.removeSelectionInterval(selectedValues[index], selectedValues[index])
+                    //     }
+                    // });
+                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + error);
                     that.getView().byId("idUiTabVendorNoti").setBusy(false);
                     that.getOwnerComponent().getModel().refresh();
-                    // that.getView().getModel().refresh();
                     sap.ui.core.BusyIndicator.hide();
-                });
-                for (var a of aData) {
-                    var oActionUriParameters = {
-                        uuid: a.uuid,
-                        Vendor_List_manufacturerCode: a.Vendor_List_manufacturerCode,
-                        Vendor_List_countryCode_code: a.Vendor_List_countryCode_code,
-                        Vendor_List_localManufacturerCode: a.Vendor_List_localManufacturerCode,
-                        completionDate: new Date().toISOString(),
-                        approvedDate: new Date().toISOString(),
-                        approver: logOnUserObj.userid,
-                        status_code: "Approved"
-                    };
-                    oModel.update("/VendorNotifications(guid'" + a.uuid + "')", oActionUriParameters, {
-                        method: "PUT",
-                        success: function (dataRes) {
-                            // objectLastRes = dataRes;
-                            //jQuery.sap.log.info("create - success");
-                        },
-                        error: function (e) {
-                            jQuery.sap.log.error("create - error");
-                            var textMsg = e.statusText;
-                            textMsg = textMsg.split("|").join("\n");
-                            // that.makeResultDialog("Error", "Error", textMsg).open();
-                            isSuccess = false;
-                        }
-                    });
-                }
+                    MessageBox.error("Error While Approving All/Partial Requests");
+                    oTable.clearSelection();
+
+                })
+
+
             },
             handleReject: function () {
                 // var oSelObj = oInput.getBindingContext().getObject();
@@ -510,7 +577,7 @@ sap.ui.define(
                             type: ButtonType.Emphasized,
                             text: "Reject",
                             enabled: false,
-                            press: this.onBatchRejOk.bind(this, aPayLoad),
+                            press: this.onBatchRejOk.bind(this, aPayLoad, oTable),
                         }),
                         endButton: new Button({
                             text: "Cancel",
@@ -522,7 +589,7 @@ sap.ui.define(
                 }
                 this.oRejectDialog.open();
             },
-            onBatchRejOk: function (aData) {
+            onBatchRejOk: function (aData, oTable) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var sText = sap.ui.getCore().byId("rejectionNote").getValue();
                 var oModel = this.getOwnerComponent().getModel();
@@ -563,19 +630,93 @@ sap.ui.define(
                     oModel.create("/VendorComments", oActionUriParameters, {
                         method: "PUT",
                         success: function (dataRes) {
-                            // objectLastRes = dataRes;
-                            //jQuery.sap.log.info("create - success");
+
                         },
                         error: function (e) {
                             jQuery.sap.log.error("create - error");
                             var textMsg = e.statusText;
                             textMsg = textMsg.split("|").join("\n");
                             // that.makeResultDialog("Error", "Error", textMsg).open();
-                            isSuccess = false;
+
                         }
                     });
                 }
+                MessageBox.success("Record Rejected Successfully");
+                oTable.clearSelection();
+            },
+
+            myPromiseAll: function (taskList) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
+                var oModel = this.getOwnerComponent().getModel();
+                var aupdate = [];
+                let promisesCompleted = 0;
+                return new Promise((resolve, reject) => {
+                    taskList.forEach((oUpdate, index) => {
+                        oModel.update(oUpdate.entityName, oUpdate.payload, {
+                            success: (dataRes) => {
+                                promisesCompleted += 1;
+                                aupdate[index] = {
+                                    entityName: oUpdate.entityName,
+                                    iSelIndex: oUpdate.iSelIndex,
+                                    result: dataRes,
+                                    status: 'Success'
+                                };
+
+                                var oMessage = new sap.ui.core.message.Message({
+                                    message: " Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + " and Country Code:" +
+                                        dataRes.Vendor_List_countryCode_code + " is Approved Successfully",
+                                    // message: "Row No. : " + oUpdate.iSelIndex + ",  Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + " and Country Code:" +
+                                    //     dataRes.Vendor_List_countryCode_code + " is Approved Successfully",
+                                    persistent: true,
+                                    type: sap.ui.core.MessageType.Success
+                                });
+                                sap.ui.getCore().getMessageManager().addMessages(oMessage);
+                                if (promisesCompleted === taskList.length) {
+                                    if (aupdate.find(oupdate => oupdate.status === "Failure")) {
+                                        reject(aupdate);
+                                    } else {
+                                        resolve(aupdate);
+                                    }
+                                }
+                            },
+                            error: (e) => {
+                                promisesCompleted += 1;
+                                aupdate[index] = {
+                                    entityName: oUpdate.entityName,
+                                    result: e,
+                                    status: 'Failure'
+                                };
+                                var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().getData();
+                                if (aMessages.length > 0) {
+                                    for (var a of aMessages) {
+                                        if (a.aTargets && a.aTargets.length > 0) {
+                                            if (a.aTargets[0] === oUpdate.entityName) {
+                                                a.message = "Error " + a.message + " for Manufacturer Code: " + oUpdate.payload.Vendor_List_manufacturerCode + " and Country Code: " +
+                                                    oUpdate.payload.Vendor_List_countryCode_code;
+                                            }
+                                        }
+                                    }
+                                }
+                                // var oMessage = new sap.ui.core.message.Message({
+                                //     message: "Row No. : " + oUpdate.iSelIndex + ",  Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + " and Country Code:" +
+                                //         dataRes.Vendor_List_countryCode_code + " is Approved Successfully",
+                                //     persistent: true,
+                                //     type: sap.ui.core.MessageType.Success
+                                // });
+                                // sap.ui.getCore().getMessageManager().addMessages(oMessage);
+
+                                if (promisesCompleted === taskList.length) {
+                                    reject(aupdate);
+                                }
+
+                            }
+                        });
+                    })
+                });
             }
+
+
+
         });
     }
 );

@@ -46,6 +46,8 @@ sap.ui.define(
              */
             onInit: function () {
                 this.getRouter().getRoute("pricingNoti").attachPatternMatched(this._onRouteMatched, this);
+                var oMessageManager = sap.ui.getCore().getMessageManager();
+                this.getView().setModel(oMessageManager.getMessageModel(), "message");
                 var that = this;
                 var oHashChanger = new sap.ui.core.routing.HashChanger.getInstance();
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
@@ -77,6 +79,28 @@ sap.ui.define(
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("pricingNoti");
                 this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+            },
+            onMessagePopoverPress: function (oEvent) {
+                var oSourceControl = oEvent.getSource();
+                this._getMessagePopover().then(function (oMessagePopover) {
+                    oMessagePopover.openBy(oSourceControl);
+                });
+            },
+
+            _getMessagePopover: function () {
+                var oView = this.getView();
+
+                // create popover lazily (singleton)
+                if (!this._pMessagePopover) {
+                    this._pMessagePopover = Fragment.load({
+                        id: oView.getId(),
+                        name: "com.ferrero.zmrouiapp.view.fragments.MessagePopover"
+                    }).then(function (oMessagePopover) {
+                        oView.addDependent(oMessagePopover);
+                        return oMessagePopover;
+                    });
+                }
+                return this._pMessagePopover;
             },
             onBeforeRebindTable: async function (oEvent) {
                 var mBindingParams = oEvent.getParameter("bindingParams"),
@@ -352,6 +376,7 @@ sap.ui.define(
                     success: function (oData) {
                         this.getOwnerComponent().getModel().refresh();
                         sap.ui.core.BusyIndicator.hide();
+                        MessageBox.success("Record Accepted Successfully,You can work on the Request!!");
                     }.bind(this),
                     error: function (error) {
                         sap.ui.core.BusyIndicator.hide();
@@ -501,13 +526,13 @@ sap.ui.define(
                     for (var a of aSelectedIndices) {
                         aPayLoad.push(oTable.getContextByIndex(a).getObject());
                     }
-                    this.batchUpdateRecords(aPayLoad);
+                    this.batchUpdateRecords(aPayLoad, oTable);
                 } else {
                     MessageBox.warning("Please select atleast one Row");
                     return;
                 }
             },
-            batchUpdateRecords: function (aData) {
+            batchUpdateRecords: function (aData, oTable) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
@@ -552,10 +577,11 @@ sap.ui.define(
                             var textMsg = e.statusText;
                             textMsg = textMsg.split("|").join("\n");
                             // that.makeResultDialog("Error", "Error", textMsg).open();
-                            isSuccess = false;
+
                         }
                     });
                 }
+                oTable.clearSelection();
             },
             handleReject: function () {
                 // var oSelObj = oInput.getBindingContext().getObject();
@@ -601,7 +627,7 @@ sap.ui.define(
                             type: ButtonType.Emphasized,
                             text: "Reject",
                             enabled: false,
-                            press: this.onBatchRejOk.bind(this, aPayLoad),
+                            press: this.onBatchRejOk.bind(this, aPayLoad, oTable),
                         }),
                         endButton: new Button({
                             text: "Cancel",
@@ -613,10 +639,9 @@ sap.ui.define(
                 }
                 this.oRejectDialog.open();
             },
-            onBatchRejOk: function (aData) {
+            onBatchRejOk: function (aData, oTable) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var sText = sap.ui.getCore().byId("rejectionNote").getValue();
-                sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var that = this,
@@ -654,18 +679,14 @@ sap.ui.define(
                     oModel.create("/PricingComments", oActionUriParameters, {
                         method: "PUT",
                         success: function (dataRes) {
-                            // objectLastRes = dataRes;
-                            //jQuery.sap.log.info("create - success");
+
                         },
-                        error: function (e) {
-                            jQuery.sap.log.error("create - error");
-                            var textMsg = e.statusText;
-                            textMsg = textMsg.split("|").join("\n");
-                            // that.makeResultDialog("Error", "Error", textMsg).open();
-                            isSuccess = false;
+                        error: function (e) {                        
+
                         }
                     });
                 }
+                oTable.clearSelection();
             }
         });
     }
