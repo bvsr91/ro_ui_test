@@ -537,51 +537,45 @@ sap.ui.define(
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 sap.ui.core.BusyIndicator.show();
-                var that = this;
-                var iCounter = 1;
-                oModel.setUseBatch(true);
-                oModel.attachBatchRequestCompleted(function (dataBatch) {
-                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
-                    that.getView().byId("idUiTabPricingNoti").setBusy(false);
-                    if (iCounter === 1) {
-                        that.getOwnerComponent().getModel().refresh();
-                        iCounter += 1;
-                    }
-                    sap.ui.core.BusyIndicator.hide();
-                });
-                oModel.attachBatchRequestFailed(function (e) {
-                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
-                    that.getView().byId("idUiTabPricingNoti").setBusy(false);
-                    that.getOwnerComponent().getModel().refresh();
-                    // that.getView().getModel().refresh();
-                    sap.ui.core.BusyIndicator.hide();
-                });
-                for (var a of aData) {
+                var that = this,
+                    iCounter = 1,
+                    oContext = {
+                        update: []
+                    };
+                oModel.setUseBatch(false);
+                var selectedValues = oTable.getSelectedIndices();
+                for (var a = 0; a < aData.length; a++) {
                     var oActionUriParameters = {
                         uuid: a.uuid,
-                        Pricing_Conditions_manufacturerCode: a.Pricing_Conditions_manufacturerCode,
-                        Pricing_Conditions_countryCode_code: a.Pricing_Conditions_countryCode_code,
+                        Pricing_Conditions_manufacturerCode: aData[a].Pricing_Conditions_manufacturerCode,
+                        Pricing_Conditions_countryCode_code: aData[a].Pricing_Conditions_countryCode_code,
                         completionDate: new Date().toISOString(),
                         approvedDate: new Date().toISOString(),
                         approver: logOnUserObj.userid,
                         status_code: "Approved"
                     };
-                    oModel.update("/PricingNotifications(guid'" + a.uuid + "')", oActionUriParameters, {
-                        method: "PUT",
-                        success: function (dataRes) {
-                            // objectLastRes = dataRes;
-                            //jQuery.sap.log.info("create - success");
-                        },
-                        error: function (e) {
-                            jQuery.sap.log.error("create - error");
-                            var textMsg = e.statusText;
-                            textMsg = textMsg.split("|").join("\n");
-                            // that.makeResultDialog("Error", "Error", textMsg).open();
-
-                        }
+                    oContext.update.push({
+                        "entityName": "/PricingNotifications(guid'" + aData[a].uuid + "')", "payload": oActionUriParameters, "iSelIndex": selectedValues[a] + 1
                     });
                 }
-                oTable.clearSelection();
+                this.onPromiseAll(oContext.update, 'update', "Approve", "PricingNotifications").then((oResponse) => {
+                    oTable.setBusy(false);
+                    if (iCounter === 1) {
+                        that.getOwnerComponent().getModel().refresh();
+                        iCounter += 1;
+                    }
+                    sap.ui.core.BusyIndicator.hide();
+                    MessageBox.success("Record Approved Successfully");
+                    oTable.clearSelection();
+
+
+                }).catch((error) => {
+                    oTable.setBusy(false);
+                    that.getOwnerComponent().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                    MessageBox.error("Error While Approving All/Partial Requests");
+                    oTable.clearSelection();
+                });
             },
             handleReject: function () {
                 // var oSelObj = oInput.getBindingContext().getObject();
@@ -646,47 +640,44 @@ sap.ui.define(
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var that = this,
                     iCounter = 1;
+                var oContext = {
+                    update: []
+                };
                 sap.ui.core.BusyIndicator.show();
-                oModel.setUseBatch(true);
-                oModel.attachBatchRequestCompleted(function (dataBatch) {
-                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
-                    that.getView().byId("idUiTabPricingNoti").setBusy(false);
+                oModel.setUseBatch(false);
+                var selectedValues = oTable.getSelectedIndices();
+                for (var a = 0; a < aData.length; a++) {
+                    var oActionUriParameters = {
+                        pricing_Notif_uuid: aData[a].uuid,
+                        Pricing_Conditions_manufacturerCode: aData[a].Pricing_Conditions_manufacturerCode,
+                        Pricing_Conditions_countryCode_code: aData[a].Pricing_Conditions_countryCode_code,
+                        Comment: sText
+                    };
+                    oContext.update.push({
+                        "entityName": "/PricingComments", "payload": oActionUriParameters, "iSelIndex": selectedValues[a] + 1
+                    });
+                }
+                this.onPromiseAll(oContext.update, 'create', "Reject", "PricingComments").then((oResponse) => {
+                    oTable.setBusy(false);
                     if (iCounter === 1) {
                         that.getOwnerComponent().getModel().refresh();
                         iCounter += 1;
                     }
                     that.oRejectDialog.close();
-                    // that.getView().getModel().refresh();
                     sap.ui.core.BusyIndicator.hide();
-                });
-                oModel.attachBatchRequestFailed(function (e) {
-                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
-                    that.getView().byId("idUiTabPricingNoti").setBusy(false);
-                    if (iCounter === 1) {
-                        that.getOwnerComponent().getModel().refresh();
-                        iCounter += 1;
-                    }
-                    // that.getView().getModel().refresh();
+                    MessageBox.success("Record Rejected Successfully");
+                    oTable.clearSelection();
+
+
+                }).catch((error) => {
+                    oTable.setBusy(false);
+                    that.getOwnerComponent().getModel().refresh();
+                    that.oRejectDialog.close();
                     sap.ui.core.BusyIndicator.hide();
-                });
-                for (var a of aData) {
-                    var oActionUriParameters = {
-                        pricing_Notif_uuid: a.uuid,
-                        Pricing_Conditions_manufacturerCode: a.Pricing_Conditions_manufacturerCode,
-                        Pricing_Conditions_countryCode_code: a.Pricing_Conditions_countryCode_code,
-                        Comment: sText
-                    };
-                    oModel.create("/PricingComments", oActionUriParameters, {
-                        method: "PUT",
-                        success: function (dataRes) {
+                    MessageBox.error("Error While Rejecting All/Partial Requests");
+                    oTable.clearSelection();
 
-                        },
-                        error: function (e) {                        
-
-                        }
-                    });
-                }
-                oTable.clearSelection();
+                })
             }
         });
     }

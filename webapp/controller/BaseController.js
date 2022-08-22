@@ -350,6 +350,79 @@ sap.ui.define(
                     }
 
                 }
+            },
+            onPromiseAll: function (taskList, sAction, sType, sEntityName) {
+                sap.ui.getCore().getMessageManager().removeAllMessages();
+                var oModel = this.getOwnerComponent().getModel();
+                var aupdate = [];
+                let promisesCompleted = 0;
+                return new Promise((resolve, reject) => {
+                    taskList.forEach((oUpdate, index) => {
+                        sAction = sAction;
+                        oModel[sAction](oUpdate.entityName, oUpdate.payload, {
+                            success: (dataRes) => {
+                                promisesCompleted += 1;
+                                aupdate[index] = {
+                                    entityName: oUpdate.entityName,
+                                    iSelIndex: oUpdate.iSelIndex,
+                                    result: dataRes,
+                                    status: 'Success'
+                                };
+                                var sMsg;
+                                if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
+                                    sMsg = "Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + " and Country Code:" +
+                                        dataRes.Vendor_List_countryCode_code + " is " + sType + "ed Successfully"
+                                } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
+                                    sMsg = "Manufacturer Code: " + dataRes.Pricing_Conditions_manufacturerCode + " and Country Code:" +
+                                        dataRes.Pricing_Conditions_countryCode_code + " is " + sType + "ed Successfully"
+                                }
+                                var oMessage = new sap.ui.core.message.Message({
+                                    message: sMsg,
+                                    persistent: true,
+                                    type: sap.ui.core.MessageType.Success
+                                });
+                                sap.ui.getCore().getMessageManager().addMessages(oMessage);
+                                if (promisesCompleted === taskList.length) {
+                                    if (aupdate.find(oupdate => oupdate.status === "Failure")) {
+                                        reject(aupdate);
+                                    } else {
+                                        resolve(aupdate);
+                                    }
+                                }
+                            },
+                            error: (e) => {
+                                promisesCompleted += 1;
+                                aupdate[index] = {
+                                    entityName: oUpdate.entityName,
+                                    result: e,
+                                    status: 'Failure'
+                                };
+                                var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().getData();
+                                if (aMessages.length > 0) {
+                                    for (var a of aMessages) {
+                                        if (a.aTargets && a.aTargets.length > 0) {
+                                            if (a.aTargets[0] === oUpdate.entityName) {
+                                                var sMsg;
+                                                if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
+                                                    sMsg = "Error " + a.message + " for Manufacturer Code: " + oUpdate.payload.Vendor_List_manufacturerCode + " and Country Code: " +
+                                                        oUpdate.payload.Vendor_List_countryCode_code
+                                                } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
+                                                    sMsg = "Manufacturer Code: " + oUpdate.Pricing_Conditions_manufacturerCode + " and Country Code:" +
+                                                        oUpdate.Pricing_Conditions_countryCode_code + " is " + sType + "ed Successfully"
+                                                }
+                                                a.message = sMsg;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (promisesCompleted === taskList.length) {
+                                    reject(aupdate);
+                                }
+
+                            }
+                        });
+                    })
+                });
             }
         });
     }
