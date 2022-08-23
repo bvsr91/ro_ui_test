@@ -454,7 +454,7 @@ sap.ui.define(
                     if (error.length === aMessages.length) {
                         sMsg = "Mass Upload failed with Error, please click on the Logs button to see the possible cause for the error";
                     } else {
-                        sMsg = "Mass Upload partially successful, please click on the Logs button to see the possible cause for the error";
+                        sMsg = "Mass Upload partially successfull, please click on the Logs button to see the possible cause for the error";
                     }
                     MessageBox.error(sMsg);
                 });

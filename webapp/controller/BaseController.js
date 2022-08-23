@@ -370,17 +370,17 @@ sap.ui.define(
                                 };
                                 var sMsg;
                                 if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
-                                    sMsg = "Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + " and Country Code:" +
-                                        dataRes.Vendor_List_countryCode_code + " is " + sType + "Successfully"
+                                    sMsg = "Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + ", Local Manufacturer Code:" + dataRes.Vendor_List_localManufacturerCode + " and Country Code:" +
+                                        dataRes.Vendor_List_countryCode_code + " is " + sType + " Successfully"
                                 } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
                                     sMsg = "Manufacturer Code: " + dataRes.Pricing_Conditions_manufacturerCode + " and Country Code:" +
-                                        dataRes.Pricing_Conditions_countryCode_code + " is " + sType + "Successfully"
+                                        dataRes.Pricing_Conditions_countryCode_code + " is " + sType + " Successfully"
                                 } else if (sEntityName === "VendorList") {
-                                    sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + " and Country Code:" +
-                                        dataRes.countryCode_code + " is " + sType + "Successfully"
+                                    sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + ", Local Manufacturer Code:" + dataRes.localManufacturerCode + " and Country Code:" +
+                                        dataRes.countryCode_code + " is " + sType + " Successfully"
                                 } else if (sEntityName === "PricingConditions") {
                                     sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + " and Country Code:" +
-                                        dataRes.countryCode_code + " is " + sType + "Successfully"
+                                        dataRes.countryCode_code + " is " + sType + " Successfully"
                                 }
 
                                 var oMessage = new sap.ui.core.message.Message({
@@ -412,7 +412,7 @@ sap.ui.define(
                                             if (a.aTargets[0] === oUpdate.entityName) {
                                                 var sMsg;
                                                 if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
-                                                    sMsg = "Error " + a.message + " for Manufacturer Code: " + oUpdate.payload.Vendor_List_manufacturerCode + " and Country Code: " +
+                                                    sMsg = a.message + " for Manufacturer Code: " + oUpdate.payload.Vendor_List_manufacturerCode + ", Local Manufacturer Code:" + oUpdate.payload.Vendor_List_localManufacturerCode + " and Country Code: " +
                                                         oUpdate.payload.Vendor_List_countryCode_code;
                                                 } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
                                                     sMsg = "Manufacturer Code: " + oUpdate.Pricing_Conditions_manufacturerCode + " and Country Code:" +
@@ -420,7 +420,7 @@ sap.ui.define(
                                                 }
                                                 else if (sEntityName === "VendorList") {
                                                     if (a.description !== "") {
-                                                        sMsg = a.message + " for Manufacturer Code: " + oUpdate.payload.manufacturerCode + " and Country Code:" +
+                                                        sMsg = a.message + " for Manufacturer Code: " + oUpdate.payload.manufacturerCode + ", Local Manufacturer Code:" + oUpdate.payload.localManufacturerCode + " and Country Code:" +
                                                             oUpdate.payload.countryCode_code;
                                                         a.description = "";
                                                     } else {

@@ -498,84 +498,84 @@ sap.ui.define(
             },
             massCreateData: function (aData) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
-                var that = this;
                 var oModel = this.getOwnerComponent().getModel();
-                var objectLastRes;
-                var isSuccess = true;
+                var oTable = this.getView().byId("idPricingCondTab");
                 sap.ui.core.BusyIndicator.show();
-                oModel.setUseBatch(true);
-                oModel.attachBatchRequestCompleted(function (dataBatch) {
-                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
-                    that.getView().byId("idPricingCondTab").setBusy(false);
-                    sap.ui.core.BusyIndicator.hide();
-                });
-                oModel.attachBatchRequestFailed(function (e) {
-                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
-                    that.getView().byId("idPricingCondTab").setBusy(false);
-                    sap.ui.core.BusyIndicator.hide();
-                });
-                for (var a of aData) {
-                    a.p_notif = {};
-                    if (a.manufacturerCode === "") {
-                        a.manufacturerCode = null;
+                var that = this,
+                    iCounter = 1,
+                    oContext = {
+                        update: []
+                    };
+                oModel.setUseBatch(false);
+                for (var a = 0; a < aData.length; a++) {
+                    aData[a].p_notif = {};
+                    if (aData[a].manufacturerCode === "") {
+                        aData[a].manufacturerCode = null;
                     }
-                    if (a.countryCode_code === "") {
-                        a.countryCode_code = null;
+                    if (aData[a].countryCode_code === "") {
+                        aData[a].countryCode_code = null;
                     }
-                    if (a.countryFactor) {
-                        a.countryFactor = isNaN(parseInt(a.countryFactor)) && a.countryFactor === "" ? null : parseFloat(a.countryFactor);
+                    if (aData[a].countryFactor) {
+                        aData[a].countryFactor = isNaN(parseInt(aData[a].countryFactor)) && aData[a].countryFactor === "" ? null : parseFloat(aData[a].countryFactor);
                     }
-                    if (a.exchangeRate) {
-                        a.exchangeRate = isNaN(parseInt(a.exchangeRate)) && a.exchangeRate === "" ? null : parseFloat(a.exchangeRate);
+                    if (aData[a].exchangeRate) {
+                        aData[a].exchangeRate = isNaN(parseInt(aData[a].exchangeRate)) && aData[a].exchangeRate === "" ? null : parseFloat(aData[a].exchangeRate);
                     }
-                    if (a.validityStart) {
-                        if (a.validityStart !== "") {
+                    if (aData[a].validityStart) {
+                        if (aData[a].validityStart !== "") {
                             // var newData = a.validityStart.replace(/(\d+[/])(\d+[/])/, '$2$1');
                             var date1 = a.validityStart.split("/");
                             var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
-                            a.validityStart = d.toISOString();
+                            aData[a].validityStart = d.toISOString();
                         }
                         else {
-                            a.validityStart = null;
+                            aData[a].validityStart = null;
                         }
                     }
-                    if (a.validityEnd) {
-                        if (a.validityEnd !== "") {
+                    if (aData[a].validityEnd) {
+                        if (aData[a].validityEnd !== "") {
                             var date1 = a.validityEnd.split("/");
                             var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
-                            a.validityEnd = d.toISOString();
+                            aData[a].validityEnd = d.toISOString();
                         } else {
-                            a.validityEnd = null;
+                            aData[a].validityEnd = null;
                         }
                     }
-                    // if (a.local_ownership === "X" || a.local_ownership === "x") {
-                    //     a.local_ownership = true;
-                    //     a.exchangeRate = null;
-                    //     a.localCurrency_code = null;
-                    //     a.countryFactor = null;
-                    // }
-                    if (a.lo_exchangeRate === "X" || a.lo_exchangeRate === "x") {
-                        a.lo_exchangeRate = true;
-                        a.exchangeRate = null;
-                        a.localCurrency_code = null;
+                    if (aData[a].lo_exchangeRate === "X" || aData[a].lo_exchangeRate === "x") {
+                        aData[a].lo_exchangeRate = true;
+                        aData[a].exchangeRate = null;
+                        aData[a].localCurrency_code = null;
                     }
-                    if (a.lo_countryFactor === "X" || a.lo_countryFactor === "x") {
-                        a.lo_countryFactor = true;
-                        a.countryFactor = null;
+                    if (aData[a].lo_countryFactor === "X" || aData[a].lo_countryFactor === "x") {
+                        aData[a].lo_countryFactor = true;
+                        aData[a].countryFactor = null;
                     }
-                    oModel.create("/PricingConditions", a, {
-                        method: "POST",
-                        success: function (dataRes) {
-                            objectLastRes = dataRes;
-                        },
-                        error: function (e) {
-                            jQuery.sap.log.error("create - error");
-                            var textMsg = e.statusText;
-                            textMsg = textMsg.split("|").join("\n");
-                            isSuccess = false;
-                        }
-                    });
+                    oContext.update.push({
+                        "entityName": "/PricingConditions", "payload": aData[a], "iSelIndex": a + 2
+                    });                
                 }
+                this.onPromiseAll(oContext.update, 'create', "Created", "PricingConditions").then((oResponse) => {
+                    oTable.setBusy(false);
+                    if (iCounter === 1) {
+                        that.getOwnerComponent().getModel().refresh();
+                        iCounter += 1;
+                    }
+                    sap.ui.core.BusyIndicator.hide();
+                    MessageBox.success("Record Created Successfully");
+                }).catch((error) => {
+                    oTable.setBusy(false);
+                    that.getOwnerComponent().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                    var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().getData(),
+                        sMsg;
+                    aMessages = aMessages.filter(a => a.type === "Error");
+                    if (error.length === aMessages.length) {
+                        sMsg = "Mass Upload failed with Error, please click on the Logs button to see the possible cause for the error";
+                    } else {
+                        sMsg = "Mass Upload partially successfull, please click on the Logs button to see the possible cause for the error";
+                    }
+                    MessageBox.error(sMsg);
+                });
             },
             onMessagePopoverPress: function (oEvent) {
                 var oSourceControl = oEvent.getSource();
