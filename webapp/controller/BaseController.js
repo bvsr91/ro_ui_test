@@ -354,7 +354,7 @@ sap.ui.define(
             onPromiseAll: function (taskList, sAction, sType, sEntityName) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
-                var aupdate = [];
+                var aUpdate = [];
                 let promisesCompleted = 0;
                 return new Promise((resolve, reject) => {
                     taskList.forEach((oUpdate, index) => {
@@ -362,7 +362,7 @@ sap.ui.define(
                         oModel[sAction](oUpdate.entityName, oUpdate.payload, {
                             success: (dataRes) => {
                                 promisesCompleted += 1;
-                                aupdate[index] = {
+                                aUpdate[index] = {
                                     entityName: oUpdate.entityName,
                                     iSelIndex: oUpdate.iSelIndex,
                                     result: dataRes,
@@ -391,16 +391,16 @@ sap.ui.define(
                                 });
                                 sap.ui.getCore().getMessageManager().addMessages(oMessage);
                                 if (promisesCompleted === taskList.length) {
-                                    if (aupdate.find(oupdate => oupdate.status === "Failure")) {
-                                        reject(aupdate);
+                                    if (aUpdate.find(oupdate => oupdate.status === "Failure")) {
+                                        reject(aUpdate);
                                     } else {
-                                        resolve(aupdate);
+                                        resolve(aUpdate);
                                     }
                                 }
                             },
                             error: (e) => {
                                 promisesCompleted += 1;
-                                aupdate[index] = {
+                                aUpdate[index] = {
                                     entityName: oUpdate.entityName,
                                     result: e,
                                     status: 'Failure'
@@ -408,47 +408,40 @@ sap.ui.define(
                                 var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().getData();
                                 if (aMessages.length > 0) {
                                     for (var a of aMessages) {
-                                        if (a.aTargets && a.aTargets.length > 0) {
-                                            if (a.aTargets[0] === oUpdate.entityName) {
-                                                var sMsg;
-                                                if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
-                                                    sMsg = a.message + " for Manufacturer Code: " + oUpdate.payload.Vendor_List_manufacturerCode + ", Local Manufacturer Code:" + oUpdate.payload.Vendor_List_localManufacturerCode + " and Country Code: " +
-                                                        oUpdate.payload.Vendor_List_countryCode_code;
-                                                } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
-                                                    sMsg = "Manufacturer Code: " + oUpdate.Pricing_Conditions_manufacturerCode + " and Country Code:" +
-                                                        oUpdate.Pricing_Conditions_countryCode_code;
-                                                }
-                                                else if (sEntityName === "VendorList") {
-                                                    if (a.description !== "") {
-                                                        sMsg = a.message + " for Manufacturer Code: " + oUpdate.payload.manufacturerCode + ", Local Manufacturer Code:" + oUpdate.payload.localManufacturerCode + " and Country Code:" +
-                                                            oUpdate.payload.countryCode_code;
-                                                        a.description = "";
-                                                    } else {
-                                                        continue;
-                                                    }
-                                                }
-                                                else if (sEntityName === "PricingConditions") {
-                                                    if (a.description !== "") {
-                                                        sMsg = a.message + " for Manufacturer Code: " + oUpdate.payload.manufacturerCode + " and Country Code:" +
-                                                            oUpdate.payload.countryCode_code;
-                                                        a.description = "";
-                                                    } else {
-                                                        continue;
-                                                    }
-                                                }
-                                                a.message = sMsg;
-                                            }
+                                        var sMsg;
+                                        if (a.description !== "") {
+                                            sMsg = this.prepareErrorMsg(a.message, sEntityName, oUpdate.payload);
+                                            a.description = "";
+                                        } else {
+                                            continue;
                                         }
+                                        a.message = sMsg;
                                     }
                                 }
                                 if (promisesCompleted === taskList.length) {
-                                    reject(aupdate);
+                                    reject(aUpdate);
                                 }
-
                             }
                         });
                     })
                 });
+            },
+            prepareErrorMsg: function (sErrorMsg, sEntityName, oReq) {
+                var sMsg;
+                if (sEntityName === "VendorList") {
+                    sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.manufacturerCode + ", Local Manufacturer Code:" + oReq.localManufacturerCode + " and Country Code:" +
+                        oReq.countryCode_code;
+                } else if (sEntityName === "PricingConditions") {
+                    sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.manufacturerCode + " and Country Code:" +
+                        oReq.countryCode_code;
+                } else if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
+                    sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.Vendor_List_manufacturerCode + ", Local Manufacturer Code:" + oReq.Vendor_List_localManufacturerCode + " and Country Code:" +
+                        oReq.Vendor_List_countryCode_code;
+                } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
+                    sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.Pricing_Conditions_manufacturerCode + " and Country Code:" +
+                        oReq.Pricing_Conditions_countryCode_code;
+                }
+                return sMsg;
             }
         });
     }
