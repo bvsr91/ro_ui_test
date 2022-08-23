@@ -371,15 +371,23 @@ sap.ui.define(
                                 var sMsg;
                                 if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
                                     sMsg = "Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + " and Country Code:" +
-                                        dataRes.Vendor_List_countryCode_code + " is " + sType + "ed Successfully"
+                                        dataRes.Vendor_List_countryCode_code + " is " + sType + "Successfully"
                                 } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
                                     sMsg = "Manufacturer Code: " + dataRes.Pricing_Conditions_manufacturerCode + " and Country Code:" +
-                                        dataRes.Pricing_Conditions_countryCode_code + " is " + sType + "ed Successfully"
+                                        dataRes.Pricing_Conditions_countryCode_code + " is " + sType + "Successfully"
+                                } else if (sEntityName === "VendorList") {
+                                    sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + " and Country Code:" +
+                                        dataRes.countryCode_code + " is " + sType + "Successfully"
+                                } else if (sEntityName === "PricingConditions") {
+                                    sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + " and Country Code:" +
+                                        dataRes.countryCode_code + " is " + sType + "Successfully"
                                 }
+
                                 var oMessage = new sap.ui.core.message.Message({
                                     message: sMsg,
                                     persistent: true,
-                                    type: sap.ui.core.MessageType.Success
+                                    type: sap.ui.core.MessageType.Success,
+                                    description: ""
                                 });
                                 sap.ui.getCore().getMessageManager().addMessages(oMessage);
                                 if (promisesCompleted === taskList.length) {
@@ -405,10 +413,28 @@ sap.ui.define(
                                                 var sMsg;
                                                 if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
                                                     sMsg = "Error " + a.message + " for Manufacturer Code: " + oUpdate.payload.Vendor_List_manufacturerCode + " and Country Code: " +
-                                                        oUpdate.payload.Vendor_List_countryCode_code
+                                                        oUpdate.payload.Vendor_List_countryCode_code;
                                                 } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
                                                     sMsg = "Manufacturer Code: " + oUpdate.Pricing_Conditions_manufacturerCode + " and Country Code:" +
-                                                        oUpdate.Pricing_Conditions_countryCode_code + " is " + sType + "ed Successfully"
+                                                        oUpdate.Pricing_Conditions_countryCode_code;
+                                                }
+                                                else if (sEntityName === "VendorList") {
+                                                    if (a.description !== "") {
+                                                        sMsg = a.message + " for Manufacturer Code: " + oUpdate.payload.manufacturerCode + " and Country Code:" +
+                                                            oUpdate.payload.countryCode_code;
+                                                        a.description = "";
+                                                    } else {
+                                                        continue;
+                                                    }
+                                                }
+                                                else if (sEntityName === "PricingConditions") {
+                                                    if (a.description !== "") {
+                                                        sMsg = a.message + " for Manufacturer Code: " + oUpdate.payload.manufacturerCode + " and Country Code:" +
+                                                            oUpdate.payload.countryCode_code;
+                                                        a.description = "";
+                                                    } else {
+                                                        continue;
+                                                    }
                                                 }
                                                 a.message = sMsg;
                                             }

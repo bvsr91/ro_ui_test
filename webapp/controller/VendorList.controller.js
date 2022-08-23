@@ -412,50 +412,52 @@ sap.ui.define(
             },
             massCreateData: function (aData) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
-                var that = this;
                 var oModel = this.getOwnerComponent().getModel();
-                var objectLastRes;
-                var isSuccess = true;
+                var oTable = this.getView().byId("idUiTab");
                 sap.ui.core.BusyIndicator.show();
-                oModel.setUseBatch(true);
-                oModel.attachBatchRequestCompleted(function (dataBatch) {
-                    jQuery.sap.log.info("attachBatchRequestCompleted - success");
-                    that.getView().byId("idUiTab").setBusy(false);
-                    // that.getView().getModel().refresh();
-                    sap.ui.core.BusyIndicator.hide();
-                });
-                oModel.attachBatchRequestFailed(function (e) {
-                    jQuery.sap.log.info("attachBatchRequestFailed - fail: " + e);
-                    that.getView().byId("idUiTab").setBusy(false);
-                    // that.getView().getModel().refresh();
-                    sap.ui.core.BusyIndicator.hide();
-                });
-                for (var a of aData) {
-                    a.v_notif = {};
-                    if (a.manufacturerCode === "") {
-                        a.manufacturerCode = null;
+                var that = this,
+                    iCounter = 1,
+                    oContext = {
+                        update: []
+                    };
+                oModel.setUseBatch(false);
+                for (var a = 0; a < aData.length; a++) {
+                    aData[a].v_notif = {};
+                    if (aData[a].manufacturerCode === "") {
+                        aData[a].manufacturerCode = null;
                     }
-                    if (a.localManufacturerCode === "") {
-                        a.localManufacturerCode = null;
+                    if (aData[a].localManufacturerCode === "") {
+                        aData[a].localManufacturerCode = null;
                     }
-                    if (a.countryCode_code === "") {
-                        a.countryCode_code = null;
+                    if (aData[a].countryCode_code === "") {
+                        aData[a].countryCode_code = null;
                     }
-                    oModel.create("/VendorList", a, {
-                        method: "POST",
-                        success: function (dataRes) {
-                            objectLastRes = dataRes;
-                            //jQuery.sap.log.info("create - success");
-                        },
-                        error: function (e) {
-                            jQuery.sap.log.error("create - error");
-                            var textMsg = e.statusText;
-                            textMsg = textMsg.split("|").join("\n");
-                            // that.makeResultDialog("Error", "Error", textMsg).open();
-                            isSuccess = false;
-                        }
+                    oContext.update.push({
+                        "entityName": "/VendorList", "payload": aData[a], "iSelIndex": a + 2
                     });
                 }
+                this.onPromiseAll(oContext.update, 'create', "Created", "VendorList").then((oResponse) => {
+                    oTable.setBusy(false);
+                    if (iCounter === 1) {
+                        that.getOwnerComponent().getModel().refresh();
+                        iCounter += 1;
+                    }
+                    sap.ui.core.BusyIndicator.hide();
+                    MessageBox.success("Record Created Successfully");
+                }).catch((error) => {
+                    oTable.setBusy(false);
+                    that.getOwnerComponent().getModel().refresh();
+                    sap.ui.core.BusyIndicator.hide();
+                    var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().getData(),
+                        sMsg;
+                    aMessages = aMessages.filter(a => a.type === "Error");
+                    if (error.length === aMessages.length) {
+                        sMsg = "Mass Upload failed with Error, please click on the Logs button to see the possible cause for the error";
+                    } else {
+                        sMsg = "Mass Upload partially successful, please click on the Logs button to see the possible cause for the error";
+                    }
+                    MessageBox.error(sMsg);
+                });
             },
             onMessagePopoverPress: function (oEvent) {
                 var oSourceControl = oEvent.getSource();
