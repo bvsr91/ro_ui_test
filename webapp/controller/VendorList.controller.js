@@ -247,9 +247,12 @@ sap.ui.define(
                 var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
                 var manufacturerDesc = this.byId(Fragment.createId("FrgVendorData", "ManfDescId")).getValue();
                 var localDealerMaufacturerDesc = this.byId(Fragment.createId("FrgVendorData", "localManufDescID")).getValue();
+                var localDealerMaufacturer = this.byId(Fragment.createId("FrgVendorData", "idIpLocalManufCode")).getValue();
                 var oPayLoad = {};
                 oPayLoad.manufacturerCodeDesc = manufacturerDesc;
                 oPayLoad.localManufacturerCodeDesc = localDealerMaufacturerDesc;
+                oPayLoad.localManufacturerCode = localDealerMaufacturer;
+                oPayLoad.status_code = "Pending";
                 var oModel = this.getOwnerComponent().getModel();
                 // this.getView().setBusy(true);
                 sap.ui.core.BusyIndicator.show();
@@ -311,7 +314,7 @@ sap.ui.define(
                 var oList = this.byId(Fragment.createId("FrgVendorComments", "idListVendComment"));
                 var aFilter = [];
                 aFilter.push(new Filter("Vendor_List_manufacturerCode", FilterOperator.EQ, oSelObj.manufacturerCode, true));
-                aFilter.push(new Filter("Vendor_List_localManufacturerCode", FilterOperator.EQ, oSelObj.localManufacturerCode, true));
+                aFilter.push(new Filter("localManufacturerCode", FilterOperator.EQ, oSelObj.localManufacturerCode, true));
                 aFilter.push(new Filter("Vendor_List_countryCode_code", FilterOperator.EQ, oSelObj.countryCode_code, true));
                 oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();

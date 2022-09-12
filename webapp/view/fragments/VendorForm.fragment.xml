@@ -9,15 +9,15 @@
                 <Label text="Manufacturer Code"/>
                 <Text id="idIpManf" text="{manufacturerCode}"/>
                 <Label text="Manufacturer Code Desc"/>
-                <Input id="ManfDescId" text="{manufacturerCodeDesc}" />
+                <Input id="ManfDescId" value="{manufacturerCodeDesc}" />
                 <Label text="Country"/>
                 <Text id="idIpCountry" text="{countryCode_code}"/>
                 <!-- <Label text="Country Desc"/>
                 <Text id="idIpCountryDesc" text="{countryDesc}"/> -->
                 <Label text="Local Manufacutrer Code"/>
-                <Text id="localManufCodeId" text="{localManufacturerCode}" />
+                <Input id="idIpLocalManufCode" value="{localManufacturerCode}" />
                 <Label text="Local Manufacturer Desc"/>
-                <Input id="localManufDescID" text="{localManufacturerCodeDesc}"/>
+                <Input id="localManufDescID" value="{localManufacturerCodeDesc}"/>
             </form:content>
         </form:SimpleForm>
         <buttons>

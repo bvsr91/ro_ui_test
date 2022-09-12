@@ -123,6 +123,15 @@
             <Annotations Target="Metadata.Currencies/symbol">
                 <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
             </Annotations>
+            <Annotations Target="Metadata.Currencies/exponent">
+                <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
+            </Annotations>
+            <Annotations Target="Metadata.Currencies/numcode">
+                <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
+            </Annotations>
+            <Annotations Target="Metadata.Currencies/minor">
+                <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
+            </Annotations>
             <Annotations Target="Metadata.CountriesCodeList/code">
                 <Annotation Term="com.sap.vocabularies.UI.v1.HiddenFilter" />
             </Annotations>
