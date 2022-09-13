@@ -110,6 +110,7 @@ sap.ui.define(
                     this._DialogAddVendor.close();
                     this._DialogAddVendor.destroy(true);
                     this._DialogAddVendor = undefined;
+                    this.removePrePopulateData();
                 }
             },
             onSaveNewVendorData: function (oPayLoad) {
@@ -359,6 +360,7 @@ sap.ui.define(
             },
             onCancelDialog: function (oEvent) {
                 oEvent.getSource().getParent().close();
+                this.removePrePopulateData();
             },
             onCreate: function () {
                 var oList = this.byId("idUiTab");

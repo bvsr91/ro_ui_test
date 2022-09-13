@@ -216,7 +216,7 @@ sap.ui.define(
                 } else {
                     oRecordCreator = oInput.getBindingContext().getObject().initiator;
                     if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
-                        && oSelObj.status_code === "Pending" && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "LDT")) {
+                        && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "LDT")) {
                         bEdit = true;
                         bDelete = true;
                     } else {
@@ -552,7 +552,7 @@ sap.ui.define(
                     }
                     oContext.update.push({
                         "entityName": "/PricingConditions", "payload": aData[a], "iSelIndex": a + 2
-                    });                
+                    });
                 }
                 this.onPromiseAll(oContext.update, 'create', "Created", "PricingConditions").then((oResponse) => {
                     oTable.setBusy(false);
