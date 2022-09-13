@@ -314,7 +314,7 @@ sap.ui.define(
                 var oList = this.byId(Fragment.createId("FrgVendorComments", "idListVendComment"));
                 var aFilter = [];
                 aFilter.push(new Filter("Vendor_List_manufacturerCode", FilterOperator.EQ, oSelObj.manufacturerCode, true));
-                aFilter.push(new Filter("localManufacturerCode", FilterOperator.EQ, oSelObj.localManufacturerCode, true));
+                // aFilter.push(new Filter("localManufacturerCode", FilterOperator.EQ, oSelObj.localManufacturerCode, true));
                 aFilter.push(new Filter("Vendor_List_countryCode_code", FilterOperator.EQ, oSelObj.countryCode_code, true));
                 oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();
