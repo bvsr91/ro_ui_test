@@ -405,8 +405,8 @@ sap.ui.define(
                 if (bSel) {
                     this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setEnabled(!bSel);
                     this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setEnabled(!bSel);
-                    // this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setValue("");
-                    // this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setValue(null);
+                    this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setValue("");
+                    this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setValue(null);
                 } else {
                     this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setEnabled(!bSel);
                     this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setEnabled(!bSel);
@@ -416,10 +416,10 @@ sap.ui.define(
                 var bSel = oEvent.getParameter("selected");
                 if (bSel) {
                     this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setEnabled(!bSel);
-                    // this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setValue(null);
+                    this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setValue(null);
 
                 } else {
-                    this.byId(Fragment.createId("FrgAddPricing", "idContFactor")).setEnabled(!bSel);
+                    this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setEnabled(!bSel);
                 }
             },
             onValueHelpRequestCurrency: function (oEvent) {
