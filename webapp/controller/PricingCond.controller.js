@@ -199,7 +199,7 @@ sap.ui.define(
             },
             onLinksDownload: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
-                var bEdit, bDelete;
+                var bEdit = false, bDelete = false;
                 var oRecordCreator;
                 var oSelObj = oInput.getBindingContext().getObject();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
@@ -215,13 +215,15 @@ sap.ui.define(
                     }
                 } else {
                     oRecordCreator = oInput.getBindingContext().getObject().initiator;
-                    if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
-                        && (logOnUserObj.role_role === "CDT")) {
-                        bEdit = true;
-                        bDelete = true;
-                    } else {
-                        bEdit = false;
-                        bDelete = false;
+                    if (oSelObj.ld_initiator === null) {
+                        if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
+                            && (logOnUserObj.role_role === "CDT") && (oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected")) {
+                            bEdit = true;
+                            bDelete = true;
+                        } else {
+                            bEdit = false;
+                            bDelete = false;
+                        }
                     }
                 }
                 var oActionSheet = new sap.m.ActionSheet({
