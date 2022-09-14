@@ -206,7 +206,7 @@ sap.ui.define(
                 if (logOnUserObj.role_role === "LDT") {
                     oRecordCreator = oInput.getBindingContext().getObject().ld_initiator;
                     if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) &&
-                        oSelObj.status_code === "In Progress") {
+                        (oSelObj.status_code === "In Progress" || oSelObj.status_code === "Rejected")) {
                         bEdit = true;
                         bDelete = true;
                     } else {
@@ -216,7 +216,7 @@ sap.ui.define(
                 } else {
                     oRecordCreator = oInput.getBindingContext().getObject().initiator;
                     if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
-                        && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "LDT")) {
+                        && (logOnUserObj.role_role === "CDT")) {
                         bEdit = true;
                         bDelete = true;
                     } else {
