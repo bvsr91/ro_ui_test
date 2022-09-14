@@ -203,7 +203,7 @@ sap.ui.define(
                 var oRecordCreator;
                 var oSelObj = oInput.getBindingContext().getObject();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (logOnUserObj.role_role === "LDT") {
+                if (logOnUserObj.role_role === "LDT" || logOnUserObj.role_role === "SLP") {
                     oRecordCreator = oInput.getBindingContext().getObject().ld_initiator;
                     if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) &&
                         (oSelObj.status_code === "In Progress" || oSelObj.status_code === "Rejected")) {
@@ -217,7 +217,7 @@ sap.ui.define(
                     oRecordCreator = oInput.getBindingContext().getObject().initiator;
                     if (oSelObj.ld_initiator === null) {
                         if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
-                            && (logOnUserObj.role_role === "CDT") && (oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected")) {
+                            && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC") && (oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected")) {
                             bEdit = true;
                             bDelete = true;
                         } else {
@@ -637,10 +637,12 @@ sap.ui.define(
                 var bExRate, bCoFa;
                 switch (oUser.role_role) {
                     case "CDT":
+                    case "SGC":
                         bExRate = !oObj.lo_exchangeRate;
                         bCoFa = !oObj.lo_countryFactor;
                         break;
                     case "LDT":
+                    case "SLP":
                         bExRate = oObj.lo_exchangeRate;
                         bCoFa = oObj.lo_countryFactor;
                         break;

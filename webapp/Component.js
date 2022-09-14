@@ -45,7 +45,7 @@ sap.ui.define([
                         var role = aData[0].role_role;
                         var sRoute;
                         var aSideNav = this.getModel("userModel").getProperty("/navigation");
-                        if (role === "LDT" || role === "LP") {
+                        if (role === "LDT" || role === "LP" || role === "SLP") {
                             aSideNav = aSideNav.filter(a => a.key !== "vendorList");
                             aSideNav = aSideNav.map(function (a) {
                                 if (a.key === "myInbox") {
@@ -115,7 +115,7 @@ sap.ui.define([
                 var oUserModel = this.getModel("userModel");
                 var bVisiblePricingAddBtn = false,
                     bPricingVendorAddBtn = false;
-                if (role === "CDT") {
+                if (role === "CDT" || role === "SGC") {
                     bVisiblePricingAddBtn = true;
                     bPricingVendorAddBtn = true;
                 } else {

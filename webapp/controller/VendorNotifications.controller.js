@@ -117,7 +117,7 @@ sap.ui.define(
                 }
 
                 if (role.role_role) {
-                    if (role.role_role === "CDT" || role.role_role === "LDT") {
+                    if (role.role_role === "CDT") {
                         // sFieldName = "createdBy";
                         this.getView().byId("idSTabVendorNoti").setEntitySet("VendorNotifications_U");
                         this._sEntitySet = "VendorNotifications_U";
@@ -195,7 +195,7 @@ sap.ui.define(
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase() && (logOnUserObj.role_role === "GCM" ||
-                    logOnUserObj.role_role === "LP")) {
+                    logOnUserObj.role_role === "SGC")) {
                     if (oInput.getBindingContext().getObject().status_code === "Approved" ||
                         oInput.getBindingContext().getObject().status_code === "Rejected") {
                         bEdit = false;

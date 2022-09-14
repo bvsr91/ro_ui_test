@@ -192,7 +192,7 @@ sap.ui.define(
                 var oRecordCreator = oInput.getBindingContext().getObject().initiator;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if ((logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
-                    && logOnUserObj.role_role === "CDT") {
+                    && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC")) {
                     bEdit = true;
                     bDelete = true;
                 } else {

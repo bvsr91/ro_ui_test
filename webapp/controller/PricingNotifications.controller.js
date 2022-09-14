@@ -243,7 +243,7 @@ sap.ui.define(
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var oObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if (oObj.userid && oRecordApprover.toLowerCase() === oObj.userid.toLowerCase() && (oObj.role_role === "GCM" ||
-                    oObj.role_role === "LP")) {
+                    oObj.role_role === "LP" || oObj.role_role === "SGC" || oObj.role_role === "SLP")) {
                     if (oInput.getBindingContext().getObject().status_code === "Approved" || oInput.getBindingContext().getObject().status_code === "Rejected") {
                         bEdit = false;
                     } else {

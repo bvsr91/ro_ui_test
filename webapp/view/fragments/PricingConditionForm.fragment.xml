@@ -14,12 +14,12 @@
                 <Input id="idIpManfDesc" value="{manufacturerCodeDesc}" />
                 <Label text="Country"/>
                 <Text id="idIpCountry" text="{countryCode_code}"/>
-                <CheckBox selected="{lo_exchangeRate}" select="onSelectLocalOwnershipEditER" text="Local Ownership Exchange Rate" id="localOwnershipERId" enabled="{= ${userModel>/role/role_role} === 'LDT' ? false: true}"/>
+                <CheckBox selected="{lo_exchangeRate}" select="onSelectLocalOwnershipEditER" text="Local Ownership Exchange Rate" id="localOwnershipERId" enabled="{= ${userModel>/role/role_role} === 'LDT'  || ${userModel>/role/role_role} === 'SLP' ? false: true}"/>
                 <Label text="Local Currency"/>
                 <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom" />
                 <Label text="Exchange Rate"/>
                 <Input id="idExchRate" type="Number" value="{exchangeRate}" />
-                <CheckBox selected="{lo_countryFactor}" select="onSelectLocalOwnershipEditCF" text="Local Ownership Country Factor" id="localOwnershipCFId" enabled="{= ${userModel>/role/role_role} === 'LDT' ? false: true}"/>
+                <CheckBox selected="{lo_countryFactor}" select="onSelectLocalOwnershipEditCF" text="Local Ownership Country Factor" id="localOwnershipCFId" enabled="{= ${userModel>/role/role_role} === 'LDT' || ${userModel>/role/role_role} === 'SLP' ? false: true}"/>
                 <Label text="Country Factor"/>
                 <Input id="idContFactor" type="Number" value="{countryFactor}"/>
                 <Label text="Validity Start"/>

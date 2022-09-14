@@ -67,31 +67,6 @@ sap.ui.define(
             toolPageExpanded: function (bVal) {
                 this.getOwnerComponent().getModel("userModel").setProperty("/isExpanded", bVal);
             },
-            determineVisibilityBasedOnRole: function () {
-                var oVisibleModel = this.getOwnerComponent().getModel("userModel");
-                var oVisibleData = oVisibleModel.getData();
-                var bCudVisible = false,
-                    sRoleName;
-                if (oVisibleData.role === "GCM") {
-                    // Global catalog manager
-                    bCudVisible = false;
-                    sRoleName = "Global Catalog Manager";
-                } else if (oVisibleData.role === "CDT") {
-                    //Central Delivery Team
-                    bCudVisible = true;
-                    sRoleName = "Central Delivery Team";
-                } else if (oVisibleData.role === "LPT") {
-                    //Local Procurement Team
-                    bCudVisible = false;
-                    sRoleName = "Local Procurement Team";
-                } else if (oVisibleData.role === "LDT") {
-                    // Local Delivery Team
-                    bCudVisible = true;
-                    sRoleName = "Local Delivery Team";
-                }
-                oVisibleModel.setProperty("/cudVisible", bCudVisible);
-                oVisibleModel.setProperty("/roleName", sRoleName);
-            },
             setSelKey: function (sKey) {
                 //   sap.ui.getCore().byId("idSN").setSelectedKey(sKey);
                 this.getOwnerComponent()
@@ -164,13 +139,13 @@ sap.ui.define(
                 oData = oModel.getData();
                 role = oData.role;
                 if (role) {
-                    if (role.role_role === "CDT") {
+                    if (role.role_role === "CDT" || role.role_role === "SGC") {
                         if (aCDTRoutes.includes(sRoute)) {
                             oRouter.navTo(sRoute);
                         } else {
                             oRouter.navTo("notFound");
                         }
-                    } else if (role.role_role === "LDT") {
+                    } else if (role.role_role === "LDT" || role.role_role === "SLP") {
                         if (aLDTRoutes.includes(sRoute)) {
                             oRouter.navTo(sRoute);
                         } else {
@@ -214,7 +189,7 @@ sap.ui.define(
                         this.buttonVisibility(role);
                         var sRoute;
                         var aSideNav = this.getModel("userModel").getProperty("/navigation");
-                        if (role === "LDT" || role === "LP") {
+                        if (role === "LDT" || role === "LP" || role === "SLP") {
                             aSideNav = aSideNav.filter(a => a.key !== "vendorList");
                             aSideNav = aSideNav.map(function (a) {
                                 if (a.key === "myInbox") {
@@ -283,7 +258,7 @@ sap.ui.define(
                 var oUserModel = this.getModel("userModel");
                 var bVisiblePricingAddBtn = false,
                     bPricingVendorAddBtn = false;
-                if (role === "CDT") {
+                if (role === "CDT" || role === "SGC") {
                     bVisiblePricingAddBtn = true;
                     bPricingVendorAddBtn = true;
                 } else {
