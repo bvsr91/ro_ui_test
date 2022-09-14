@@ -262,6 +262,7 @@ sap.ui.define(
                     .bindElement({
                         path: sPath,
                     });
+                this.fieldEnable(oCtx);
                 this._oDialog.open();
             },
             onSavePricingData: function (oInput) {
@@ -630,6 +631,27 @@ sap.ui.define(
                     .finally(function () {
                         oSheet.destroy();
                     });
+            },
+            fieldEnable: function (oObj) {
+                var oUser = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+                var bExRate, bCoFa;
+                switch (oUser.role_role) {
+                    case "CDT":
+                        bExRate = !oObj.lo_exchangeRate;
+                        bCoFa = !oObj.lo_countryFactor;
+                        break;
+                    case "LDT":
+                        bExRate = oObj.lo_exchangeRate;
+                        bCoFa = oObj.lo_countryFactor;
+                        break;
+                    default:
+                        bExRate = false;
+                        bCoFa = false;
+                        break;
+                }
+                this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setEnabled(bExRate);
+                this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setEnabled(bExRate);
+                this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setEnabled(bCoFa);
             }
         });
     }

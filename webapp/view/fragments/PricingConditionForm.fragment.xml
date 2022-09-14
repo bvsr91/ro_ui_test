@@ -16,12 +16,12 @@
                 <Text id="idIpCountry" text="{countryCode_code}"/>
                 <CheckBox selected="{lo_exchangeRate}" select="onSelectLocalOwnershipEditER" text="Local Ownership Exchange Rate" id="localOwnershipERId" enabled="{= ${userModel>/role/role_role} === 'LDT' ? false: true}"/>
                 <Label text="Local Currency"/>
-                <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom" enabled="{= ${lo_exchangeRate}=== false ? false: true}"/>
+                <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom" />
                 <Label text="Exchange Rate"/>
-                <Input id="idExchRate" type="Number" value="{exchangeRate}" enabled="{= ${lo_exchangeRate}=== false ? false: true}"/>
+                <Input id="idExchRate" type="Number" value="{exchangeRate}" />
                 <CheckBox selected="{lo_countryFactor}" select="onSelectLocalOwnershipEditCF" text="Local Ownership Country Factor" id="localOwnershipCFId" enabled="{= ${userModel>/role/role_role} === 'LDT' ? false: true}"/>
                 <Label text="Country Factor"/>
-                <Input id="idContFactor" type="Number" value="{countryFactor}" enabled="{= ${lo_countryFactor}=== false ? false: true}"/>
+                <Input id="idContFactor" type="Number" value="{countryFactor}"/>
                 <Label text="Validity Start"/>
                 <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityStart', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
                 <Label text="Validity End"/>

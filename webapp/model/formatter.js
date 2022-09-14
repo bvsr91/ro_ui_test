@@ -30,6 +30,28 @@ sap.ui.define([], function () {
             } else {
                 return "None";
             }
+        },
+        loExchangeRateFormatter: function (bFlag, sRole) {
+            // if (flag === true) {
+            switch (sRole) {
+                case "CDT":
+                    return !bFlag;
+                case "LDT":
+                    return bFlag;
+                default:
+                    return false;
+            }
+            // }
+            // else {
+            //     switch (sRole) {
+            //         case "CDT":
+            //             return false;
+            //         case "LDT":
+            //             return true;
+            //         default:
+            //             return false;
+            //     }
+            // }
         }
     };
 });
