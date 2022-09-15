@@ -1,44 +1,40 @@
-    <mvc:View controllerName="com.ferrero.zmrouiapp.controller.App"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns="sap.m"
-        xmlns:f="sap.f"
-        xmlns:tnt="sap.tnt">
-        <tnt:ToolPage id="app" sideExpanded="{userModel>/isExpanded}" class="sapUiNoMarginBegin sapUiResponsivePadding">
-            <tnt:header>
-                <tnt:ToolHeader>
-                    <Button id="sideNavigationToggleButton" icon="sap-icon://menu2" type="Transparent" press=".onSideNavButtonPress" tooltip="{i18n>collpaseMenuButtonText}">
-                        <layoutData>
-                            <OverflowToolbarLayoutData priority="NeverOverflow"/>
-                        </layoutData>
-                    </Button>
-                    <!-- <SearchField width="10rem"/> -->
-                    <ToolbarSpacer />
-                    <Title text="{userModel>/jwtData/decodeJwtTooken/given_name}" level="H2"/>
-                    <Title text="Role: {userModel>/role/role_role}" class="sapUiMediumMarginBegin sapUiLargeMarginEnd"/>
-                </tnt:ToolHeader>
-            </tnt:header>
-            <tnt:sideContent class="sapUiResponsivePadding">
-                <tnt:SideNavigation id="idSN" expanded="{userModel>/isExpanded}" selectedKey="{userModel>/selectedKey}" itemSelect=".onItemSelect">
-                    <tnt:item>
-                        <tnt:NavigationList items="{
-                            path: 'userModel>/navigation'
+<mvc:View controllerName="com.ferrero.zmrouiapp.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:tnt="sap.tnt">
+    <tnt:ToolPage id="app" sideExpanded="{userModel>/isExpanded}" class="sapUiNoMarginBegin sapUiResponsivePadding">
+        <tnt:header>
+            <tnt:ToolHeader>
+                <Button id="sideNavigationToggleButton" icon="sap-icon://menu2" type="Transparent" press=".onSideNavButtonPress" tooltip="{i18n>collpaseMenuButtonText}">
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow"/>
+                    </layoutData>
+                </Button>
+                <!-- <SearchField width="10rem"/> -->
+                <ToolbarSpacer />
+                <Title text="{userModel>/jwtData/decodeJwtTooken/given_name}" level="H2"/>
+                <Title text="Role: {userModel>/role/role_role}" class="sapUiMediumMarginBegin sapUiLargeMarginEnd"/>
+            </tnt:ToolHeader>
+        </tnt:header>
+        <tnt:sideContent class="sapUiResponsivePadding">
+            <tnt:SideNavigation id="idSN" expanded="{userModel>/isExpanded}" selectedKey="{userModel>/selectedKey}" itemSelect=".onItemSelect">
+                <tnt:item>
+                    <tnt:NavigationList items="{
+                            path: 'userModel>/navigation', templateShareable: false
                         }" id="idNL" itemSelect="onItemSelect" selectedKey="{userModel>/selectedKey}">
-                            <tnt:NavigationListItem text="{path: 'userModel>titleI18nKey', formatter: '.formatter.getBundleText'}" 
-                                icon="{userModel>icon}" expanded="{userModel>expanded}" key="{userModel>key}" items="{userModel>items}">
-                                    <tnt:NavigationListItem
-                                        text="{userModel>title}"
-                                        key="{userModel>key}"
-                                        enabled="{userModel>enabled}" />
-                            </tnt:NavigationListItem>
-                        </tnt:NavigationList>
-                    </tnt:item>
-                </tnt:SideNavigation>
-            </tnt:sideContent>
-            <tnt:mainContents>
-                <App id="mainContents" class="sapUiContentPadding" >
-                    <!-- <f:FlexibleColumnLayout id="layout" layout="{appView>/layout}" backgroundDesign="Translucent">
+                        <tnt:NavigationListItem text="{path: 'userModel>titleI18nKey', formatter: '.formatter.getBundleText'}" icon="{userModel>icon}" expanded="{userModel>expanded}" key="{userModel>key}" items="{path:'userModel>items', templateShareable: false}">
+                            <tnt:NavigationListItem text="{userModel>title}" key="{userModel>key}" enabled="{userModel>enabled}" />
+                        </tnt:NavigationListItem>
+                    </tnt:NavigationList>
+                </tnt:item>
+            </tnt:SideNavigation>
+        </tnt:sideContent>
+        <tnt:mainContents>
+            <App id="mainContents" class="sapUiContentPadding">
+                <!-- <f:FlexibleColumnLayout id="layout" layout="{appView>/layout}" backgroundDesign="Translucent">
                     </f:FlexibleColumnLayout> -->
-                </App>
-            </tnt:mainContents>
-        </tnt:ToolPage>
-    </mvc:View>
+            </App>
+        </tnt:mainContents>
+    </tnt:ToolPage>
+</mvc:View>

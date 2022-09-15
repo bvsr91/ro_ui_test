@@ -11,14 +11,13 @@
                 <Label text="Manufacturer Code" required="true" />
                 <Input id="idIpManf" change="onNameChange" maxLength="" />
                 <Label text="Manufacturer Name" />
-                <Input id="idIpManfDesc" rows="4" />
+                <Input id="idIpManfDesc" />
                 <Label text="Country" />
                 <Input id="idIpCountry" type="Text" placeholder="Enter Country ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCountry" class="sapUiSmallMarginBottom" required="true"/>
                 <Label text="Country Desc" />
                 <Text id="idIpCountryDesc"/>
                 <!-- <Label text=""/> -->
                 <CheckBox id="localOwnershipERId" text="Local Ownership Exchange Rate" select="onSelectLocalOwnershipER"/>
-
                 <Label text="Local Currency"/>
                 <Input id="idIpLocCurr" placeholder="Enter Currency ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom"/>
                 <!-- <Input id="idIpLocCurr" maxLength="3" /> -->
@@ -28,9 +27,11 @@
                 <Label text="Country Factor"/>
                 <Input id="idIpContFact" type="Number" />
                 <Label text="Validity Start"/>
-                <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy"/>
+                <!-- <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" change="onDateChange"/> -->
+                <DatePicker id="validityStartId" displayFormat="dd/MM/yyyy" change="onDateChange"></DatePicker>
                 <Label text="Validity End"/>
-                <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy"/>
+                <DatePicker id="validityEndId" displayFormat="dd/MM/yyyy" change="onDateChange"></DatePicker>
+                <!-- <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" change="onDateChange"/> -->
             </form:content>
         </form:SimpleForm>
         <!-- </content> -->

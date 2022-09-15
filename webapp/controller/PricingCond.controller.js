@@ -13,10 +13,11 @@ sap.ui.define(
         "sap/ui/table/RowAction",
         "sap/ui/table/RowActionItem",
         "sap/ui/table/RowSettings",
-        "sap/ui/export/Spreadsheet"
+        "sap/ui/export/Spreadsheet",
+        "../utils/moment_with_locales"
     ],
     function (
-        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Fragment, MessageBox, formatter, RowAction, RowActionItem, RowSettings, Spreadsheet) {
+        BaseController, JSONModel, Filter, Sorter, FilterOperator, GroupHeaderListItem, Device, Fragment, MessageBox, formatter, RowAction, RowActionItem, RowSettings, Spreadsheet, moment_with_locales) {
         "use strict";
 
         return BaseController.extend("com.ferrero.zmrouiapp.controller.PricingCond", {
@@ -91,13 +92,21 @@ sap.ui.define(
                 var country = this.byId(Fragment.createId("FrgAddPricing", "idIpCountry")).getValue();
                 var countryDesc = this.byId(Fragment.createId("FrgAddPricing", "idIpCountryDesc")).getText();
                 var countryFact = this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).getValue();
-                var validityStartId = this.byId(Fragment.createId("FrgAddPricing", "validityStartId")).getValue();
-                var validityEndId = this.byId(Fragment.createId("FrgAddPricing", "validityEndId")).getValue();
+                var validityStartId = this.byId(Fragment.createId("FrgAddPricing", "validityStartId")).getDateValue();
+                var validityEndId = this.byId(Fragment.createId("FrgAddPricing", "validityEndId")).getDateValue();
                 var localCurreny = this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).getValue();
                 var exchageRate = this.byId(Fragment.createId("FrgAddPricing", "idIpExchRate")).getValue();
                 var bLocalOwnerShipER = this.byId(Fragment.createId("FrgAddPricing", "localOwnershipERId")).getSelected();
                 var bLocalOwnerShipCF = this.byId(Fragment.createId("FrgAddPricing", "localOwnershipCFId")).getSelected();
+                var bStartDateValState = this.byId(Fragment.createId("FrgAddPricing", "validityStartId")).getValueState();
+                var bEndDateValState = this.byId(Fragment.createId("FrgAddPricing", "validityEndId")).getValueState();
+                if (bStartDateValState === "Error" || bEndDateValState === "Error") {
+                    MessageBox.error("Please enter valid date");
+                    return;
+                }
                 var oPayLoad = {};
+                //validityEndId = moment(validityEndId, "YYYYMMDD");
+                //validityStartId = moment(validityStartId, "YYYYMMDD");
                 oPayLoad.manufacturerCode = manufacturerCode === "" ? null : manufacturerCode;
                 // oPayLoad.localManufacturerCode = localDealerManufacturerCode;
                 oPayLoad.countryCode_code = country === "" ? null : country;
@@ -105,8 +114,11 @@ sap.ui.define(
                 oPayLoad.manufacturerCodeDesc = manufacturerCodeDesc;
                 oPayLoad.countryFactor = isNaN(parseInt(countryFact)) && countryFact === "" ? null : parseFloat(countryFact);
                 oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? null : parseFloat(exchageRate);
-                oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
-                oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
+                // oPayLoad.validityStart = !validityStartId.isValid() ? null : this.formatReturnDate(validityStartId);
+                // oPayLoad.validityEnd = !validityEndId.isValid() ? null : this.formatReturnDate(validityEndId);
+                oPayLoad.validityStart = validityStartId === "" ? null : this.formatReturnDate(validityStartId);
+                oPayLoad.validityEnd = validityEndId === "" ? null : this.formatReturnDate(validityEndId);
+
                 oPayLoad.localCurrency_code = localCurreny === "" ? null : localCurreny;
                 oPayLoad.lo_exchangeRate = bLocalOwnerShipER;
                 oPayLoad.lo_countryFactor = bLocalOwnerShipCF;
@@ -152,9 +164,13 @@ sap.ui.define(
                 // var oFilter = new Filter("desc", FilterOperator.Contains, sValue, true);
                 var aFilters = [];
                 aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
-
+                aFilters.push(this.createFilter("code", FilterOperator.Contains, sValue, true));
                 var oBinding = oEvent.getParameter("itemsBinding");
-                oBinding.filter(aFilters);
+                var oFilter = new Filter({
+                    filters: aFilters,
+                    and: false,
+                });
+                oBinding.filter(oFilter);
             },
             createFilter: function (key, operator, value, useToLower) {
                 return new Filter(useToLower ? "tolower(" + key + ")" : key, operator, useToLower ? "'" + value.toLowerCase() + "'" : value);
@@ -272,13 +288,21 @@ sap.ui.define(
                 var manufacturerDesc = this.byId(Fragment.createId("FrgPricingData", "idIpManfDesc")).getValue().trim();
                 var exchangeRate = this.byId(Fragment.createId("FrgPricingData", "idExchRate")).getValue();
                 var countryFactor = this.byId(Fragment.createId("FrgPricingData", "idContFactor")).getValue();
-                var validityStartId = this.byId(Fragment.createId("FrgPricingData", "validityStartId")).getValue();
-                var validityEndId = this.byId(Fragment.createId("FrgPricingData", "validityEndId")).getValue();
+                var validityStartId = this.byId(Fragment.createId("FrgPricingData", "validityStartId")).getDateValue();
+                var validityEndId = this.byId(Fragment.createId("FrgPricingData", "validityEndId")).getDateValue();
                 var bLocalOwnerShipER = this.byId(Fragment.createId("FrgPricingData", "localOwnershipERId")).getSelected();
                 var bLocalOwnerShipCF = this.byId(Fragment.createId("FrgPricingData", "localOwnershipCFId")).getSelected();
                 var localCurreny = this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).getValue();
+                var bStartDateValState = this.byId(Fragment.createId("FrgPricingData", "validityStartId")).getValueState();
+                var bEndDateValState = this.byId(Fragment.createId("FrgPricingData", "validityEndId")).getValueState();
+                if (bStartDateValState === "Error" || bEndDateValState === "Error") {
+                    MessageBox.error("Please enter valid date");
+                    return;
+                }
                 var oPayLoad = {};
                 var oObj = oInput.getSource().getParent().getParent().getController()._editObjContext.getObject();
+                // validityEndId = moment(validityEndId, "YYYYMMDD");
+                // validityStartId = moment(validityStartId, "YYYYMMDD");
                 oPayLoad.manufacturerCodeDesc = manufacturerDesc.trim();
                 oPayLoad.ld_initiator = oObj.ld_initiator;
                 oPayLoad.countryCode_code = oObj.countryCode_code;
@@ -286,8 +310,13 @@ sap.ui.define(
                 // oPayLoad.status_code = "Pending";
                 oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? null : parseFloat(countryFactor);
                 oPayLoad.exchangeRate = isNaN(parseInt(exchangeRate)) && exchangeRate === "" ? null : parseFloat(exchangeRate);
-                oPayLoad.validityStart = validityStartId === "" ? null : new Date(validityStartId).toISOString();
-                oPayLoad.validityEnd = validityEndId === "" ? null : new Date(validityEndId).toISOString();
+                // oPayLoad.validityStart = validityStartId === "" ? null : new Date(Date(validityStartId)).toISOString();
+                // oPayLoad.validityEnd = validityEndId === "" ? null : new Date(Date(validityEndId)).toISOString();
+                // oPayLoad.validityStart = !validityStartId.isValid() ? null : this.formatReturnDate(validityStartId);
+                // oPayLoad.validityEnd = !validityEndId.isValid() ? null : this.formatReturnDate(validityEndId);
+                oPayLoad.validityStart = validityStartId === "" ? null : this.formatReturnDate(validityStartId);
+                oPayLoad.validityEnd = validityEndId === "" ? null : this.formatReturnDate(validityEndId);
+
                 oPayLoad.lo_exchangeRate = bLocalOwnerShipER;
                 oPayLoad.lo_countryFactor = bLocalOwnerShipCF;
                 oPayLoad.localCurrency_code = localCurreny === "" ? null : localCurreny;
@@ -456,14 +485,18 @@ sap.ui.define(
                 oInput.setValue(oSelectedItem.getTitle());
                 // this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", sTextID)).setText(oSelectedItem.getDescription());
             },
-            onSearch: function (oEvent) {
+            onSearchCurrency: function (oEvent) {
                 var sValue = oEvent.getParameter("value");
                 // var oFilter = new Filter("desc", FilterOperator.Contains, sValue, true);
                 var aFilters = [];
-                aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
-
+                aFilters.push(this.createFilter("descr", FilterOperator.Contains, sValue, true));
+                aFilters.push(this.createFilter("code", FilterOperator.Contains, sValue, true));
                 var oBinding = oEvent.getParameter("itemsBinding");
-                oBinding.filter(aFilters);
+                var oFilter = new Filter({
+                    filters: aFilters,
+                    and: false,
+                });
+                oBinding.filter(oFilter);
             },
             handleValueChange: function (oEvent) {
                 this._import(oEvent.getParameter("files") && oEvent.getParameter("files")[0]);
@@ -527,7 +560,7 @@ sap.ui.define(
                     if (aData[a].validityStart) {
                         if (aData[a].validityStart !== "") {
                             // var newData = a.validityStart.replace(/(\d+[/])(\d+[/])/, '$2$1');
-                            var date1 = a.validityStart.split("/");
+                            var date1 = aData[a].validityStart.split("/");
                             var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
                             aData[a].validityStart = d.toISOString();
                         }
@@ -537,7 +570,7 @@ sap.ui.define(
                     }
                     if (aData[a].validityEnd) {
                         if (aData[a].validityEnd !== "") {
-                            var date1 = a.validityEnd.split("/");
+                            var date1 = aData[a].validityEnd.split("/");
                             var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
                             aData[a].validityEnd = d.toISOString();
                         } else {
@@ -654,6 +687,27 @@ sap.ui.define(
                 this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).setEnabled(bExRate);
                 this.byId(Fragment.createId("FrgPricingData", "idExchRate")).setEnabled(bExRate);
                 this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setEnabled(bCoFa);
+            },
+            formatReturnDate: function (oDate) {
+                // var year = new Date(oDate).getFullYear();
+                // var month = ("0" + (new Date(oDate).getMonth() + 1)).slice(-2);
+                // var day = ("0" + new Date(oDate).getDate()).slice(-2);
+                // return year.toString() + "-" + month.toString() + "-" + day.toString() + "T00:00:00.000Z";
+                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                    pattern: "yyyy-MM-dd"
+                });
+                oDate = dateFormat.format(new Date(oDate));
+                return oDate = oDate + "T00:00:00";
+            },
+            onDateChange: function (oEvent) {
+                if (!oEvent.getParameters().valid) {
+                    oEvent.getSource().setValue(null);
+                    oEvent.getSource().setValueState("Error");
+                    oEvent.getSource().setValueStateText("Inavlid Date");
+                } else {
+                    oEvent.getSource().setValueState("None");
+                    oEvent.getSource().setValueStateText("");
+                }
             }
         });
     }

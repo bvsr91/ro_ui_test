@@ -31,6 +31,27 @@
                 </Annotation>
                 <!--<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>-->
             </Annotations>
+            <Annotations Target="Metadata.PricingConditions/localCurrency_code">
+                <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="localCurrency_code" />
+                        <PropertyValue Property="CollectionPath" String="Currencies" />
+                        <PropertyValue Property="SearchSupported" Bool="true" />
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="localCurrency_code" />
+                                    <PropertyValue Property="ValueListProperty" String="code" />
+                                </Record>
+                                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="descr" />
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <!-- <Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/> -->
+            </Annotations>
             <Annotations Target="Metadata.VendorList/countryCode_code">
                 <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
                     <Record>
@@ -50,7 +71,7 @@
                         </PropertyValue>
                     </Record>
                 </Annotation>
-                <!--<Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/>-->
+                <!-- <Annotation Term="com.sap.vocabularies.Common.v1.ValueListWithFixedValues"/> -->
             </Annotations>
             <Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="Metadata.PricingConditions/status_code">
                 <Annotation Term="Common.ValueList">

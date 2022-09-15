@@ -23,10 +23,11 @@
                 <Label text="Country Factor"/>
                 <Input id="idContFactor" type="Number" value="{countryFactor}"/>
                 <Label text="Validity Start"/>
-                <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityStart', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
+                <!-- <DatePicker id="validityStartId" valueFormat="YYYY-MM-dd" displayFormat="dd/MM/YYYY" value="{path:'validityStart', formatter:'.formatter.formatDate'}" change="onDateChange"/> -->
+                <DatePicker id="validityStartId" value="{path: 'validityStart', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd/MM/yyyy', strictParsing: false , UTC: false}}" displayFormat="dd/MM/yyyy" change="onDateChange"></DatePicker>
                 <Label text="Validity End"/>
-                <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" value="{path:'validityEnd', type:'sap.ui.model.type.Date', formatOptions: { style: 'medium', strictParsing: true}}"/>
-
+                <!-- <DatePicker id="validityEndId" valueFormat="YYYY-MM-dd" displayFormat="dd/MM/YYYY" value="{path:'validityEnd', formatter:'.formatter.formatDate'}" change="onDateChange" /> -->
+                <DatePicker id="validityEndId" value="{path: 'validityEnd', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd/MM/yyyy', strictParsing: false , UTC: false}}" displayFormat="dd/MM/yyyy" change="onDateChange"></DatePicker>
             </form:content>
         </form:SimpleForm>
         <!-- </VBox> -->

@@ -41,17 +41,14 @@ sap.ui.define([], function () {
                 default:
                     return false;
             }
-            // }
-            // else {
-            //     switch (sRole) {
-            //         case "CDT":
-            //             return false;
-            //         case "LDT":
-            //             return true;
-            //         default:
-            //             return false;
-            //     }
-            // }
+        },
+        formatDate: function (oDate) {
+            if (oDate !== null) {
+                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                    pattern: "dd/MM/yyyy"
+                });
+                return dateFormat.format(oDate);
+            }
         }
     };
 });

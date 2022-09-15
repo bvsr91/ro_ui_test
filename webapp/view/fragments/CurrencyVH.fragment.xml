@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m"
     xmlns:core="sap.ui.core">
-    <SelectDialog noDataText="No Currencies Found" title="Select Currency" search=".onSearch" confirm=".onValueHelpDialogCurrencyClose" cancel=".onValueHelpDialogCurrencyClose" showClearButton="true" items="{
+    <SelectDialog noDataText="No Currencies Found" title="Select Currency" search=".onSearchCurrency" confirm=".onValueHelpDialogCurrencyClose" cancel=".onValueHelpDialogCurrencyClose" showClearButton="true" items="{
 			path: '/Currencies',
 			sorter: {
 				path: 'code',
