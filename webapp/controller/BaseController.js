@@ -143,25 +143,29 @@ sap.ui.define(
                         if (aCDTRoutes.includes(sRoute)) {
                             oRouter.navTo(sRoute);
                         } else {
-                            oRouter.navTo("notFound");
+                            // oRouter.navTo("notFound");
+                            oRouter.navTo("vendorList");
                         }
                     } else if (role.role_role === "LDT" || role.role_role === "SLP") {
                         if (aLDTRoutes.includes(sRoute)) {
                             oRouter.navTo(sRoute);
                         } else {
-                            oRouter.navTo("notFound");
+                            // oRouter.navTo("notFound");
+                            oRouter.navTo("pricingCond");
                         }
                     } else if (role.role_role === "GCM") {
                         if (aGCMRoutes.includes(sRoute)) {
                             oRouter.navTo(sRoute);
                         } else {
-                            oRouter.navTo("notFound");
+                            // oRouter.navTo("notFound");
+                            oRouter.navTo("vendorList");
                         }
                     } else if (role.role_role === "LP") {
                         if (aLPRoutes.includes(sRoute)) {
                             oRouter.navTo(sRoute);
                         } else {
-                            oRouter.navTo("notFound");
+                            // oRouter.navTo("notFound");
+                            oRouter.navTo("pricingCond");
                         }
                     } else {
                         this.getOwnerComponent().getRouter().navTo("notFound");

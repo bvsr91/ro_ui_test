@@ -40,6 +40,8 @@ sap.ui.define(
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
                     that.routeAuthValidation(oHashChanger.getHash());
                 });
+                this.routeAuthValidation("vendorList");
+                this.prepareMetadata();
 
                 var oModel = this.getOwnerComponent().getModel();
 
@@ -95,8 +97,6 @@ sap.ui.define(
             _onRouteMatched: function () {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("vendorList");
-                this.routeAuthValidation("vendorList");
-                this.prepareMetadata();
             },
 
             handleAddVendor: function () {

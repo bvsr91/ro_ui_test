@@ -45,6 +45,8 @@ sap.ui.define(
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
                     that.routeAuthValidation(oHashChanger.getHash());
                 });
+                this.routeAuthValidation("pricingCond");
+                this.prepareMetadata();
             },
 
             /* =========================================================== */
@@ -68,8 +70,6 @@ sap.ui.define(
             _onRouteMatched: function () {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("pricingCond");
-                this.routeAuthValidation("pricingCond");
-                this.prepareMetadata();
             },
             handleAddPricing: function () {
                 if (!this._DialogAddPricing) {
@@ -535,7 +535,7 @@ sap.ui.define(
             massCreateData: function (aData) {
                 sap.ui.core.BusyIndicator.show();
                 aData = this.dateValidationBeforeUpload(aData);
-                if (aData === false) {
+                if (!aData) {
                     this.openErrorDialog();
                     sap.ui.core.BusyIndicator.hide();
                     return;
@@ -563,36 +563,40 @@ sap.ui.define(
                     if (aData[a].exchangeRate) {
                         aData[a].exchangeRate = isNaN(parseInt(aData[a].exchangeRate)) && aData[a].exchangeRate === "" ? null : parseFloat(aData[a].exchangeRate);
                     }
-                    if (aData[a].validityStart) {
-                        if (aData[a].validityStart !== "") {
-                            // var newData = a.validityStart.replace(/(\d+[/])(\d+[/])/, '$2$1');
-                            // var date1 = aData[a].validityStart.split("/");
-                            // var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
-                            // aData[a].validityStart = d.toISOString();
-                            // aData[a].validityStart = new Date(aData[a].validityStart);
-                            aData[a].validityStart = this.uploadDateFormat(aData[a].validityStart);
-                        }
-                        else {
-                            aData[a].validityStart = null;
-                        }
-                    }
-                    if (aData[a].validityEnd) {
-                        if (aData[a].validityEnd !== "") {
-                            // var date1 = aData[a].validityEnd.split("/");
-                            // var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
-                            // aData[a].validityEnd = d.toISOString();
-                            // aData[a].validityEnd = new Date(aData[a].validityEnd);
-                            aData[a].validityEnd = this.uploadDateFormat(aData[a].validityEnd);
-                        } else {
-                            aData[a].validityEnd = null;
-                        }
-                    }
-                    if (aData[a].lo_exchangeRate === "X" || aData[a].lo_exchangeRate === "x") {
+                    // if (aData[a].validityStart) {
+                    //     if (aData[a].validityStart !== "") {
+                    //         // var newData = a.validityStart.replace(/(\d+[/])(\d+[/])/, '$2$1');
+                    //         // var date1 = aData[a].validityStart.split("/");
+                    //         // var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
+                    //         // aData[a].validityStart = d.toISOString();
+                    //         // aData[a].validityStart = new Date(aData[a].validityStart);
+                    //         aData[a].validityStart = this.uploadDateFormat(aData[a].validityStart);
+                    //     }
+                    //     else {
+                    //         aData[a].validityStart = null;
+                    //     }
+                    // }
+                    // if (aData[a].validityEnd) {
+                    //     if (aData[a].validityEnd !== "") {
+                    //         // var date1 = aData[a].validityEnd.split("/");
+                    //         // var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
+                    //         // aData[a].validityEnd = d.toISOString();
+                    //         // aData[a].validityEnd = new Date(aData[a].validityEnd);
+                    //         aData[a].validityEnd = this.uploadDateFormat(aData[a].validityEnd);
+                    //     } else {
+                    //         aData[a].validityEnd = null;
+                    //     }
+                    // }
+                    if (!aData[a].lo_exchangeRate) {
+                        aData[a].lo_exchangeRate = false;
+                    } else if (aData[a].lo_exchangeRate === "X" || aData[a].lo_exchangeRate === "x") {
                         aData[a].lo_exchangeRate = true;
                         aData[a].exchangeRate = null;
                         aData[a].localCurrency_code = null;
                     }
-                    if (aData[a].lo_countryFactor === "X" || aData[a].lo_countryFactor === "x") {
+                    if (!aData[a].lo_countryFactor) {
+                        aData[a].lo_countryFactor = false;
+                    } else if (aData[a].lo_countryFactor === "X" || aData[a].lo_countryFactor === "x") {
                         aData[a].lo_countryFactor = true;
                         aData[a].countryFactor = null;
                     }
