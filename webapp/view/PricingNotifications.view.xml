@@ -16,8 +16,8 @@
                     <IconTabFilter icon="sap-icon://accept" iconColor="Positive" count="" text="Approved" key="Approved" />
                     <IconTabFilter icon="sap-icon://pending" iconColor="Critical" count="" text="Pending" key="Pending" />
                     <IconTabFilter icon="sap-icon://decline" iconColor="Negative" count="" text="Rejected" key="Rejected" />
-                    <IconTabFilter icon="sap-icon://forward" iconColor="Marker" count="" text="Forwarded" key="Forwarded" visible="{= ${userModel>/role/role_role} === 'LDT' ? true : false}" />
-                    <IconTabFilter icon="sap-icon://in-progress" iconColor="Tile" count="" text="In Progress" key="In Progress" visible="{= ${userModel>/role/role_role} === 'LDT' ? true : false}"/>
+                    <IconTabFilter icon="sap-icon://forward" iconColor="Marker" count="" text="Forwarded" key="Forwarded" visible="{= ${userModel>/role/role_role} === 'LDT' || ${userModel>/role/role_role} === 'SLP' ? true : false}" />
+                    <IconTabFilter icon="sap-icon://in-progress" iconColor="Tile" count="" text="In Progress" key="In Progress" visible="{= ${userModel>/role/role_role} === 'LDT' || ${userModel>/role/role_role} === 'SLP' ? true : false}"/>
 
                 </items>
                 <content>

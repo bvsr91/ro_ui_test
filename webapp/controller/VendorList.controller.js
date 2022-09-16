@@ -42,9 +42,7 @@ sap.ui.define(
                 });
                 this.routeAuthValidation("vendorList");
                 this.prepareMetadata();
-
                 var oModel = this.getOwnerComponent().getModel();
-
                 oModel.attachMetadataLoaded(null, function () {
                     var oMetadata = oModel.getServiceMetadata();
                     console.log(oMetadata);
@@ -97,6 +95,7 @@ sap.ui.define(
             _onRouteMatched: function () {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("vendorList");
+                this.getView().byId("vendSmartTab").rebindTable(true);
             },
 
             handleAddVendor: function () {

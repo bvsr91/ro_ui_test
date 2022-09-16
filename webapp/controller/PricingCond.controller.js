@@ -35,18 +35,14 @@ sap.ui.define(
                 this.getRouter().getRoute("pricingCond").attachPatternMatched(this._onRouteMatched, this);
                 var oMessageManager = sap.ui.getCore().getMessageManager();
                 this.getView().setModel(oMessageManager.getMessageModel(), "message");
-                // this.getRouter().attachBypassed(this.onBypassed, this);
-                // var oModel = this.getOwnerComponent().getModel("mrosrv_v2")
-                // this.getView().setModel(oModel);
-                // this.getView().byId("priceSmartTab").rebindTable();
                 this.extendTable();
                 var that = this;
                 var oHashChanger = new sap.ui.core.routing.HashChanger.getInstance();
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
                     that.routeAuthValidation(oHashChanger.getHash());
                 });
-                this.routeAuthValidation("pricingCond");
                 this.prepareMetadata();
+                this.routeAuthValidation("pricingCond");
             },
 
             /* =========================================================== */
@@ -70,6 +66,7 @@ sap.ui.define(
             _onRouteMatched: function () {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("pricingCond");
+                this.getView().byId("priceSmartTab").rebindTable(true);
             },
             handleAddPricing: function () {
                 if (!this._DialogAddPricing) {
@@ -301,19 +298,13 @@ sap.ui.define(
                 }
                 var oPayLoad = {};
                 var oObj = oInput.getSource().getParent().getParent().getController()._editObjContext.getObject();
-                // validityEndId = moment(validityEndId, "YYYYMMDD");
-                // validityStartId = moment(validityStartId, "YYYYMMDD");
                 oPayLoad.manufacturerCodeDesc = manufacturerDesc.trim();
                 oPayLoad.ld_initiator = oObj.ld_initiator;
                 oPayLoad.countryCode_code = oObj.countryCode_code;
                 oPayLoad.p_notif_uuid = oObj.p_notif_uuid;
-                // oPayLoad.status_code = "Pending";
+                oPayLoad.status_code = "Pending";
                 oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? null : parseFloat(countryFactor);
                 oPayLoad.exchangeRate = isNaN(parseInt(exchangeRate)) && exchangeRate === "" ? null : parseFloat(exchangeRate);
-                // oPayLoad.validityStart = validityStartId === "" ? null : new Date(Date(validityStartId)).toISOString();
-                // oPayLoad.validityEnd = validityEndId === "" ? null : new Date(Date(validityEndId)).toISOString();
-                // oPayLoad.validityStart = !validityStartId.isValid() ? null : this.formatReturnDate(validityStartId);
-                // oPayLoad.validityEnd = !validityEndId.isValid() ? null : this.formatReturnDate(validityEndId);
                 oPayLoad.validityStart = validityStartId === "" ? null : this.formatReturnDate(validityStartId);
                 oPayLoad.validityEnd = validityEndId === "" ? null : this.formatReturnDate(validityEndId);
 

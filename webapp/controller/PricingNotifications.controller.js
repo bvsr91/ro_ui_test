@@ -119,8 +119,11 @@ sap.ui.define(
                         // sFieldName = "createdBy";
                         this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNotifications_U");
                         this._sEntitySet = "PricingNotifications_U";
-                    } else {
+                    } else if (role.role_role === "SGC" || role.role_role === "SLP") {
                         // sFieldName = "approver"
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNotifications_S");
+                        this._sEntitySet = "PricingNotifications_S";
+                    } else {
                         this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNotifications_A");
                         this._sEntitySet = "PricingNotifications_A";
                     }
@@ -135,7 +138,6 @@ sap.ui.define(
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
                         aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
-                        // aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
                         var oFilter = new Filter({
                             filters: aFilter,
                             and: true,
@@ -144,15 +146,31 @@ sap.ui.define(
                     }
                     else if (role.role_role === "LDT") {
                         var aFilter = [];
-                        // aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
+                        if (sTabSelKey === "Forwarded") {
+                            aFilter.push(new Filter("status_code", FilterOperator.EQ, "Forwarded"));
+                            var oFilter = new Filter({
+                                filters: aFilter,
+                                and: true,
+                            });
+                        } else {
+                            aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                            aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
+                            var oFilter = new Filter({
+                                filters: aFilter,
+                                and: true,
+                            });
+                        }
+                        mBindingParams.filters.push(oFilter);
+                    } else if (role.role_role === "SGC") {
+                        var aFilter = [];
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
                         aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
                         var oFilter = new Filter({
                             filters: aFilter,
-                            and: false,
+                            and: true,
                         });
                         mBindingParams.filters.push(oFilter);
-                        // mBindingParams.filters.push();
-                        // mBindingParams.filters.push(new Filter("user", FilterOperator.EQ, role.userid));
                     }
                     else {
                         mBindingParams.filters.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey))
@@ -162,7 +180,6 @@ sap.ui.define(
                         var aFilter = [];
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
-                        // aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
                         var oFilter = new Filter({
                             filters: aFilter,
                             and: true,
@@ -175,6 +192,15 @@ sap.ui.define(
                         var oFilter = new Filter({
                             filters: aFilter,
                             and: false,
+                        });
+                        mBindingParams.filters.push(oFilter);
+                    } else if (role.role_role === "SGC") {
+                        var aFilter = [];
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
+                        var oFilter = new Filter({
+                            filters: aFilter,
+                            and: true,
                         });
                         mBindingParams.filters.push(oFilter);
                     }
