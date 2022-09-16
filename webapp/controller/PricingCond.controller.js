@@ -69,8 +69,8 @@ sap.ui.define(
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("pricingCond");
                 this.routeAuthValidation("pricingCond");
+                this.prepareMetadata();
             },
-
             handleAddPricing: function () {
                 if (!this._DialogAddPricing) {
                     this._DialogAddPricing = sap.ui.xmlfragment(this.createId("FrgAddPricing"), "com.ferrero.zmrouiapp.view.fragments.AddPricingForm", this);
@@ -533,10 +533,16 @@ sap.ui.define(
                 }
             },
             massCreateData: function (aData) {
+                sap.ui.core.BusyIndicator.show();
+                aData = this.dateValidationBeforeUpload(aData);
+                if (aData === false) {
+                    this.openErrorDialog();
+                    sap.ui.core.BusyIndicator.hide();
+                    return;
+                }
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var oTable = this.getView().byId("idPricingCondTab");
-                sap.ui.core.BusyIndicator.show();
                 var that = this,
                     iCounter = 1,
                     oContext = {
@@ -560,9 +566,11 @@ sap.ui.define(
                     if (aData[a].validityStart) {
                         if (aData[a].validityStart !== "") {
                             // var newData = a.validityStart.replace(/(\d+[/])(\d+[/])/, '$2$1');
-                            var date1 = aData[a].validityStart.split("/");
-                            var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
-                            aData[a].validityStart = d.toISOString();
+                            // var date1 = aData[a].validityStart.split("/");
+                            // var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
+                            // aData[a].validityStart = d.toISOString();
+                            // aData[a].validityStart = new Date(aData[a].validityStart);
+                            aData[a].validityStart = this.uploadDateFormat(aData[a].validityStart);
                         }
                         else {
                             aData[a].validityStart = null;
@@ -570,9 +578,11 @@ sap.ui.define(
                     }
                     if (aData[a].validityEnd) {
                         if (aData[a].validityEnd !== "") {
-                            var date1 = aData[a].validityEnd.split("/");
-                            var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
-                            aData[a].validityEnd = d.toISOString();
+                            // var date1 = aData[a].validityEnd.split("/");
+                            // var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
+                            // aData[a].validityEnd = d.toISOString();
+                            // aData[a].validityEnd = new Date(aData[a].validityEnd);
+                            aData[a].validityEnd = this.uploadDateFormat(aData[a].validityEnd);
                         } else {
                             aData[a].validityEnd = null;
                         }
@@ -708,6 +718,81 @@ sap.ui.define(
                     oEvent.getSource().setValueState("None");
                     oEvent.getSource().setValueStateText("");
                 }
+            },
+            uploadDateFormat: function (sDate) {
+                var oMoment = moment(sDate, "DD/MM/YYYY");
+                if (oMoment.isValid()) {
+                    // oMoment.toDate();
+                    var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                        pattern: "yyyy-MM-dd"
+                    });
+                    var oDate = dateFormat.format(new Date(oMoment.toDate()));
+                    return oDate = oDate + "T00:00:00";
+                } else {
+                    return "Error";
+                }
+            },
+            dateValidationBeforeUpload: function (aData) {
+                var oUserModel = this.getOwnerComponent().getModel("userModel");
+                oUserModel.setProperty("/aErrors", []);
+                var aErrors = [],
+                    oError = {},
+                    aPricingMetadata = oUserModel.getProperty("/aPricingMetadata");
+                for (var a = 0; a < aData.length; a++) {
+                    var bError = false,
+                        oError = {};
+                    if (aData[a].validityStart && aData[a].validityStart !== "") {
+                        var sDate = this.uploadDateFormat(aData[a].validityStart);
+                        if (sDate !== "Error") {
+                            aData[a].validityStart = sDate;
+                        } else {
+                            bError = true;
+                            oError.Error = "Invalid Start Date";
+                            oError.Row = a + 2;
+                            oError.Value = aData[a].validityStart;
+                        }
+                    } else {
+                        aData[a].validityStart = null;
+                    }
+                    if (aData[a].validityEnd && aData[a].validityEnd !== "") {
+                        var sDate = this.uploadDateFormat(aData[a].validityEnd);
+                        if (sDate !== "Error") {
+                            aData[a].validityEnd = sDate;
+                        } else {
+                            if (!bError) {
+                                oError.Error = "Invalid End Date";
+                                oError.Row = a + 2;
+                                oError.Value = aData[a].validityEnd;
+                            } else {
+                                oError.Error = oError.Error + ", End Date";
+                                oError.Value = oError.Value + ", " + aData[a].validityEnd;
+                            }
+                        }
+                    } else {
+                        aData[a].validityEnd = null;
+                    }
+                    if (oError.Row) {
+                        aErrors.push(oError);
+                    }
+                }
+                if (aErrors.length > 0) {
+                    oUserModel.setProperty("/aErrors", aErrors);
+                    return false;
+                } else {
+                    return aData;
+                }
+            },
+            openErrorDialog: function () {
+                if (!this._oDialogErrorLog) {
+                    this._oDialogErrorLog = sap.ui.xmlfragment(this.createId("fragmentIdErrorLog"), "com.ferrero.zmrouiapp.view.fragments.UploadError",
+                        this);
+                    this.getView().addDependent(this._oDialogErrorLog);
+                }
+                this._oDialogErrorLog.open();
+            },
+            handleClose: function () {
+                this._oDialogErrorLog.close();
+                this.dialogFrafment.destroy(true);
             }
         });
     }

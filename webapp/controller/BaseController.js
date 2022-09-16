@@ -417,6 +417,25 @@ sap.ui.define(
                         oReq.Pricing_Conditions_countryCode_code;
                 }
                 return sMsg;
+            },
+            prepareMetadata: function () {
+                var oUserModel = this.getOwnerComponent().getModel("userModel");
+                oUserModel.setProperty("/aVendorMetadata", []);
+                oUserModel.setProperty("/aPricingMetadata", []);
+                var bMetaFailed = this.getOwnerComponent().getModel().isMetadataLoadingFailed();
+                if (bMetaFailed === true) {
+                    MessageBox.error("Failed to load metadata");
+                    return;
+                }
+                var aSchema = this.getOwnerComponent().getModel().getMetaModel().oMetadata.oMetadata.dataServices.schema;
+                if (aSchema.length > 0) {
+                    var aVendorEntity = aSchema[0].entityType.filter(a => a.name === "VendorList");
+                    var aPricingEntity = aSchema[0].entityType.filter(a => a.name === "PricingConditions");
+                    var aVendorMetadata = aVendorEntity[0].property;
+                    var aPricingMetadata = aPricingEntity[0].property;
+                    oUserModel.setProperty("/aVendorMetadata", aVendorMetadata);
+                    oUserModel.setProperty("/aPricingMetadata", aPricingMetadata);
+                }
             }
         });
     }

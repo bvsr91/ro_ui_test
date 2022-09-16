@@ -96,6 +96,7 @@ sap.ui.define(
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 this.setSelKey("vendorList");
                 this.routeAuthValidation("vendorList");
+                this.prepareMetadata();
             },
 
             handleAddVendor: function () {

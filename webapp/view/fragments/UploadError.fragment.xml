@@ -1,0 +1,32 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog id="idDlgErrorLog" titleAlignment="Center" title="Errors" resizable="true" class="sapUiSizeCompact" draggable="true">
+        <content>
+            <Table id="iTableErrorLog" items="{userModel>/aErrors}" popinLayout="GridSmall">
+                <columns>
+                    <Column width="5rem">
+                        <Label design="Bold" text="Row"/>
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet" popinDisplay="Inline">
+                        <Label design="Bold" text="Error"/>
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet" width="15rem" popinDisplay="Inline">
+                        <Label design="Bold" text="Value" wrapping="true"/>
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{userModel>Row}"/>
+                            <Text text="{userModel>Error}"/>
+                            <Text text="{userModel>Value}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        <buttons>
+            <Button text="Close" type="Reject" press="handleClose"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
