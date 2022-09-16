@@ -703,15 +703,15 @@ sap.ui.define(
                 this.byId(Fragment.createId("FrgPricingData", "idContFactor")).setEnabled(bCoFa);
             },
             formatReturnDate: function (oDate) {
-                // var year = new Date(oDate).getFullYear();
-                // var month = ("0" + (new Date(oDate).getMonth() + 1)).slice(-2);
-                // var day = ("0" + new Date(oDate).getDate()).slice(-2);
-                // return year.toString() + "-" + month.toString() + "-" + day.toString() + "T00:00:00.000Z";
-                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-                    pattern: "yyyy-MM-dd"
-                });
-                oDate = dateFormat.format(new Date(oDate));
-                return oDate = oDate + "T00:00:00";
+                if (oDate !== null) {
+                    var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                        pattern: "yyyy-MM-dd"
+                    });
+                    oDate = dateFormat.format(new Date(oDate));
+                    return oDate = oDate + "T00:00:00";
+                } else {
+                    return null;
+                }
             },
             onDateChange: function (oEvent) {
                 if (!oEvent.getParameters().valid) {
