@@ -297,12 +297,14 @@ sap.ui.define(
                     oModel.update(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabVendorNoti").rebindTable(true);
+                            this.getOwnerComponent().getModel().refresh();
                             // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
+                            this.getOwnerComponent().getModel().refresh();
                             resolve(error);
-                        }
+                        }.bind(this)
                     });
                 }.bind(this));
             },
@@ -385,12 +387,14 @@ sap.ui.define(
                     oModel.create(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabVendorNoti").rebindTable(true);
+                            this.getOwnerComponent().getModel().refresh();
                             // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
+                            this.getOwnerComponent().getModel().refresh();
                             resolve(error);
-                        }
+                        }.bind(this)
                     });
                 }.bind(this));
             },

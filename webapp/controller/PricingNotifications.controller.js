@@ -137,6 +137,7 @@ sap.ui.define(
                         var aFilter = [];
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Deleted"));
                         aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
                         var oFilter = new Filter({
                             filters: aFilter,
@@ -154,6 +155,7 @@ sap.ui.define(
                             });
                         } else {
                             aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
+                            aFilter.push(new Filter("status_code", FilterOperator.NE, "Deleted"));
                             aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
                             var oFilter = new Filter({
                                 filters: aFilter,
@@ -165,6 +167,7 @@ sap.ui.define(
                         var aFilter = [];
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Deleted"));
                         aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
                         var oFilter = new Filter({
                             filters: aFilter,
@@ -180,6 +183,7 @@ sap.ui.define(
                         var aFilter = [];
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Deleted"));
                         var oFilter = new Filter({
                             filters: aFilter,
                             and: true,
@@ -189,6 +193,7 @@ sap.ui.define(
                         var aFilter = [];
                         aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
                         aFilter.push(new Filter("status_code", FilterOperator.EQ, "Forwarded"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Deleted"));
                         var oFilter = new Filter({
                             filters: aFilter,
                             and: false,
@@ -198,6 +203,7 @@ sap.ui.define(
                         var aFilter = [];
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "In Progress"));
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "Forwarded"));
+                        aFilter.push(new Filter("status_code", FilterOperator.NE, "Deleted"));
                         var oFilter = new Filter({
                             filters: aFilter,
                             and: true,
@@ -310,19 +316,21 @@ sap.ui.define(
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
+
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oActionUriParameters = {
                     uuid: oSelObj.uuid,
                     Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
                     Pricing_Conditions_countryCode_code: oSelObj.Pricing_Conditions_countryCode_code,
-                    completionDate: new Date().toISOString(),
                     approvedDate: new Date().toISOString(),
                     approver: logOnUserObj.userid,
                     status_code: "Approved"
                 };
-                var oPayLoadPC = {
-                    status_code: "Approved"
-                };
+                if (logOnUserObj.role_role === "GCM" || logOnUserObj.role_role === "SGC") {
+                    oActionUriParameters.completionDate = new Date().toISOString();
+                } else if (logOnUserObj.role_role === "LP" || logOnUserObj.role_role === "SLP") {
+                    oActionUriParameters.local_completionDate = new Date().toISOString();
+                }
                 var sPath = "/PricingNotifications(guid'" + oSelObj.uuid + "')";
                 sap.ui.core.BusyIndicator.show();
                 const info = await this.updatePricingRecord(oModel, sPath, oActionUriParameters);
@@ -352,12 +360,14 @@ sap.ui.define(
                     oModel.update(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+                            this.getOwnerComponent().getModel().refresh();
                             // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
+                            this.getOwnerComponent().getModel().refresh();
                             resolve(error);
-                        }
+                        }.bind(this)
                     });
                 }.bind(this));
             },
@@ -405,6 +415,7 @@ sap.ui.define(
                         MessageBox.success("Record Accepted Successfully,You can work on the Request!!");
                     }.bind(this),
                     error: function (error) {
+                        this.getOwnerComponent().getModel().refresh();
                         sap.ui.core.BusyIndicator.hide();
                         this.errorHandling(error);
                     }.bind(this)
@@ -492,8 +503,9 @@ sap.ui.define(
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
+                            this.getOwnerComponent().getModel().refresh();
                             resolve(error);
-                        }
+                        }.bind(this)
                     });
                 }.bind(this));
             },
@@ -503,12 +515,14 @@ sap.ui.define(
                     oModel.create(sPath, oPayLoad, {
                         success: function (oData) {
                             this.getView().byId("idSTabPrcingNoti").rebindTable(true);
+                            this.getOwnerComponent().getModel().refresh();
                             // this._oPopover.close();
                             resolve(oData);
                         }.bind(this),
                         error: function (error) {
+                            this.getOwnerComponent().getModel().refresh();
                             resolve(error);
-                        }
+                        }.bind(this)
                     });
                 }.bind(this));
             },
@@ -575,11 +589,16 @@ sap.ui.define(
                         uuid: a.uuid,
                         Pricing_Conditions_manufacturerCode: aData[a].Pricing_Conditions_manufacturerCode,
                         Pricing_Conditions_countryCode_code: aData[a].Pricing_Conditions_countryCode_code,
-                        completionDate: new Date().toISOString(),
                         approvedDate: new Date().toISOString(),
                         approver: logOnUserObj.userid,
                         status_code: "Approved"
                     };
+                    if (logOnUserObj.role_role === "GCM" || logOnUserObj.role_role === "SGC") {
+                        oActionUriParameters.completionDate = new Date().toISOString();
+                    } else if (logOnUserObj.role_role === "LP" || logOnUserObj.role_role === "SLP") {
+                        oActionUriParameters.local_completionDate = new Date().toISOString();
+                    }
+
                     oContext.update.push({
                         "entityName": "/PricingNotifications(guid'" + aData[a].uuid + "')", "payload": oActionUriParameters, "iSelIndex": selectedValues[a] + 1
                     });

@@ -63,11 +63,13 @@ sap.ui.define(
                         console.log(oData);
                         this.onCloseVendor();
                         // this.getView().setBusy(false);
+                        this.getOwnerComponent().getModel().refresh();
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record created successfully");
                     }.bind(this),
                     error: function (error) {
                         sap.ui.core.BusyIndicator.hide();
+                        this.getOwnerComponent().getModel().refresh();
                         this.getView().byId("idUiTab").setBusy(false);
                         this.errorHandling(error);
                     }.bind(this)
@@ -128,6 +130,7 @@ sap.ui.define(
                         this.onCloseVendor();
                         // this.getView().setBusy(false);
                         this.getView().byId("OpenDialog").close();
+                        this.getOwnerComponent().getModel().refresh();
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record created successfully");
                         this.removePrePopulateData();
@@ -135,6 +138,7 @@ sap.ui.define(
                     error: function (error) {
                         console.log(error);
                         sap.ui.core.BusyIndicator.hide();
+                        this.getOwnerComponent().getModel().refresh();
                         this.getView().byId("idUiTab").setBusy(false);
                         this.errorHandling(error);
                     }.bind(this)
@@ -263,11 +267,13 @@ sap.ui.define(
                         console.log(oData);
                         this.onCloseVendorData();
                         sap.ui.core.BusyIndicator.hide();
+                        this.getOwnerComponent().getModel().refresh();
                         MessageBox.success("Record updated successfully");
                     }.bind(this),
                     error: function (error) {
                         console.log(error);
                         sap.ui.core.BusyIndicator.hide();
+                        this.getOwnerComponent().getModel().refresh();
                         this.getView().byId("idUiTab").setBusy(false);
                         this.errorHandling(error);
                     }.bind(this)
@@ -295,11 +301,13 @@ sap.ui.define(
                 oModel.update(oContext.sPath, oPayLoad, {
                     success: function (oData) {
                         sap.ui.core.BusyIndicator.hide();
+                        this.getOwnerComponent().getModel().refresh();
                         MessageBox.success("Record Deleted successfully");
                     }.bind(this),
                     error: function (error) {
                         sap.ui.core.BusyIndicator.hide();
                         this.getView().byId("idUiTab").setBusy(false);
+                        this.getOwnerComponent().getModel().refresh();
                         this.errorHandling(error);
                     }.bind(this)
                 });

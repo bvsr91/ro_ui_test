@@ -251,7 +251,7 @@ sap.ui.define(
                     if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase()) &&
                         (oSelObj.status_code === "In Progress" || oSelObj.status_code === "Rejected")) {
                         bEdit = true;
-                        bDelete = true;
+                        bDelete = false;
                     } else {
                         bEdit = false;
                         bDelete = false;
@@ -333,13 +333,13 @@ sap.ui.define(
                     sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
                 }
                 if (!bLocalOwnerShipER) {
-                    if (exchageRate === "" || localCurreny === "") {
+                    if (exchangeRate === "" || localCurreny === "") {
                         bFinalValidation = false;
                         sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Exchange Rate and Local Currency are mandatory when Local Ownership for ExchangeRate is not checked");
                     }
                 }
                 if (!bLocalOwnerShipCF) {
-                    if (countryFact === "") {
+                    if (countryFactor === "") {
                         bFinalValidation = false;
                         sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Country Factor is mandatory when Local Ownership for Country Factor is not checked");
                     }
@@ -383,12 +383,13 @@ sap.ui.define(
                     success: function (oData) {
                         console.log(oData);
                         this.onClosePricingData();
-                        // this.getView().setBusy(false);
+                        this.getOwnerComponent().getModel().refresh();
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record updated successfully");
                     }.bind(this),
                     error: function (error) {
                         sap.ui.core.BusyIndicator.hide();
+                        this.getOwnerComponent().getModel().refresh();
                         this.errorHandling(error);
                         this.getView().byId("idPricingCondTab").setBusy(false);
                     }.bind(this)
@@ -425,10 +426,12 @@ sap.ui.define(
                     success: function (oData) {
                         sap.ui.core.BusyIndicator.hide();
                         MessageBox.success("Record Deleted successfully");
+                        this.getOwnerComponent().getModel().refresh();
                     }.bind(this),
                     error: function (error) {
                         sap.ui.core.BusyIndicator.hide();
                         this.getView().byId("idPricingCondTab").setBusy(false);
+                        this.getOwnerComponent().getModel().refresh();
                         this.errorHandling(error);
                     }.bind(this)
                 });
