@@ -41,7 +41,7 @@ sap.ui.define(
                     that.routeAuthValidation(oHashChanger.getHash());
                 });
                 this.routeAuthValidation("vendorList");
-                this.prepareMetadata();
+                // this.prepareMetadata();
                 var oModel = this.getOwnerComponent().getModel();
                 oModel.attachMetadataLoaded(null, function () {
                     var oMetadata = oModel.getServiceMetadata();

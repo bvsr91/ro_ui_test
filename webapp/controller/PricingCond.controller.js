@@ -41,7 +41,7 @@ sap.ui.define(
                 oHashChanger.attachEvent("hashChanged", function (oEvent) {
                     that.routeAuthValidation(oHashChanger.getHash());
                 });
-                this.prepareMetadata();
+                // this.prepareMetadata();
                 this.routeAuthValidation("pricingCond");
             },
 
@@ -87,7 +87,6 @@ sap.ui.define(
                 var manufacturerCode = this.byId(Fragment.createId("FrgAddPricing", "idIpManf")).getValue();
                 var manufacturerCodeDesc = this.byId(Fragment.createId("FrgAddPricing", "idIpManfDesc")).getValue();
                 var country = this.byId(Fragment.createId("FrgAddPricing", "idIpCountry")).getValue();
-                var countryDesc = this.byId(Fragment.createId("FrgAddPricing", "idIpCountryDesc")).getText();
                 var countryFact = this.byId(Fragment.createId("FrgAddPricing", "idIpContFact")).getValue();
                 var validityStartId = this.byId(Fragment.createId("FrgAddPricing", "validityStartId")).getDateValue();
                 var validityEndId = this.byId(Fragment.createId("FrgAddPricing", "validityEndId")).getDateValue();
@@ -97,22 +96,53 @@ sap.ui.define(
                 var bLocalOwnerShipCF = this.byId(Fragment.createId("FrgAddPricing", "localOwnershipCFId")).getSelected();
                 var bStartDateValState = this.byId(Fragment.createId("FrgAddPricing", "validityStartId")).getValueState();
                 var bEndDateValState = this.byId(Fragment.createId("FrgAddPricing", "validityEndId")).getValueState();
+                var bFinalValidation = true, sFinalMsg = "", sErrorMsg = "";
+                if (manufacturerCode === "") {
+                    bFinalValidation = false;
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Manufacturer code is mandatory");
+                }
+                if (country === "") {
+                    bFinalValidation = false;
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Country Code is mandatory");
+                }
                 if (bStartDateValState === "Error" || bEndDateValState === "Error") {
-                    MessageBox.error("Please enter valid date");
+                    bFinalValidation = false;
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Please enter valid date");
+                }
+                var bValidEndDate = this.validateStartEndDate(validityStartId, validityEndId);
+                if (!bValidEndDate) {
+                    bFinalValidation = false;
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+                }
+                if (!bLocalOwnerShipER) {
+                    if (exchageRate === "" || localCurreny === "") {
+                        bFinalValidation = false;
+                        sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Exchange Rate and Local Currency are mandatory when Local Ownership for ExchangeRate is not checked");
+                    }
+                }
+                if (!bLocalOwnerShipCF) {
+                    if (countryFact === "") {
+                        bFinalValidation = false;
+                        sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Country Factor is mandatory when Local Ownership for Country Factor is not checked");
+                    }
+                }
+                if (!bFinalValidation) {
+                    MessageBox.show(
+                        sFinalMsg,
+                        {
+                            icon: MessageBox.Icon.ERROR,
+                            title: "Validation Errors"
+                        }
+                    );
                     return;
                 }
                 var oPayLoad = {};
-                //validityEndId = moment(validityEndId, "YYYYMMDD");
-                //validityStartId = moment(validityStartId, "YYYYMMDD");
                 oPayLoad.manufacturerCode = manufacturerCode === "" ? null : manufacturerCode;
-                // oPayLoad.localManufacturerCode = localDealerManufacturerCode;
                 oPayLoad.countryCode_code = country === "" ? null : country;
-                // oPayLoad.countryDesc = countryDesc;
                 oPayLoad.manufacturerCodeDesc = manufacturerCodeDesc;
                 oPayLoad.countryFactor = isNaN(parseInt(countryFact)) && countryFact === "" ? null : parseFloat(countryFact);
                 oPayLoad.exchangeRate = isNaN(parseInt(exchageRate)) && exchageRate === "" ? null : parseFloat(exchageRate);
-                // oPayLoad.validityStart = !validityStartId.isValid() ? null : this.formatReturnDate(validityStartId);
-                // oPayLoad.validityEnd = !validityEndId.isValid() ? null : this.formatReturnDate(validityEndId);
+
                 oPayLoad.validityStart = validityStartId === "" ? null : this.formatReturnDate(validityStartId);
                 oPayLoad.validityEnd = validityEndId === "" ? null : this.formatReturnDate(validityEndId);
 
@@ -227,7 +257,7 @@ sap.ui.define(
                         bDelete = false;
                     }
                 } else {
-                    oRecordCreator = oInput.getBindingContext().getObject().initiator;
+                    oRecordCreator = oInput.getBindingContext().getObject().createdBy;
                     if (oSelObj.ld_initiator === null) {
                         if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
                             && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC") && (oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected")) {
@@ -294,6 +324,11 @@ sap.ui.define(
                 var bEndDateValState = this.byId(Fragment.createId("FrgPricingData", "validityEndId")).getValueState();
                 if (bStartDateValState === "Error" || bEndDateValState === "Error") {
                     MessageBox.error("Please enter valid date");
+                    return;
+                }
+                var bValidEndDate = this.validateStartEndDate(validityStartId, validityEndId);
+                if (!bValidEndDate) {
+                    MessageBox.error("Validity End date must greater than Start date");
                     return;
                 }
                 var oPayLoad = {};
@@ -788,6 +823,43 @@ sap.ui.define(
             handleClose: function () {
                 this._oDialogErrorLog.close();
                 this.dialogFrafment.destroy(true);
+            },
+            validateStartEndDate: function (startDate, endDate) {
+                if (startDate !== null || endDate !== null) {
+                    if (endDate > startDate) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            },
+            prepareErrorMsg: function (sFinalMsg, sMsg) {
+                if (sFinalMsg !== "") {
+                    sFinalMsg = sFinalMsg + ", " + sMsg;
+                } else {
+                    sFinalMsg = sMsg;
+                }
+                return sFinalMsg;
+            },
+            onLiveChange: function (oEvent) {
+                var value = oEvent.getSource().getValue();
+                var regexp = /^[0-9]{0,2}.?[0-9]{0,2}$/
+                var bNotnumber = isNaN(value);
+                if (bNotnumber === true) {
+                    oEvent.getSource().setValue(value.substring(0, value.length - 1));
+                } else {
+                    if (value.split(".")[0].length <= 2) {
+                        if (!regexp.test(Number(value))) {
+                            oEvent.getSource().setValue(value.substring(0, value.length - 1));
+                        }
+                    } else {
+                        var sOldVal = oEvent.getSource()._lastValue !== "" ? oEvent.getSource()._lastValue : oEvent.getSource()._sTypedInValue;
+                        oEvent.getSource().setValue(sOldVal);
+                    }
+
+                }
             }
         });
     }
