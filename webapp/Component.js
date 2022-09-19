@@ -27,6 +27,7 @@ sap.ui.define([
                 this.setModel(models.createDeviceModel(), "device");
                 this.prepareUserModel();
                 this.validateUser();
+                // this.getCountryCodes();
             },
             validateUser: async function () {
                 var oModel = this.getModel();
@@ -124,6 +125,13 @@ sap.ui.define([
                 }
                 oUserModel.setProperty("/bVisiblePricingAddBtn", bVisiblePricingAddBtn);
                 oUserModel.setProperty("/bPricingVendorAddBtn", bPricingVendorAddBtn);
+            },
+            getCountryCodes: async function () {
+                var oModel = this.getModel();
+                var oData = await $.get(oModel.sServiceUrl + '/CountriesCodeList');
+                if (oData.d.results) {
+                    this.getModel("userModel").setProperty("/countryCodes", oData.d.results);
+                }
             }
         });
     }

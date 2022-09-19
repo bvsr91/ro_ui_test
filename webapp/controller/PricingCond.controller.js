@@ -69,6 +69,9 @@ sap.ui.define(
                 this.getView().byId("priceSmartTab").rebindTable(true);
             },
             handleAddPricing: function () {
+                if (this._DialogAddPricing) {
+                    this._DialogAddPricing = null;
+                }
                 if (!this._DialogAddPricing) {
                     this._DialogAddPricing = sap.ui.xmlfragment(this.createId("FrgAddPricing"), "com.ferrero.zmrouiapp.view.fragments.AddPricingForm", this);
                     this.getView().addDependent(this._DialogAddPricing);
@@ -192,6 +195,8 @@ sap.ui.define(
                 var aFilters = [];
                 aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
                 aFilters.push(this.createFilter("code", FilterOperator.Contains, sValue, true));
+                // aFilters.push(new Filter("desc", FilterOperator.Contains, sValue, true));
+                // aFilters.push(new Filter("code", FilterOperator.Contains, sValue, true));
                 var oBinding = oEvent.getParameter("itemsBinding");
                 var oFilter = new Filter({
                     filters: aFilters,
@@ -297,6 +302,9 @@ sap.ui.define(
             open_Dialog: function (editObj) {
                 var oCtx = editObj.getObject();
                 var sPath = editObj.getPath();
+                if (this._oDialog) {
+                    this._oDialog = null;
+                }
                 if (!this._oDialog) {
                     this._oDialog = sap.ui.xmlfragment(this.createId("FrgPricingData"), "com.ferrero.zmrouiapp.view.fragments.PricingConditionForm", this);
                     this.getView().addDependent(this._oDialog);

@@ -40,7 +40,11 @@
                             <f:FormElement label="Country">
                                 <f:fields>
                                     <!-- <Input id="idIpCountry"/> -->
-                                    <Input id="idIpCountry" type="Text" placeholder="Enter Country ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCountry" class="sapUiSmallMarginBottom" required="true"/>
+                                    <Input id="idIpCountry" type="Text" placeholder="Enter Country ..." showValueHelp="true" valueHelpOnly="false" valueHelpRequest=".onValueHelpRequestCountry" class="sapUiSmallMarginBottom" required="true" suggest="onSuggest" suggestionItems="{path: 'userModel>/countryCodes'}" showSuggestion="true" enableSuggestionsHighlighting="true">
+                                        <suggestionItems>
+                                            <SuggestionItem text="{userModel>desc}" key="{userModel>code}"/>
+                                        </suggestionItems>
+                                    </Input>
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement label="Country Desc">

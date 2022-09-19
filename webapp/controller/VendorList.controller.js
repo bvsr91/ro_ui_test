@@ -101,6 +101,10 @@ sap.ui.define(
             },
 
             handleAddVendor: function () {
+                if (this._DialogAddVendor) {
+                    this._DialogAddVendor.destroy(true);
+                    this._DialogAddVendor = null;
+                }
                 if (!this._DialogAddVendor) {
                     this._DialogAddVendor = sap.ui.xmlfragment(this.createId("FrgAddVendorData"), "com.ferrero.zmrouiapp.view.fragments.AddVendorForm", this);
                     this.getView().addDependent(this._DialogAddVendor);
@@ -340,31 +344,63 @@ sap.ui.define(
             onValueHelpRequestCountry: function (oEvent) {
                 this.openCountryValueHelpDialog(oEvent);
             },
-            _configValueHelpDialog: function () {
-                // var sInputValue = this.byId("idIpCountry").getValue();
+            _configValueHelpDialog: function (oEvent) {
+                var sInputValue = this.byId("idIpCountry").getValue();
+                if (sInputValue !== "") {
+                    var aFilters = [];
+                    // aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
+                    aFilters.push(this.createFilter("code", FilterOperator.Contains, sInputValue, true));
+                    var oBinding = oEvent.getParameter("itemsBinding");
+                    var oFilter = new Filter({
+                        filters: aFilters,
+                        and: false,
+                    });
+                    var oBinding = oEvent.getParameter("itemsBinding");
+                    oBinding.filter(oFilter);
+                }
                 // this.byId(sap.ui.core.Fragment.createId("FrgAddVendorData", "idIpCountry")).getValue();
             },
 
             onValueHelpDialogClose: function (oEvent) {
                 // this.countryValueHelpClose(oEvent, "FrgAddVendorData", "idIpCountry", "idIpCountryDesc")
-                var desc = oEvent.getParameter("selectedItem").getDescription();
-                var code = oEvent.getParameter("selectedItem").getTitle();
-                this.byId("idIpCountry").setValue(code);
-                this.byId("idIpCountryDesc").setText(desc);
+                if (oEvent.getParameter("selectedItem")) {
+                    var desc = oEvent.getParameter("selectedItem").getDescription();
+                    var code = oEvent.getParameter("selectedItem").getTitle();
+                    this.byId("idIpCountry").setValue(code);
+                    this.byId("idIpCountryDesc").setText(desc);
+                } else {
+                    this.byId("idIpCountry").setValue("");
+                    this.byId("idIpCountryDesc").setText("");
+                }
             },
             onSearch: function (oEvent) {
                 var sValue = oEvent.getParameter("value");
                 // var oFilter = new Filter("desc", FilterOperator.Contains, sValue, true);
                 var aFilters = [];
+                // aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
+                // aFilters.push(new Filter("desc", FilterOperator.Contains, sValue, true));
+                // aFilters.push(new Filter("code", FilterOperator.Contains, sValue, true));
                 aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
-
+                aFilters.push(this.createFilter("code", FilterOperator.Contains, sValue, true));
                 var oBinding = oEvent.getParameter("itemsBinding");
-                oBinding.filter(aFilters);
+                var oFilter = new Filter({
+                    filters: aFilters,
+                    and: false,
+                });
+                var oBinding = oEvent.getParameter("itemsBinding");
+                oBinding.filter(oFilter);
             },
             createFilter: function (key, operator, value, useToLower) {
                 return new Filter(useToLower ? "tolower(" + key + ")" : key, operator, useToLower ? "'" + value.toLowerCase() + "'" : value);
             },
             onOpenAddDialog: function () {
+                // this.getView().byId("OpenDialog").destroy(true);
+                this.getView().byId("idIpManf").setValue(null);
+                this.getView().byId("idIpManfDesc").setValue(null);
+                this.getView().byId("idIpLocalManf").setValue(null);
+                this.getView().byId("idIpLocalManfDesc").setValue(null);                
+                this.getView().byId("idIpCountry").setValue("");
+                this.getView().byId("idIpCountryDesc").setText("");
                 this.getView().byId("OpenDialog").open();
             },
             onCancelDialog: function (oEvent) {
