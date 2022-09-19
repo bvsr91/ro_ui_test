@@ -326,9 +326,32 @@ sap.ui.define(
                     MessageBox.error("Please enter valid date");
                     return;
                 }
+                var bFinalValidation = true, sFinalMsg = "";
                 var bValidEndDate = this.validateStartEndDate(validityStartId, validityEndId);
                 if (!bValidEndDate) {
-                    MessageBox.error("Validity End date must greater than Start date");
+                    bFinalValidation = false;
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+                }
+                if (!bLocalOwnerShipER) {
+                    if (exchageRate === "" || localCurreny === "") {
+                        bFinalValidation = false;
+                        sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Exchange Rate and Local Currency are mandatory when Local Ownership for ExchangeRate is not checked");
+                    }
+                }
+                if (!bLocalOwnerShipCF) {
+                    if (countryFact === "") {
+                        bFinalValidation = false;
+                        sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Country Factor is mandatory when Local Ownership for Country Factor is not checked");
+                    }
+                }
+                if (!bFinalValidation) {
+                    MessageBox.show(
+                        sFinalMsg,
+                        {
+                            icon: MessageBox.Icon.ERROR,
+                            title: "Validation Errors"
+                        }
+                    );
                     return;
                 }
                 var oPayLoad = {};
@@ -589,30 +612,7 @@ sap.ui.define(
                     if (aData[a].exchangeRate) {
                         aData[a].exchangeRate = isNaN(parseInt(aData[a].exchangeRate)) && aData[a].exchangeRate === "" ? null : parseFloat(aData[a].exchangeRate);
                     }
-                    // if (aData[a].validityStart) {
-                    //     if (aData[a].validityStart !== "") {
-                    //         // var newData = a.validityStart.replace(/(\d+[/])(\d+[/])/, '$2$1');
-                    //         // var date1 = aData[a].validityStart.split("/");
-                    //         // var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
-                    //         // aData[a].validityStart = d.toISOString();
-                    //         // aData[a].validityStart = new Date(aData[a].validityStart);
-                    //         aData[a].validityStart = this.uploadDateFormat(aData[a].validityStart);
-                    //     }
-                    //     else {
-                    //         aData[a].validityStart = null;
-                    //     }
-                    // }
-                    // if (aData[a].validityEnd) {
-                    //     if (aData[a].validityEnd !== "") {
-                    //         // var date1 = aData[a].validityEnd.split("/");
-                    //         // var d = new Date(date1[2], date1[1] - 1, (parseInt(date1[0]) + 1).toString());
-                    //         // aData[a].validityEnd = d.toISOString();
-                    //         // aData[a].validityEnd = new Date(aData[a].validityEnd);
-                    //         aData[a].validityEnd = this.uploadDateFormat(aData[a].validityEnd);
-                    //     } else {
-                    //         aData[a].validityEnd = null;
-                    //     }
-                    // }
+
                     if (!aData[a].lo_exchangeRate) {
                         aData[a].lo_exchangeRate = false;
                     } else if (aData[a].lo_exchangeRate === "X" || aData[a].lo_exchangeRate === "x") {
@@ -770,16 +770,19 @@ sap.ui.define(
                     aPricingMetadata = oUserModel.getProperty("/aPricingMetadata");
                 for (var a = 0; a < aData.length; a++) {
                     var bError = false,
-                        oError = {};
+                        oError = {},
+                        bValidError = true,
+                        sFinalMsg = "",
+                        sFinalValue = "";
                     if (aData[a].validityStart && aData[a].validityStart !== "") {
                         var sDate = this.uploadDateFormat(aData[a].validityStart);
                         if (sDate !== "Error") {
                             aData[a].validityStart = sDate;
                         } else {
+                            bValidError = false;
+                            sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Invalid Start Date");
+                            sFinalValue = this.prepareErrorMsg(sFinalValue, aData[a].validityStart);
                             bError = true;
-                            oError.Error = "Invalid Start Date";
-                            oError.Row = a + 2;
-                            oError.Value = aData[a].validityStart;
                         }
                     } else {
                         aData[a].validityStart = null;
@@ -789,21 +792,34 @@ sap.ui.define(
                         if (sDate !== "Error") {
                             aData[a].validityEnd = sDate;
                         } else {
-                            if (!bError) {
-                                oError.Error = "Invalid End Date";
-                                oError.Row = a + 2;
-                                oError.Value = aData[a].validityEnd;
-                            } else {
-                                oError.Error = oError.Error + ", End Date";
-                                oError.Value = oError.Value + ", " + aData[a].validityEnd;
-                            }
+                            bValidError = false;
+                            sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Invalid End Date");
+                            sFinalValue = this.prepareErrorMsg(sFinalValue, aData[a].validityEnd);
                         }
                     } else {
                         aData[a].validityEnd = null;
                     }
-                    if (oError.Row) {
+                    if (!aData[a].lo_exchangeRate) {
+                        if ((!aData[a].exchangeRate || aData[a].exchangeRate === "") || (!aData[a].localCurrency_code || aData[a].localCurrency_code === "")) {
+                            bValidError = false;
+                            sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Exchange Rate and Local Currency are mandatory when Local Ownership for ExchangeRate is not checked");
+                        }
+                    }
+                    if (!aData[a].lo_countryFactor) {
+                        if (!aData[a].countryFactor || aData[a].countryFactor === "") {
+                            bValidError = false;
+                            sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Country Factor is mandatory when Local Ownership for Country Factor is not checked");
+                        }
+                    }
+                    if (!bValidError) {
+                        oError.Error = sFinalMsg;
+                        oError.Row = a + 2;
+                        oError.Value = sFinalValue;
                         aErrors.push(oError);
                     }
+                    // if (oError.Row) {
+                    //     aErrors.push(oError);
+                    // }
                 }
                 if (aErrors.length > 0) {
                     oUserModel.setProperty("/aErrors", aErrors);
@@ -813,6 +829,10 @@ sap.ui.define(
                 }
             },
             openErrorDialog: function () {
+                if (this._oDialogErrorLog) {
+                    this._oDialogErrorLog.destroy(true);
+                    this._oDialogErrorLog = null;
+                }
                 if (!this._oDialogErrorLog) {
                     this._oDialogErrorLog = sap.ui.xmlfragment(this.createId("fragmentIdErrorLog"), "com.ferrero.zmrouiapp.view.fragments.UploadError",
                         this);
@@ -822,10 +842,11 @@ sap.ui.define(
             },
             handleClose: function () {
                 this._oDialogErrorLog.close();
-                this.dialogFrafment.destroy(true);
+                this._oDialogErrorLog.destroy(true);
+                this._oDialogErrorLog = null;
             },
             validateStartEndDate: function (startDate, endDate) {
-                if (startDate !== null || endDate !== null) {
+                if ((startDate || startDate !== null) || (endDate || endDate !== null)) {
                     if (endDate > startDate) {
                         return true;
                     } else {
