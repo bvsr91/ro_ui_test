@@ -10,8 +10,6 @@
     xmlns:t="sap.ui.table"
     xmlns:form="sap.ui.layout.form" height="100%">
     <VBox fitContainer="true">
-        <!-- <Page showHeader="false" enableScrolling="true" class="sapUiNoContentPadding" showNavButton="false">
-        <content> -->
         <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="VendorList">
             <smartFilterBar:layoutData templateShareable="false">
                 <FlexItemData shrinkFactor="0" />
@@ -26,7 +24,7 @@
                         <ToolbarSpacer />
                         <Button icon="sap-icon://alert" text="Logs ({=${message>/}.length})" visible="{=${message>/}.length > 0}" type="Emphasized" press="onMessagePopoverPress"/>
                         <Button icon="sap-icon://download" text="Template" type="Transparent" press="exportTemplate" visible="{= ${userModel>/role/role_role} === 'CDT' || ${userModel>/role/role_role} === 'SGC' ? true: false}"/>
-                        <u:FileUploader id="fileUploader" buttonOnly="true" name="myFileUpload" fileAllowed="onAllowedFile" tooltip="{i18>uploadTooltip}" uploadComplete="handleUploadComplete" change="handleValueChange" typeMissmatch="handleTypeMissmatch" fileType="xlsx" buttonText="Upload" icon="sap-icon://upload" sameFilenameAllowed="true" class="uploadButton" visible="{= ${userModel>/role/role_role} === 'CDT' || ${userModel>/role/role_role} === 'SGC' ? true: false}"/>
+                        <u:FileUploader id="fileUploader" style="Transparent" buttonOnly="true" name="myFileUpload" fileAllowed="onAllowedFile" tooltip="{i18>uploadTooltip}" uploadComplete="handleUploadComplete" change="handleValueChange" typeMissmatch="handleTypeMissmatch" fileType="xlsx" buttonText="Upload" icon="sap-icon://upload" sameFilenameAllowed="true" class="uploadButton" visible="{= ${userModel>/role/role_role} === 'CDT' || ${userModel>/role/role_role} === 'SGC' ? true: false}"/>
 
                         <!-- <Button icon="sap-icon://add" tooltip="Add new record" press=".handleAddVendor" /> -->
                         <Button id="createButton" type="Transparent" icon="sap-icon://add-document" tooltip="Create" visible="{userModel>/bPricingVendorAddBtn}" press="onOpenAddDialog"/>
@@ -62,6 +60,4 @@
             </smartTable:layoutData>
         </smartTable:SmartTable>
     </VBox>
-    <!-- </content>
-    </Page> -->
 </mvc:View>
