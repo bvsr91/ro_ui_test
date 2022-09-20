@@ -322,6 +322,7 @@ sap.ui.define(
                     uuid: oSelObj.uuid,
                     Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
                     Pricing_Conditions_countryCode_code: oSelObj.Pricing_Conditions_countryCode_code,
+                    Pricing_Conditions_uuid: oSelObj.Pricing_Conditions_uuid,
                     approvedDate: new Date().toISOString(),
                     approver: logOnUserObj.userid,
                     status_code: "Approved"
@@ -384,6 +385,7 @@ sap.ui.define(
                 var aFilter = [];
                 aFilter.push(new Filter("Pricing_Conditions_manufacturerCode", FilterOperator.EQ, oSelObj.Pricing_Conditions_manufacturerCode, true));
                 aFilter.push(new Filter("Pricing_Conditions_countryCode_code", FilterOperator.EQ, oSelObj.Pricing_Conditions_countryCode_code, true));
+                aFilter.push(new Filter("Pricing_Conditions_uuid", FilterOperator.EQ, oSelObj.Pricing_Conditions_uuid, true));
                 oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();
             },
@@ -478,6 +480,7 @@ sap.ui.define(
                     pricing_Notif_uuid: oSelObj.uuid,
                     Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
                     Pricing_Conditions_countryCode_code: oSelObj.Pricing_Conditions_countryCode_code,
+                    Pricing_Conditions_uuid: oSelObj.Pricing_Conditions_uuid,
                     Comment: sText
                 };
                 var oPayLoadVL = {
@@ -589,6 +592,7 @@ sap.ui.define(
                         uuid: a.uuid,
                         Pricing_Conditions_manufacturerCode: aData[a].Pricing_Conditions_manufacturerCode,
                         Pricing_Conditions_countryCode_code: aData[a].Pricing_Conditions_countryCode_code,
+                        Pricing_Conditions_uuid: aData[a].Pricing_Conditions_uuid,
                         approvedDate: new Date().toISOString(),
                         approver: logOnUserObj.userid,
                         status_code: "Approved"
@@ -696,6 +700,7 @@ sap.ui.define(
                         pricing_Notif_uuid: aData[a].uuid,
                         Pricing_Conditions_manufacturerCode: aData[a].Pricing_Conditions_manufacturerCode,
                         Pricing_Conditions_countryCode_code: aData[a].Pricing_Conditions_countryCode_code,
+                        Pricing_Conditions_uuid: aData[a].Pricing_Conditions_uuid,
                         Comment: sText
                     };
                     oContext.update.push({

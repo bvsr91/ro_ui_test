@@ -474,6 +474,7 @@ sap.ui.define(
                 var aFilter = [];
                 aFilter.push(new Filter("Pricing_Conditions_manufacturerCode", FilterOperator.EQ, oSelObj.manufacturerCode, true));
                 aFilter.push(new Filter("Pricing_Conditions_countryCode_code", FilterOperator.EQ, oSelObj.countryCode_code, true));
+                aFilter.push(new Filter("Pricing_Conditions_uuid", FilterOperator.EQ, oSelObj.uuid, true));
                 oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();
             },
