@@ -237,7 +237,7 @@ sap.ui.define(
                 var oList = this.byId(Fragment.createId("FrgVendorComments", "idListVendComment"));
                 var aFilter = [];
                 aFilter.push(new Filter("Vendor_List_manufacturerCode", FilterOperator.EQ, oSelObj.Vendor_List_manufacturerCode, true));
-                // aFilter.push(new Filter("localManufacturerCode", FilterOperator.EQ, oSelObj.localManufacturerCode, true));
+                aFilter.push(new Filter("Vendor_List_uuid", FilterOperator.EQ, oSelObj.Vendor_List_uuid, true));
                 aFilter.push(new Filter("Vendor_List_countryCode_code", FilterOperator.EQ, oSelObj.Vendor_List_countryCode_code, true));
                 oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();
@@ -259,6 +259,7 @@ sap.ui.define(
                     uuid: oSelObj.uuid,
                     Vendor_List_manufacturerCode: oSelObj.Vendor_List_manufacturerCode,
                     Vendor_List_countryCode_code: oSelObj.Vendor_List_countryCode_code,
+                    Vendor_List_uuid: oSelObj.Vendor_List_uuid,
                     localManufacturerCode: oSelObj.localManufacturerCode,
                     completionDate: new Date().toISOString(),
                     approvedDate: new Date().toISOString(),
@@ -364,6 +365,7 @@ sap.ui.define(
                     vendor_Notif_uuid: oSelObj.uuid,
                     Vendor_List_manufacturerCode: oSelObj.Vendor_List_manufacturerCode,
                     Vendor_List_countryCode_code: oSelObj.Vendor_List_countryCode_code,
+                    Vendor_List_uuid: oSelObj.Vendor_List_uuid,
                     localManufacturerCode: oSelObj.localManufacturerCode,
                     Comment: sText
                 };
@@ -461,6 +463,7 @@ sap.ui.define(
                         uuid: aData[a].uuid,
                         Vendor_List_manufacturerCode: aData[a].Vendor_List_manufacturerCode,
                         Vendor_List_countryCode_code: aData[a].Vendor_List_countryCode_code,
+                        Vendor_List_uuid: aData[a].Vendor_List_uuid,
                         localManufacturerCode: aData[a].localManufacturerCode,
                         completionDate: new Date().toISOString(),
                         approvedDate: new Date().toISOString(),
@@ -565,6 +568,7 @@ sap.ui.define(
                         vendor_Notif_uuid: aData[a].uuid,
                         Vendor_List_manufacturerCode: aData[a].Vendor_List_manufacturerCode,
                         Vendor_List_countryCode_code: aData[a].Vendor_List_countryCode_code,
+                        Vendor_List_uuid: aData[a].Vendor_List_uuid,
                         localManufacturerCode: aData[a].localManufacturerCode,
                         Comment: sText
                     };

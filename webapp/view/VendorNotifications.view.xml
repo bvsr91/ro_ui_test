@@ -19,7 +19,7 @@
                     <IconTabFilter icon="sap-icon://decline" iconColor="Negative" count="" text="Rejected" key="Rejected" />
                 </items>
                 <content>
-                    <smartTable:SmartTable entitySet="VendorNotifications_U" id="idSTabVendorNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid" beforeRebindTable="onBeforeRebindTable">
+                    <smartTable:SmartTable entitySet="VendorNotifications_U" id="idSTabVendorNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid,Vendor_List_uuid" beforeRebindTable="onBeforeRebindTable">
                         <t:Table id="idUiTabVendorNoti" rowSelectionChange="onRowlSelChange" visibleRowCount="8">
                         </t:Table>
                         <smartTable:customToolbar>

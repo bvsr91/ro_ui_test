@@ -18,7 +18,7 @@
             </smartFilterBar:layoutData>
         </smartFilterBar:SmartFilterBar>
         <smartTable:SmartTable entitySet="VendorList" id="vendSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor List Items" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
-                    country,countryDesc" ignoredFields="uuid, v_notif_uuid" requestAtLeastFields="uuid,v_notif_uuid">
+                    country,countryDesc" ignoredFields="uuid, v_notif_uuid,Vendor_List_uuid" requestAtLeastFields="uuid,v_notif_uuid,Vendor_List_uuid">
             <t:Table id="idUiTab" selectionMode="None" visibleRowCountMode="Auto"/>
             <smartTable:customToolbar>
                 <OverflowToolbar>

@@ -195,15 +195,17 @@ sap.ui.define(
             },
             onLinksDownload: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
-                var bEdit;
-                var bDelete;
-                // var oRecordCreator = oInput.getBindingContext().getObject().initiator;
+                var bEdit = false, bDelete = false;
+                var oSelObj = oInput.getBindingContext().getObject();
                 var oRecordCreator = oInput.getBindingContext().getObject().createdBy;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if ((logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
                     && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC")) {
-                    bEdit = true;
-                    bDelete = true;
+                    if (oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected") {
+                        bEdit = true;
+                        bDelete = true;
+                    }
+
                 } else {
                     bEdit = false;
                     bDelete = false
@@ -332,7 +334,7 @@ sap.ui.define(
                 var oList = this.byId(Fragment.createId("FrgVendorComments", "idListVendComment"));
                 var aFilter = [];
                 aFilter.push(new Filter("Vendor_List_manufacturerCode", FilterOperator.EQ, oSelObj.manufacturerCode, true));
-                // aFilter.push(new Filter("localManufacturerCode", FilterOperator.EQ, oSelObj.localManufacturerCode, true));
+                aFilter.push(new Filter("Vendor_List_uuid", FilterOperator.EQ, oSelObj.uuid, true));
                 aFilter.push(new Filter("Vendor_List_countryCode_code", FilterOperator.EQ, oSelObj.countryCode_code, true));
                 oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();
