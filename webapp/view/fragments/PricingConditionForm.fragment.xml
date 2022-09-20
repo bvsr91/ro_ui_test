@@ -16,7 +16,7 @@
                 <Text id="idIpCountry" text="{countryCode_code}"/>
                 <CheckBox selected="{lo_exchangeRate}" select="onSelectLocalOwnershipEditER" text="Local Ownership Exchange Rate" id="localOwnershipERId" enabled="{= ${userModel>/role/role_role} === 'LDT'  || ${userModel>/role/role_role} === 'SLP' ? false: true}"/>
                 <Label text="Local Currency"/>
-                <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom" />
+                <Input id="idIpLocCurr" value="{localCurrency_code}" showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrencyEdit" class="sapUiSmallMarginBottom" />
                 <Label text="Exchange Rate"/>
                 <Input id="idExchRate" type="Number" value="{exchangeRate}" liveChange="onLiveChange"/>
                 <CheckBox selected="{lo_countryFactor}" select="onSelectLocalOwnershipEditCF" text="Local Ownership Country Factor" id="localOwnershipCFId" enabled="{= ${userModel>/role/role_role} === 'LDT' || ${userModel>/role/role_role} === 'SLP' ? false: true}"/>

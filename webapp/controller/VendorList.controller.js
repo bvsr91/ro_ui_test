@@ -234,6 +234,10 @@ sap.ui.define(
             open_Dialog: function (editObj) {
                 var oCtx = editObj.getObject();
                 var sPath = editObj.getPath();
+                if (this._oDialog) {
+                    this._oDialog.destroy(true);
+                    this._oDialog = null;
+                }
                 if (!this._oDialog) {
                     this._oDialog = sap.ui.xmlfragment(this.createId("FrgVendorData"), "com.ferrero.zmrouiapp.view.fragments.VendorForm", this);
                     this.getView().addDependent(this._oDialog);
@@ -342,7 +346,20 @@ sap.ui.define(
 
             },
             onValueHelpRequestCountry: function (oEvent) {
-                this.openCountryValueHelpDialog(oEvent);
+                var oDialog = this.openCountryValueHelpDialog(oEvent);
+                var sInputValue = this.byId("idIpCountry").getValue();
+                if (sInputValue !== "") {
+                    var aFilters = [];
+                    aFilters.push(new Filter("code", FilterOperator.EQ, sInputValue, true));
+                    var oFilter = new Filter({
+                        filters: aFilters,
+                        and: false,
+                    });
+                    oDialog.getBinding("items").filter(oFilter);
+                    oDialog.open(sInputValue);
+                } else {
+                    oDialog.open();
+                }
             },
             _configValueHelpDialog: function (oEvent) {
                 var sInputValue = this.byId("idIpCountry").getValue();
@@ -362,16 +379,15 @@ sap.ui.define(
             },
 
             onValueHelpDialogClose: function (oEvent) {
-                // this.countryValueHelpClose(oEvent, "FrgAddVendorData", "idIpCountry", "idIpCountryDesc")
-                if (oEvent.getParameter("selectedItem")) {
-                    var desc = oEvent.getParameter("selectedItem").getDescription();
-                    var code = oEvent.getParameter("selectedItem").getTitle();
-                    this.byId("idIpCountry").setValue(code);
-                    this.byId("idIpCountryDesc").setText(desc);
-                } else {
-                    this.byId("idIpCountry").setValue("");
-                    this.byId("idIpCountryDesc").setText("");
+                var oSelectedItem = oEvent.getParameter("selectedItem");
+                if (!oSelectedItem) {
+                    // oInput.resetProperty("value");                    
+                    return;
                 }
+                var desc = oEvent.getParameter("selectedItem").getDescription();
+                var code = oEvent.getParameter("selectedItem").getTitle();
+                this.byId("idIpCountry").setValue(code);
+                this.byId("idIpCountryDesc").setText(desc);
             },
             onSearch: function (oEvent) {
                 var sValue = oEvent.getParameter("value");
@@ -398,7 +414,7 @@ sap.ui.define(
                 this.getView().byId("idIpManf").setValue(null);
                 this.getView().byId("idIpManfDesc").setValue(null);
                 this.getView().byId("idIpLocalManf").setValue(null);
-                this.getView().byId("idIpLocalManfDesc").setValue(null);                
+                this.getView().byId("idIpLocalManfDesc").setValue(null);
                 this.getView().byId("idIpCountry").setValue("");
                 this.getView().byId("idIpCountryDesc").setText("");
                 this.getView().byId("OpenDialog").open();

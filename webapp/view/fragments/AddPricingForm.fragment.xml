@@ -19,7 +19,7 @@
                 <!-- <Label text=""/> -->
                 <CheckBox id="localOwnershipERId" text="Local Ownership Exchange Rate" select="onSelectLocalOwnershipER"/>
                 <Label text="Local Currency"/>
-                <Input id="idIpLocCurr" placeholder="Enter Currency ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrency" class="sapUiSmallMarginBottom"/>
+                <Input id="idIpLocCurr" placeholder="Enter Currency ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCurrencyAdd" class="sapUiSmallMarginBottom"/>
                 <!-- <Input id="idIpLocCurr" maxLength="3" /> -->
                 <Label text="Exchange Rate"/>
                 <Input id="idIpExchRate" type="Number" liveChange="onLiveChange"/>

@@ -70,6 +70,7 @@ sap.ui.define(
             },
             handleAddPricing: function () {
                 if (this._DialogAddPricing) {
+                    this._DialogAddPricing.destroy(true);
                     this._DialogAddPricing = null;
                 }
                 if (!this._DialogAddPricing) {
@@ -179,7 +180,20 @@ sap.ui.define(
                 });
             },
             onValueHelpRequestCountry: function (oEvent) {
-                this.openCountryValueHelpDialog(oEvent);
+                var oDialog = this.openCountryValueHelpDialog(oEvent);
+                var sInputValue = this.byId(Fragment.createId("FrgAddPricing", "idIpCountry")).getValue();
+                if (sInputValue !== "") {
+                    var aFilters = [];
+                    aFilters.push(new Filter("code", FilterOperator.EQ, sInputValue, true));
+                    var oFilter = new Filter({
+                        filters: aFilters,
+                        and: false,
+                    });
+                    oDialog.getBinding("items").filter(oFilter);
+                    oDialog.open(sInputValue);
+                } else {
+                    oDialog.open();
+                }
             },
             _configValueHelpDialog: function () {
                 // var sInputValue = this.byId("idIpCountry").getValue();
@@ -303,6 +317,7 @@ sap.ui.define(
                 var oCtx = editObj.getObject();
                 var sPath = editObj.getPath();
                 if (this._oDialog) {
+                    this._oDialog.destroy(true);
                     this._oDialog = null;
                 }
                 if (!this._oDialog) {
@@ -514,31 +529,56 @@ sap.ui.define(
             },
             onValueHelpRequestCurrency: function (oEvent) {
                 var oView = this.getView();
-                if (!this._currencyVHDialog) {
-                    this._currencyVHDialog = Fragment.load({
-                        id: oView.getId(),
-                        name: "com.ferrero.zmrouiapp.view.fragments.CurrencyVH",
-                        controller: this
-                    }).then(function (oValueHelpDialog) {
-                        oView.addDependent(oValueHelpDialog);
-                        return oValueHelpDialog;
-                    });
+                if (this._currencyVHDialog) {
+                    this._currencyVHDialog.destroy(true);
+                    this._currencyVHDialog = null;
                 }
-                this._currencyVHDialog.then(function (oValueHelpDialog) {
-                    this._configValueHelpDialog();
-                    oValueHelpDialog.open();
-                }.bind(this));
+                sap.ui.core.BusyIndicator.show();
+                var oModel = this.getOwnerComponent().getModel();
+                if (!this._currencyVHDialog) {
+                    this._currencyVHDialog = sap.ui.xmlfragment(this.createId("FrgCurrency"), "com.ferrero.zmrouiapp.view.fragments.CurrencyVH", this);
+                    this.getView().addDependent(this._currencyVHDialog);
+                }
+                sap.ui.core.BusyIndicator.hide();
+                return this._currencyVHDialog;
             },
-            _configValueHelpDialog: function () {
-                // var sInputValue = this.byId("idIpCountry").getValue();
-                // this.byId(sap.ui.core.Fragment.createId("FrgAddVendorData", "idIpCountry")).getValue();
+            onValueHelpRequestCurrencyAdd: function (oEvent) {
+                var oDialog = this.onValueHelpRequestCurrency(oEvent);
+                var sInputValue = this.byId(Fragment.createId("FrgAddPricing", "idIpLocCurr")).getValue();
+                if (sInputValue !== "") {
+                    var aFilters = [];
+                    aFilters.push(new Filter("code", FilterOperator.EQ, sInputValue, true));
+                    var oFilter = new Filter({
+                        filters: aFilters,
+                        and: false,
+                    });
+                    oDialog.getBinding("items").filter(oFilter);
+                    oDialog.open(sInputValue);
+                } else {
+                    oDialog.open();
+                }
             },
-
+            onValueHelpRequestCurrencyEdit: function (oEvent) {
+                var oDialog = this.onValueHelpRequestCurrency(oEvent);
+                var sInputValue = this.byId(Fragment.createId("FrgPricingData", "idIpLocCurr")).getValue();
+                if (sInputValue !== "") {
+                    var aFilters = [];
+                    aFilters.push(new Filter("code", FilterOperator.EQ, sInputValue, true));
+                    var oFilter = new Filter({
+                        filters: aFilters,
+                        and: false,
+                    });
+                    oDialog.getBinding("items").filter(oFilter);
+                    oDialog.open(sInputValue);
+                } else {
+                    oDialog.open();
+                }
+            },
             onValueHelpDialogCurrencyClose: function (oEvent) {
                 var oSelectedItem = oEvent.getParameter("selectedItem"),
                     oInput = this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", "idIpLocCurr")) ? this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", "idIpLocCurr")) : this.byId(sap.ui.core.Fragment.createId("FrgPricingData", "idIpLocCurr"));
                 if (!oSelectedItem) {
-                    oInput.resetProperty("value");
+                    // oInput.resetProperty("value");
                     // this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", sTextID)).setText("");
                     return;
                 }

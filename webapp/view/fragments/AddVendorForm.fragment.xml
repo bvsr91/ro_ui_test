@@ -20,7 +20,7 @@
                             </f:FormElement>
                             <f:FormElement label="Manufacturer Code Desc">
                                 <f:fields>
-                                    <Input id="idIpManfDesc" />
+                                    <Input id="idIpManfDesc" maxLength="35"/>
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement label="Local Dealer Manufacturer">
@@ -30,7 +30,7 @@
                             </f:FormElement>
                             <f:FormElement label="Local Dealer Manufacturer Desc">
                                 <f:fields>
-                                    <Input id="idIpLocalManfDesc" />
+                                    <Input id="idIpLocalManfDesc" maxLength="35"/>
                                 </f:fields>
                             </f:FormElement>
                         </f:formElements>

@@ -100,52 +100,18 @@ sap.ui.define(
             },
             openCountryValueHelpDialog: function (oEvent) {
                 var oView = this.getView();
-                if (this._oDialog) {
-                    this._oDialog.destroy(true);
-                    // this._oDialogErrorLog.destroy(true);
-                    this._oDialog = null;
+                if (this._oDialogCH) {
+                    this._oDialogCH.destroy(true);
+                    this._oDialogCH = null;
                 }
-                // if (!this._pValueHelpDialog) {
-                //     this._pValueHelpDialog = Fragment.load({
-                //         id: oView.getId(),
-                //         name: "com.ferrero.zmrouiapp.view.fragments.CountryValueHelpDialog",
-                //         controller: this
-                //     }).then(function (oValueHelpDialog) {
-                //         oView.addDependent(oValueHelpDialog);
-                //         return oValueHelpDialog;
-                //     });
-                // }
-                // this._pValueHelpDialog.then(function (oValueHelpDialog) {
-                //     this._configValueHelpDialog(oValueHelpDialog);
-                //     oValueHelpDialog.open();
-                // }.bind(this));
                 sap.ui.core.BusyIndicator.show();
                 var oModel = this.getOwnerComponent().getModel();
-                if (!this._oDialog) {
-                    this._oDialog = sap.ui.xmlfragment(this.createId("FrgCountry"), "com.ferrero.zmrouiapp.view.fragments.CountryValueHelpDialog", this);
-                    this.getView().addDependent(this._oDialog);
+                if (!this._oDialogCH) {
+                    this._oDialogCH = sap.ui.xmlfragment(this.createId("FrgCountry"), "com.ferrero.zmrouiapp.view.fragments.CountryValueHelpDialog", this);
+                    this.getView().addDependent(this._oDialogCH);
                 }
-                // var oList = this.byId(Fragment.createId("FrgCountry", "idSelDialog"));
-                // var aFilter = [];
-                // aFilter.push(new Filter("p_request_RequestID", FilterOperator.EQ, oSelObj.RequestID, true));
-                // oList.getBinding("items").filter(aFilter);
-                var sInputValue = this.byId("idIpCountry").getValue();
-                if (sInputValue !== "") {
-                    var aFilters = [];
-                    // aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
-                    aFilters.push(new Filter("code", FilterOperator.EQ, sInputValue, true));
-                    var oFilter = new Filter({
-                        filters: aFilters,
-                        and: false,
-                    });
-                    this._oDialog.getBinding("items").filter(oFilter);
-                    // this._oDialog.setShowClearButton(true);
-                    this._oDialog.open(sInputValue);
-                } else {
-                    this._oDialog.open();
-                }
-
                 sap.ui.core.BusyIndicator.hide();
+                return this._oDialogCH;
             },
             countryValueHelpClose: function (oEvent, sFragmentID, sInputID, sTextID) {
                 var oSelectedItem = oEvent.getParameter("selectedItem"),
