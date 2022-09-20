@@ -4,8 +4,6 @@
     xmlns:footerbar="sap.ushell.ui.footerbar"
     xmlns:core="sap.ui.core">
     <Dialog id="myDialog" title="Edit Pricing Record ..">
-        <!-- <content> -->
-        <!-- <VBox class="sapUiSmallMargin"> -->
         <form:SimpleForm editable="true" layout="ResponsiveGridLayout" id="SimpleFormToolbarPricingDisplay">
             <form:content>
                 <Label text="Manufacturer Code"/>
@@ -22,16 +20,12 @@
                 <CheckBox selected="{lo_countryFactor}" select="onSelectLocalOwnershipEditCF" text="Local Ownership Country Factor" id="localOwnershipCFId" enabled="{= ${userModel>/role/role_role} === 'LDT' || ${userModel>/role/role_role} === 'SLP' ? false: true}"/>
                 <Label text="Country Factor"/>
                 <Input id="idContFactor" type="Number" value="{countryFactor}" liveChange="onLiveChange"/>
-                <Label text="Validity Start"/>
-                <!-- <DatePicker id="validityStartId" valueFormat="YYYY-MM-dd" displayFormat="dd/MM/YYYY" value="{path:'validityStart', formatter:'.formatter.formatDate'}" change="onDateChange"/> -->
+                <Label text="Validity Start" required="true"/>
                 <DatePicker id="validityStartId" value="{path: 'validityStart', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd/MM/yyyy', strictParsing: false , UTC: false}}" displayFormat="dd/MM/yyyy" change="onDateChange"></DatePicker>
-                <Label text="Validity End"/>
-                <!-- <DatePicker id="validityEndId" valueFormat="YYYY-MM-dd" displayFormat="dd/MM/YYYY" value="{path:'validityEnd', formatter:'.formatter.formatDate'}" change="onDateChange" /> -->
+                <Label text="Validity End" required="true"/>
                 <DatePicker id="validityEndId" value="{path: 'validityEnd', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd/MM/yyyy', strictParsing: false , UTC: false}}" displayFormat="dd/MM/yyyy" change="onDateChange"></DatePicker>
             </form:content>
         </form:SimpleForm>
-        <!-- </VBox> -->
-        <!-- </content> -->
         <buttons>
             <Button text="Save" type="Emphasized" press=".onSavePricingData"/>
             <Button text="Cancel" press="onClosePricingData" type="Emphasized"/>

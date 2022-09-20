@@ -12,7 +12,7 @@
                 <Input id="idIpManf" change="onNameChange" maxLength="10" />
                 <Label text="Manufacturer Name" />
                 <Input id="idIpManfDesc" maxLength="35"/>
-                <Label text="Country" />
+                <Label text="Country" required="true"/>
                 <Input id="idIpCountry" type="Text" placeholder="Enter Country ..." showValueHelp="true" valueHelpOnly="true" valueHelpRequest=".onValueHelpRequestCountry" class="sapUiSmallMarginBottom" required="true"/>
                 <Label text="Country Desc" />
                 <Text id="idIpCountryDesc"/>
@@ -26,10 +26,10 @@
                 <CheckBox id="localOwnershipCFId" text="Local Ownership Country Factor" select="onSelectLocalOwnershipCF"/>
                 <Label text="Country Factor"/>
                 <Input id="idIpContFact" type="Number" liveChange="onLiveChange" />
-                <Label text="Validity Start"/>
+                <Label text="Validity Start" required="true"/>
                 <!-- <DatePicker id="validityStartId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" change="onDateChange"/> -->
                 <DatePicker id="validityStartId" displayFormat="dd/MM/yyyy" change="onDateChange"></DatePicker>
-                <Label text="Validity End"/>
+                <Label text="Validity End" required="true"/>
                 <DatePicker id="validityEndId" displayFormat="dd/MM/yyyy" change="onDateChange"></DatePicker>
                 <!-- <DatePicker id="validityEndId" valueFormat="yyyy-MM-ddTHH:mm:ss.SSSX" displayFormat="dd/MM/yyyy" change="onDateChange"/> -->
             </form:content>

@@ -195,22 +195,24 @@ sap.ui.define(
                     oDialog.open();
                 }
             },
-            _configValueHelpDialog: function () {
-                // var sInputValue = this.byId("idIpCountry").getValue();
-                // this.byId(sap.ui.core.Fragment.createId("FrgAddVendorData", "idIpCountry")).getValue();
-            },
-
             onValueHelpDialogClose: function (oEvent) {
-                this.countryValueHelpClose(oEvent, "FrgAddPricing", "idIpCountry", "idIpCountryDesc")
+                var oSelectedItem = oEvent.getParameter("selectedItem"),
+                    oInput = this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", "idIpCountry")),
+                    oText = this.byId(sap.ui.core.Fragment.createId("FrgAddPricing", "idIpCountryDesc"));
+                if (!oSelectedItem) {
+                    // oInput.resetProperty("value");                    
+                    return;
+                }
+                var desc = oEvent.getParameter("selectedItem").getDescription();
+                var code = oEvent.getParameter("selectedItem").getTitle();
+                oInput.setValue(code);
+                oText.setText(desc);
             },
             onSearch: function (oEvent) {
                 var sValue = oEvent.getParameter("value");
-                // var oFilter = new Filter("desc", FilterOperator.Contains, sValue, true);
                 var aFilters = [];
                 aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
                 aFilters.push(this.createFilter("code", FilterOperator.Contains, sValue, true));
-                // aFilters.push(new Filter("desc", FilterOperator.Contains, sValue, true));
-                // aFilters.push(new Filter("code", FilterOperator.Contains, sValue, true));
                 var oBinding = oEvent.getParameter("itemsBinding");
                 var oFilter = new Filter({
                     filters: aFilters,
@@ -917,7 +919,7 @@ sap.ui.define(
             },
             onLiveChange: function (oEvent) {
                 var value = oEvent.getSource().getValue();
-                var regexp = /^[0-9]{0,2}.?[0-9]{0,2}$/
+                var regexp = /^[0-9]{0,2}.?[0-9]{0,3}$/
                 var bNotnumber = isNaN(value);
                 if (bNotnumber === true) {
                     oEvent.getSource().setValue(value.substring(0, value.length - 1));

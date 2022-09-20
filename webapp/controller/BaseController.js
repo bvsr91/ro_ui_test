@@ -72,17 +72,8 @@ sap.ui.define(
             },
             setSelKey: function (sKey) {
                 //   sap.ui.getCore().byId("idSN").setSelectedKey(sKey);
-                this.getOwnerComponent()
-                    .getModel("userModel")
-                    .setProperty("/selectedKey", sKey);
-                // var aData = this.getOwnerComponent().getModel("userModel").getProperty("/navigation");
-                // aData.forEach(element => {
-                //     if(element.key === sKey){
-
-                //     }
-                // });
+                this.getOwnerComponent().getModel("userModel").setProperty("/selectedKey", sKey);
                 this.getOwnerComponent().getModel("userModel").refresh(true);
-                // this.getView().byId("idNL").setSelectedKey(sKey);
             },
             getFormattedDate: function () {
                 var today = new Date();
@@ -113,25 +104,14 @@ sap.ui.define(
                 sap.ui.core.BusyIndicator.hide();
                 return this._oDialogCH;
             },
-            countryValueHelpClose: function (oEvent, sFragmentID, sInputID, sTextID) {
-                var oSelectedItem = oEvent.getParameter("selectedItem"),
-                    oInput = this.byId(sap.ui.core.Fragment.createId(sFragmentID, sInputID));
-                if (!oSelectedItem) {
-                    oInput.resetProperty("value");
-                    this.byId(sap.ui.core.Fragment.createId(sFragmentID, sTextID)).setText("");
-                    return;
-                }
-                oInput.setValue(oSelectedItem.getTitle());
-                this.byId(sap.ui.core.Fragment.createId(sFragmentID, sTextID)).setText(oSelectedItem.getDescription());
-            },
             routeAuthValidation: async function (sRoute) {
                 var oModel = this.getOwnerComponent().getModel("userModel");
                 var oData = oModel.getData();
                 var role = oData.role;
                 var aCDTRoutes = ["vendorList", "pricingCond", "myInbox", "pricingNoti", "vendNoti"];
-                var aLDTRoutes = ["pricingCond", "myInbox", "pricingNoti"];
+                var aLDTRoutes = ["vendorList", "pricingCond", "myInbox", "pricingNoti"];
                 var aGCMRoutes = ["myInbox", "pricingNoti", "vendNoti", "vendorList", "pricingCond"];
-                var aLPRoutes = ["myInbox", "pricingNoti", "pricingCond"];
+                var aLPRoutes = ["vendorList", "myInbox", "pricingNoti", "pricingCond"];
                 var oRouter = this.getOwnerComponent().getRouter();
                 if (!role) {
                     await this.validateUser();
@@ -194,7 +174,7 @@ sap.ui.define(
                         var sRoute;
                         var aSideNav = this.getModel("userModel").getProperty("/navigation");
                         if (role === "LDT" || role === "LP" || role === "SLP") {
-                            aSideNav = aSideNav.filter(a => a.key !== "vendorList");
+                            // aSideNav = aSideNav.filter(a => a.key !== "vendorList");
                             aSideNav = aSideNav.map(function (a) {
                                 if (a.key === "myInbox") {
                                     a.items.splice(0, 1);
@@ -331,6 +311,9 @@ sap.ui.define(
                 }
             },
             onPromiseAll: function (taskList, sAction, sType, sEntityName) {
+                if (sType === "Reject") {
+                    sType = "Rejected";
+                }
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var aUpdate = [];

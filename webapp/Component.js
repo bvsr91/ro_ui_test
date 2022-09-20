@@ -47,7 +47,7 @@ sap.ui.define([
                         var sRoute;
                         var aSideNav = this.getModel("userModel").getProperty("/navigation");
                         if (role === "LDT" || role === "LP" || role === "SLP") {
-                            aSideNav = aSideNav.filter(a => a.key !== "vendorList");
+                            // aSideNav = aSideNav.filter(a => a.key !== "vendorList");
                             aSideNav = aSideNav.map(function (a) {
                                 if (a.key === "myInbox") {
                                     a.items.splice(0, 1);

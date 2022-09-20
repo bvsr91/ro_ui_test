@@ -395,9 +395,6 @@ sap.ui.define(
                 var sValue = oEvent.getParameter("value");
                 // var oFilter = new Filter("desc", FilterOperator.Contains, sValue, true);
                 var aFilters = [];
-                // aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
-                // aFilters.push(new Filter("desc", FilterOperator.Contains, sValue, true));
-                // aFilters.push(new Filter("code", FilterOperator.Contains, sValue, true));
                 aFilters.push(this.createFilter("desc", FilterOperator.Contains, sValue, true));
                 aFilters.push(this.createFilter("code", FilterOperator.Contains, sValue, true));
                 var oBinding = oEvent.getParameter("itemsBinding");
