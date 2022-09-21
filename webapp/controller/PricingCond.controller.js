@@ -114,9 +114,12 @@ sap.ui.define(
                     sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Please enter valid date");
                 }
                 var bValidEndDate = this.validateStartEndDate(validityStartId, validityEndId);
-                if (!bValidEndDate) {
+                if (bValidEndDate === "1") {
                     bFinalValidation = false;
                     sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+                } else if (bValidEndDate === "2") {
+                    bFinalValidation = false;
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity Start and End Date are mandatory");
                 }
                 if (!bLocalOwnerShipER) {
                     if (exchageRate === "" || localCurreny === "") {
@@ -281,9 +284,14 @@ sap.ui.define(
                     oRecordCreator = oInput.getBindingContext().getObject().createdBy;
                     if (oSelObj.ld_initiator === null) {
                         if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
-                            && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC") && (oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected")) {
-                            bEdit = true;
-                            bDelete = true;
+                            && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC") && (oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected" || oSelObj.status_code === "Forwarded")) {
+                            if (oSelObj.status_code === "Forwarded") {
+                                bEdit = true;
+                                bDelete = false;
+                            } else {
+                                bEdit = true;
+                                bDelete = true;
+                            }
                         } else {
                             bEdit = false;
                             bDelete = false;
@@ -353,9 +361,12 @@ sap.ui.define(
                 }
                 var bFinalValidation = true, sFinalMsg = "";
                 var bValidEndDate = this.validateStartEndDate(validityStartId, validityEndId);
-                if (!bValidEndDate) {
+                if (bValidEndDate === "1") {
                     bFinalValidation = false;
                     sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+                } else if (bValidEndDate === "2") {
+                    bFinalValidation = false;
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity Start and End Date are mandatory");
                 }
                 if (!bLocalOwnerShipER) {
                     if (exchangeRate === "" || localCurreny === "") {
@@ -900,14 +911,14 @@ sap.ui.define(
                 this._oDialogErrorLog = null;
             },
             validateStartEndDate: function (startDate, endDate) {
-                if ((startDate || startDate !== null) || (endDate || endDate !== null)) {
+                if ((startDate || startDate !== null) && (endDate || endDate !== null)) {
                     if (endDate > startDate) {
-                        return true;
+                        return "0";
                     } else {
-                        return false;
+                        return "1";
                     }
                 } else {
-                    return true;
+                    return "2";
                 }
             },
             prepareErrorMsg: function (sFinalMsg, sMsg) {
