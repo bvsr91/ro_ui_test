@@ -343,6 +343,7 @@ sap.ui.define(
             },
             onSavePricingData: function (oInput) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
+                var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var oModel = this.getOwnerComponent().getModel();
                 var sPath = oInput.getSource().getParent().getParent().getController()._editObjContext.sPath;
                 var manufacturerDesc = this.byId(Fragment.createId("FrgPricingData", "idIpManfDesc")).getValue().trim();
@@ -368,16 +369,31 @@ sap.ui.define(
                     bFinalValidation = false;
                     sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity Start and End Date are mandatory");
                 }
-                if (!bLocalOwnerShipER) {
-                    if (exchangeRate === "" || localCurreny === "") {
-                        bFinalValidation = false;
-                        sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Exchange Rate and Local Currency are mandatory when Local Ownership for ExchangeRate is not checked");
+                if (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC") {
+                    if (!bLocalOwnerShipER) {
+                        if (exchangeRate === "" || localCurreny === "") {
+                            bFinalValidation = false;
+                            sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Exchange Rate and Local Currency are mandatory when Local Ownership for ExchangeRate is not checked");
+                        }
                     }
-                }
-                if (!bLocalOwnerShipCF) {
-                    if (countryFactor === "") {
-                        bFinalValidation = false;
-                        sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Country Factor is mandatory when Local Ownership for Country Factor is not checked");
+                    if (!bLocalOwnerShipCF) {
+                        if (countryFactor === "") {
+                            bFinalValidation = false;
+                            sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Country Factor is mandatory when Local Ownership for Country Factor is not checked");
+                        }
+                    }
+                } else if (logOnUserObj.role_role === "LDT" || logOnUserObj.role_role === "SLP") {
+                    if (bLocalOwnerShipER) {
+                        if (exchangeRate === "" || localCurreny === "") {
+                            bFinalValidation = false;
+                            sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Exchange Rate and Local Currency are mandatory when Local Ownership for ExchangeRate is checked");
+                        }
+                    }
+                    if (bLocalOwnerShipCF) {
+                        if (countryFactor === "") {
+                            bFinalValidation = false;
+                            sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Country Factor is mandatory when Local Ownership for Country Factor is checked");
+                        }
                     }
                 }
                 if (!bFinalValidation) {

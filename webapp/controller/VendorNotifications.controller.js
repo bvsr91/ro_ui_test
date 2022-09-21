@@ -189,8 +189,8 @@ sap.ui.define(
             },
             handleActionPress: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
-                var bEdit;
-                var bDelete;
+                var bEdit = false, bDelete = false, bReopen = false;
+                var oSelObj = oInput.getBindingContext().getObject();
                 var oRecordCreator = oInput.getBindingContext().getObject().createdBy;
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
@@ -206,6 +206,9 @@ sap.ui.define(
                 } else {
                     bEdit = false;
                 }
+                if (oSelObj.status_code === "Approved" && oSelObj.approver === logOnUserObj.userid.toUpperCase()) {
+                    bReopen = true;
+                }
                 var oActionSheet = new sap.m.ActionSheet({
                     placement: "VerticalPreferredBottom",
                     buttons: [
@@ -216,6 +219,10 @@ sap.ui.define(
                         new sap.m.Button({
                             text: 'Reject', type: 'Transparent', width: '6rem', enabled: bEdit,
                             press: this.onPressReject.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'Reopen', type: 'Transparent', width: '6rem', visible: bReopen,
+                            press: this.onPressReopen.bind(this, oInput)
                         }),
                         new sap.m.Button({
                             text: 'History', type: 'Transparent', width: '6rem',
@@ -598,6 +605,54 @@ sap.ui.define(
                     oTable.clearSelection();
 
                 })
+            },
+            onPressReopen: function (oInput) {
+                var sPath = oInput.getBindingContext().getPath;
+                var oSelObj = oInput.getBindingContext().getObject();
+                var oModel = this.getOwnerComponent().getModel();
+                if (this._oReopenDialog) {
+                    this._oReopenDialog.destroy(true);
+                    this._oReopenDialog = null;
+                }
+                if (!this._oReopenDialog) {
+                    this._oReopenDialog = sap.ui.xmlfragment(this.createId("FrgReopen"), "com.ferrero.zmrouiapp.view.fragments.Reopen", this);
+                    this.getView().addDependent(this._oReopenDialog);
+                }
+                // var oList = this.byId(Fragment.createId("FrgVendorComments", "idTxtReopen"));
+                this.byId(Fragment.createId("FrgReopen", "idTxtReopen")).setText(oSelObj.uuid);
+                this._oReopenDialog.open();
+            },
+            onPressReopenSave: function (oEvent) {
+                var iSelIndex = this.byId(Fragment.createId("FrgReopen", "idRgb")).getSelectedIndex(),
+                    uuid = this.byId(Fragment.createId("FrgReopen", "idTxtReopen")).getText();
+                sap.ui.getCore().getMessageManager().removeAllMessages();
+                var oModel = this.getOwnerComponent().getModel();
+                var oPayLoad = {
+                    notif_uuid: uuid,
+                    status: iSelIndex === 0 ? "Pending" : "Deleted"
+                };
+                sap.ui.core.BusyIndicator.show();
+
+                oModel.callFunction("/reopenVendor", {
+                    method: "POST",
+                    urlParameters: oPayLoad,
+                    success: function (oData) {
+                        this.getOwnerComponent().getModel().refresh();
+                        sap.ui.core.BusyIndicator.hide();
+                        MessageBox.success("Record Updated Successfully");
+                    }.bind(this),
+                    error: function (error) {
+                        this.getOwnerComponent().getModel().refresh();
+                        sap.ui.core.BusyIndicator.hide();
+                        this.errorHandling(error);
+                    }.bind(this)
+                });
+            },
+            onPressCanelReopen: function (oEvent) {
+                if (this._oReopenDialog) {
+                    this._oReopenDialog.destroy(true);
+                    this._oReopenDialog = null;
+                }
             }
         });
     }
