@@ -290,11 +290,11 @@ sap.ui.define(
                     bAccept = false;
                 }
                 if (oSelObj.status_code === "Approved") {
-                    if ((oObj.role_role === "GCM" || oObj.role_role === "SGC") && !oSelObj.ld_initiator &&
+                    if ((oObj.role_role === "GCM" || oObj.role_role === "SGC") && !oSelObj.local_completionDate &&
                         oObj.userid.toUpperCase() === oSelObj.approver.toUpperCase()) {
                         bReopen = true;
                     }
-                    if ((oObj.role_role === "LP" || oObj.role_role === "SLP") && oSelObj.ld_initiator &&
+                    if ((oObj.role_role === "LP" || oObj.role_role === "SLP") && oSelObj.local_completionDate &&
                         (oObj.userid.toUpperCase() === oSelObj.localApprover.toUpperCase() && oSelObj.localApprover)) {
                         bReopen = true;
                     }
