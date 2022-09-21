@@ -295,7 +295,7 @@ sap.ui.define(
                         bReopen = true;
                     }
                     if ((oObj.role_role === "LP" || oObj.role_role === "SLP") && oSelObj.local_completionDate &&
-                        (oObj.userid.toUpperCase() === oSelObj.localApprover.toUpperCase() && oSelObj.localApprover)) {
+                        (oObj.userid.toUpperCase() === oSelObj.approver.toUpperCase() && oSelObj.approver)) {
                         bReopen = true;
                     }
                 }
