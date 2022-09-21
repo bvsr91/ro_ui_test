@@ -270,11 +270,11 @@ sap.ui.define(
             },
             handleActionPress: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
-                var bEdit, bDelete, bAccept;
+                var bEdit = false, bDelete = false, bAccept = false, bReopen = false;
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oRecordApprover = oInput.getBindingContext().getObject().approver;
                 var oObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (oObj.userid && oRecordApprover.toLowerCase() === oObj.userid.toLowerCase() && (oObj.role_role === "GCM" ||
+                if (oObj.userid && oRecordApprover.toUpperCase() === oObj.userid.toUpperCase() && (oObj.role_role === "GCM" ||
                     oObj.role_role === "LP" || oObj.role_role === "SGC" || oObj.role_role === "SLP")) {
                     if (oInput.getBindingContext().getObject().status_code === "Approved" || oInput.getBindingContext().getObject().status_code === "Rejected") {
                         bEdit = false;
@@ -288,6 +288,16 @@ sap.ui.define(
                     bAccept = true;
                 } else {
                     bAccept = false;
+                }
+                if (oSelObj.status_code === "Approved") {
+                    if ((oObj.role_role === "GCM" || oObj.role_role === "SGC") && !oSelObj.ld_initiator &&
+                        oObj.userid.toUpperCase() === oSelObj.approver.toUpperCase()) {
+                        bReopen = true;
+                    }
+                    if ((oObj.role_role === "LP" || oObj.role_role === "SLP") && oSelObj.ld_initiator &&
+                        (oObj.userid.toUpperCase() === oSelObj.localApprover.toUpperCase() && oSelObj.localApprover)) {
+                        bReopen = true;
+                    }
                 }
                 var oActionSheet = new sap.m.ActionSheet({
                     placement: "VerticalPreferredBottom",
@@ -303,6 +313,10 @@ sap.ui.define(
                         new sap.m.Button({
                             text: 'Reject', type: 'Transparent', width: '6rem', enabled: bEdit,
                             press: this.onPressReject.bind(this, oInput)
+                        }),
+                        new sap.m.Button({
+                            text: 'Re-Open', type: 'Transparent', width: '6rem', visible: bReopen,
+                            press: this.onPressReopen.bind(this, oInput)
                         }),
                         new sap.m.Button({
                             text: 'History', type: 'Transparent', width: '6rem',
@@ -728,6 +742,55 @@ sap.ui.define(
                     oTable.clearSelection();
 
                 })
+            },
+            onPressReopen: function (oInput) {
+                var sPath = oInput.getBindingContext().getPath;
+                var oSelObj = oInput.getBindingContext().getObject();
+                var oModel = this.getOwnerComponent().getModel();
+                if (this._oReopenDialog) {
+                    this._oReopenDialog.destroy(true);
+                    this._oReopenDialog = null;
+                }
+                if (!this._oReopenDialog) {
+                    this._oReopenDialog = sap.ui.xmlfragment(this.createId("FrgReopenPricing"), "com.ferrero.zmrouiapp.view.fragments.Reopen", this);
+                    this.getView().addDependent(this._oReopenDialog);
+                }
+                // var oList = this.byId(Fragment.createId("FrgVendorComments", "idTxtReopen"));
+                this.byId(Fragment.createId("FrgReopenPricing", "idTxtReopen")).setText(oSelObj.uuid);
+                this._oReopenDialog.open();
+            },
+            onPressReopenSave: function (oEvent) {
+                var iSelIndex = this.byId(Fragment.createId("FrgReopenPricing", "idRgb")).getSelectedIndex(),
+                    uuid = this.byId(Fragment.createId("FrgReopenPricing", "idTxtReopen")).getText();
+                sap.ui.getCore().getMessageManager().removeAllMessages();
+                var oModel = this.getOwnerComponent().getModel();
+                var oPayLoad = {
+                    notif_uuid: uuid,
+                    status: iSelIndex === 0 ? "Pending" : "Deleted"
+                };
+                sap.ui.core.BusyIndicator.show();
+
+                oModel.callFunction("/reopenPricing", {
+                    method: "POST",
+                    urlParameters: oPayLoad,
+                    success: function (oData) {
+                        this.getOwnerComponent().getModel().refresh();
+                        sap.ui.core.BusyIndicator.hide();
+                        this.onPressCanelReopen();
+                        MessageBox.success("Record Updated Successfully");
+                    }.bind(this),
+                    error: function (error) {
+                        this.getOwnerComponent().getModel().refresh();
+                        sap.ui.core.BusyIndicator.hide();
+                        this.errorHandling(error);
+                    }.bind(this)
+                });
+            },
+            onPressCanelReopen: function (oEvent) {
+                if (this._oReopenDialog) {
+                    this._oReopenDialog.destroy(true);
+                    this._oReopenDialog = null;
+                }
             }
         });
     }

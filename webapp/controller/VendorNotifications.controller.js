@@ -221,7 +221,7 @@ sap.ui.define(
                             press: this.onPressReject.bind(this, oInput)
                         }),
                         new sap.m.Button({
-                            text: 'Reopen', type: 'Transparent', width: '6rem', visible: bReopen,
+                            text: 'Re-Open', type: 'Transparent', width: '6rem', visible: bReopen,
                             press: this.onPressReopen.bind(this, oInput)
                         }),
                         new sap.m.Button({
@@ -639,6 +639,7 @@ sap.ui.define(
                     success: function (oData) {
                         this.getOwnerComponent().getModel().refresh();
                         sap.ui.core.BusyIndicator.hide();
+                        this.onPressCanelReopen();
                         MessageBox.success("Record Updated Successfully");
                     }.bind(this),
                     error: function (error) {
