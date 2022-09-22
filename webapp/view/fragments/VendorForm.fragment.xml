@@ -8,7 +8,7 @@
             <form:content>
                 <Label text="Manufacturer Code"/>
                 <Text id="idIpManf" text="{manufacturerCode}"/>
-                <Label text="Manufacturer Code Desc"/>
+                <Label text="Manufacturer Description"/>
                 <Input id="ManfDescId" value="{manufacturerCodeDesc}" maxLength="35"/>
                 <Label text="Country"/>
                 <Text id="idIpCountry" text="{countryCode_code}"/>
@@ -16,7 +16,7 @@
                 <Text id="idIpCountryDesc" text="{countryDesc}"/> -->
                 <Label text="Local Manufacutrer Code"/>
                 <Input id="idIpLocalManufCode" value="{localManufacturerCode}" maxLength="10"/>
-                <Label text="Local Manufacturer Desc"/>
+                <Label text="Local Manufacturer Description"/>
                 <Input id="localManufDescID" value="{localManufacturerCodeDesc}" maxLength="35"/>
             </form:content>
         </form:SimpleForm>

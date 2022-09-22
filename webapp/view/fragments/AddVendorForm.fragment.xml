@@ -18,17 +18,17 @@
                                     <Input id="idIpManf" required="true" maxLength="10"/>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Manufacturer Code Desc">
+                            <f:FormElement label="Manufacturer Description">
                                 <f:fields>
                                     <Input id="idIpManfDesc" maxLength="35"/>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Local Dealer Manufacturer">
+                            <f:FormElement label="Local Manufacturer Code">
                                 <f:fields>
                                     <Input id="idIpLocalManf" required="true" maxLength="10"/>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Local Dealer Manufacturer Desc">
+                            <f:FormElement label="Local Manufacturer Description">
                                 <f:fields>
                                     <Input id="idIpLocalManfDesc" maxLength="35"/>
                                 </f:fields>
