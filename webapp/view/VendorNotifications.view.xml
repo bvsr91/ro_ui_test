@@ -20,6 +20,17 @@
                 <content>
                     <smartTable:SmartTable entitySet="VendorNotifications_U" id="idSTabVendorNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid" requestAtLeastFields="uuid,Vendor_List_uuid" beforeRebindTable="onBeforeRebindTable">
                         <t:Table id="idUiTabVendorNoti" rowSelectionChange="onRowlSelChange" visibleRowCount="8">
+                            <t:columns>
+                                <t:Column width="8rem" hAlign="Begin">
+                                    <t:customData>
+                                        <core:CustomData key="p13nData" value='\{"columnKey": "status_code", "columnIndex": 5, "leadingProperty": "status_code"}'/>
+                                    </t:customData>
+                                    <Label text="Status" />
+                                    <t:template>
+                                        <ObjectStatus text="{status_code}" icon="{path:'status_code', formatter:'.formatter.statusIcon'}" state="{path:'status_code', formatter:'.formatter.statusState'}" />
+                                    </t:template>
+                                </t:Column>
+                            </t:columns>
                         </t:Table>
                         <smartTable:customToolbar>
                             <OverflowToolbar>

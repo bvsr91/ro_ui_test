@@ -49,6 +49,42 @@ sap.ui.define([], function () {
                 });
                 return dateFormat.format(oDate);
             }
+        },
+        statusIcon: function (sStatus) {
+            if (sStatus) {
+                switch (sStatus) {
+                    case "Pending":
+                        return "sap-icon://pending";
+                    case "Approved":
+                        return "sap-icon://sys-enter-2";
+                    case "Rejected":
+                        return "sap-icon://sys-cancel-2";
+                    case "Deleted":
+                        return "sap-icon://delete";
+                    case "In Progress":
+                        return "sap-icon://in-progress";
+                    case "Forwarded":
+                        return "sap-icon://forward";
+                }
+            }
+        },
+        statusState: function (sStatus) {
+            if (sStatus) {
+                switch (sStatus) {
+                    case "Pending":
+                        return "Indication03";
+                    case "Approved":
+                        return "Indication04";
+                    case "Rejected":
+                        return "Indication01";
+                    case "Deleted":
+                        return "Indication02";
+                    case "In Progress":
+                        return "Indication06";
+                    case "Forwarded":
+                        return "Indication08";
+                }
+            }
         }
     };
 });

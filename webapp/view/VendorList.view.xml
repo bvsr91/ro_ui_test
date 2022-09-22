@@ -17,7 +17,19 @@
         </smartFilterBar:SmartFilterBar>
         <smartTable:SmartTable entitySet="VendorList" id="vendSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Vendor List Items" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
                     country,countryDesc" ignoredFields="uuid, v_notif_uuid,Vendor_List_uuid" requestAtLeastFields="uuid,v_notif_uuid,Vendor_List_uuid">
-            <t:Table id="idUiTab" selectionMode="None" visibleRowCountMode="Auto"/>
+            <t:Table id="idUiTab" selectionMode="None" visibleRowCountMode="Auto">
+                <t:columns>
+                    <t:Column width="8rem" hAlign="Begin">
+                        <t:customData>
+                            <core:CustomData key="p13nData" value='\{"columnKey": "status_code", "columnIndex": 5, "leadingProperty": "status_code"}'/>
+                        </t:customData>
+                        <Label text="Status" />
+                        <t:template>
+                            <ObjectStatus text="{status_code}" icon="{path:'status_code', formatter:'.formatter.statusIcon'}" state="{path:'status_code', formatter:'.formatter.statusState'}" />
+                        </t:template>
+                    </t:Column>
+                </t:columns>
+            </t:Table>
             <smartTable:customToolbar>
                 <OverflowToolbar>
                     <content>

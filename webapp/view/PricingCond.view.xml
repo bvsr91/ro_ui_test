@@ -17,13 +17,17 @@
         <smartTable:SmartTable entitySet="PricingConditions" id="priceSmartTab" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Conditions" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode,manufacturerCodeDesc,localManufacturerCode,localManufacturerCodeDesc,
                     country,countryDesc" ignoredFields="uuid" requestAtLeastFields="uuid">
             <t:Table id="idPricingCondTab" selectionMode="None" visibleRowCountMode="Auto">
-                <!-- <t:columns>
-                    </t:columns>
-                    <t:rowActionTemplate>
-                        <t:RowAction>
-                            <t:RowActionItem press="onSelectPriceGroup" type="Navigation" icon="sap-icon://feeder-arrow" />
-                        </t:RowAction>
-                    </t:rowActionTemplate> -->
+                <t:columns>
+                    <t:Column width="8rem" hAlign="Begin">
+                        <t:customData>
+                            <core:CustomData key="p13nData" value='\{"columnKey": "status_code", "columnIndex": 5, "leadingProperty": "status_code"}'/>
+                        </t:customData>
+                        <Label text="Status" />
+                        <t:template>
+                            <ObjectStatus text="{status_code}" icon="{path:'status_code', formatter:'.formatter.statusIcon'}" state="{path:'status_code', formatter:'.formatter.statusState'}" />
+                        </t:template>
+                    </t:Column>
+                </t:columns>
             </t:Table>
             <smartTable:customToolbar>
                 <OverflowToolbar>
