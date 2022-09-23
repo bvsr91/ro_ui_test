@@ -285,12 +285,16 @@ sap.ui.define(
                     if (oSelObj.ld_initiator === null) {
                         if (logOnUserObj.userid && (oRecordCreator !== null && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
                             && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC") && (oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected" || oSelObj.status_code === "Forwarded")) {
-                            if (oSelObj.status_code === "Forwarded") {
-                                bEdit = true;
-                                bDelete = false;
-                            } else {
+                            if (oSelObj.status_code === "Forwarded" && (oSelObj.lo_countryFactor === true && oSelObj.lo_exchangeRate === true)) {
                                 bEdit = true;
                                 bDelete = true;
+                            } else if ((oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected") && (oSelObj.lo_countryFactor === true || oSelObj.lo_exchangeRate === true)) {
+                                bEdit = true;
+                                bDelete = true;
+                            }
+                            else {
+                                bEdit = false;
+                                bDelete = false;
                             }
                         } else {
                             bEdit = false;
