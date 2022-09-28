@@ -119,12 +119,12 @@ sap.ui.define(
                 if (role.role_role) {
                     if (role.role_role === "CDT") {
                         // sFieldName = "createdBy";
-                        this.getView().byId("idSTabVendorNoti").setEntitySet("VendorNotifications_U");
-                        this._sEntitySet = "VendorNotifications_U";
+                        this.getView().byId("idSTabVendorNoti").setEntitySet("VendorNoti_U");
+                        this._sEntitySet = "VendorNoti_U";
                     } else {
                         // sFieldName = "approver"
-                        this.getView().byId("idSTabVendorNoti").setEntitySet("VendorNotifications_A");
-                        this._sEntitySet = "VendorNotifications_A";
+                        this.getView().byId("idSTabVendorNoti").setEntitySet("VendorNoti_A");
+                        this._sEntitySet = "VendorNoti_A";
                     }
                 }
                 if (sTabSelKey !== "All" && sTabSelKey !== "") {
@@ -243,9 +243,9 @@ sap.ui.define(
                 }
                 var oList = this.byId(Fragment.createId("FrgVendorComments", "idListVendComment"));
                 var aFilter = [];
-                aFilter.push(new Filter("Vendor_List_manufacturerCode", FilterOperator.EQ, oSelObj.Vendor_List_manufacturerCode, true));
-                aFilter.push(new Filter("Vendor_List_uuid", FilterOperator.EQ, oSelObj.Vendor_List_uuid, true));
-                aFilter.push(new Filter("Vendor_List_countryCode_code", FilterOperator.EQ, oSelObj.Vendor_List_countryCode_code, true));
+                aFilter.push(new Filter("Vendor_List_manufacturerCode", FilterOperator.EQ, oSelObj.manufacturerCode, true));
+                aFilter.push(new Filter("Vendor_List_uuid", FilterOperator.EQ, oSelObj.uuid, true));
+                aFilter.push(new Filter("Vendor_List_countryCode_code", FilterOperator.EQ, oSelObj.countryCode_code, true));
                 oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();
             },
@@ -264,45 +264,25 @@ sap.ui.define(
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oActionUriParameters = {
                     uuid: oSelObj.uuid,
-                    Vendor_List_manufacturerCode: oSelObj.Vendor_List_manufacturerCode,
-                    Vendor_List_countryCode_code: oSelObj.Vendor_List_countryCode_code,
-                    Vendor_List_uuid: oSelObj.Vendor_List_uuid,
-                    localManufacturerCode: oSelObj.localManufacturerCode,
-                    completionDate: new Date().toISOString(),
-                    approvedDate: new Date().toISOString(),
-                    approver: logOnUserObj.userid,
-                    status_code: "Approved"
+                    manufacturerCode: oSelObj.manufacturerCode,
+                    countryCode: oSelObj.countryCode_code
                 };
-                var oPayLoadVL = {
-                    status_code: "Approved"
-                };
-                var sPath = "/VendorNotifications(guid'" + oSelObj.uuid + "')";
+                var sPath = "/approveVendor";
                 sap.ui.core.BusyIndicator.show();
                 const info = await this.updateVendorRecord(oModel, sPath, oActionUriParameters);
-                if (info.status_code) {
+                if (info.approveVendor) {
                     MessageBox.success("Record Approved Successfully");
                 } else {
                     this.errorHandling(info);
                 }
                 sap.ui.core.BusyIndicator.hide();
-
-                // oModel.callFunction("/approvePricing", {
-                //     method: "POST",
-                //     urlParameters: oActionUriParameters,
-                //     success: function (oData) {
-                //         this.getView().byId("idSTabPrcingNoti").rebindTable(true);
-                //         this._oPopover.close();
-                //         // debugger;
-                //     }.bind(this),
-                //     error: function (error) {
-                //         // debugger;
-                //     }
-                // });
             },
             updateVendorRecord: function (oModel, sPath, oPayLoad) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 return new Promise(function (resolve, reject) {
-                    oModel.update(sPath, oPayLoad, {
+                    oModel.callFunction(sPath, {
+                        method: "POST",
+                        urlParameters: oPayLoad,
                         success: function (oData) {
                             this.getView().byId("idSTabVendorNoti").rebindTable(true);
                             this.getOwnerComponent().getModel().refresh();
@@ -332,7 +312,7 @@ sap.ui.define(
                         type: DialogType.Message,
                         content: [
                             new Label({
-                                text: "Do you want to reject " + oSelObj.Vendor_List_manufacturerCode + "?",
+                                text: "Do you want to reject " + oSelObj.manufacturerCode + "?",
                                 labelFor: "rejectionNote",
                             }),
                             new TextArea("rejectionNote", {
@@ -369,10 +349,10 @@ sap.ui.define(
                 var oModel = this.getOwnerComponent().getModel();
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oActionUriParameters = {
-                    vendor_Notif_uuid: oSelObj.uuid,
-                    Vendor_List_manufacturerCode: oSelObj.Vendor_List_manufacturerCode,
-                    Vendor_List_countryCode_code: oSelObj.Vendor_List_countryCode_code,
-                    Vendor_List_uuid: oSelObj.Vendor_List_uuid,
+                    // vendor_Notif_uuid: oSelObj.uuid,
+                    Vendor_List_manufacturerCode: oSelObj.manufacturerCode,
+                    Vendor_List_countryCode_code: oSelObj.countryCode_code,
+                    Vendor_List_uuid: oSelObj.uuid,
                     localManufacturerCode: oSelObj.localManufacturerCode,
                     Comment: sText
                 };
@@ -381,7 +361,7 @@ sap.ui.define(
                 };
                 sap.ui.core.BusyIndicator.show();
                 const info = await this.createVendorComment(oModel, "/VendorComments", oActionUriParameters);
-                if (info.vendor_Notif_uuid) {
+                if (info.Vendor_List_uuid) {
                     MessageBox.success("Record Rejected Successfully");
                 } else {
                     this.errorHandling(info);
@@ -468,21 +448,15 @@ sap.ui.define(
                 for (var a = 0; a < aData.length; a++) {
                     var oActionUriParameters = {
                         uuid: aData[a].uuid,
-                        Vendor_List_manufacturerCode: aData[a].Vendor_List_manufacturerCode,
-                        Vendor_List_countryCode_code: aData[a].Vendor_List_countryCode_code,
-                        Vendor_List_uuid: aData[a].Vendor_List_uuid,
-                        localManufacturerCode: aData[a].localManufacturerCode,
-                        completionDate: new Date().toISOString(),
-                        approvedDate: new Date().toISOString(),
-                        approver: logOnUserObj.userid,
-                        status_code: "Approved"
+                        manufacturerCode: aData[a].manufacturerCode,
+                        countryCode: aData[a].countryCode_code
                     };
 
                     oContext.update.push({
-                        "entityName": "/VendorNotifications(guid'" + aData[a].uuid + "')", "payload": oActionUriParameters, "iSelIndex": selectedValues[a] + 1
+                        "entityName": "/approveVendor", "payload": oActionUriParameters, "iSelIndex": selectedValues[a] + 1
                     });
                 }
-                this.onPromiseAll(oContext.update, 'update', "Approve", "VendorNotifications").then((oResponse) => {
+                this.onPromiseAll(oContext.update, 'callFunction', "Approved", "VendorNotifications").then((oResponse) => {
                     that.getView().byId("idUiTabVendorNoti").setBusy(false);
                     if (iCounter === 1) {
                         that.getOwnerComponent().getModel().refresh();
@@ -572,10 +546,9 @@ sap.ui.define(
                 var selectedValues = oTable.getSelectedIndices();
                 for (var a = 0; a < aData.length; a++) {
                     var oActionUriParameters = {
-                        vendor_Notif_uuid: aData[a].uuid,
-                        Vendor_List_manufacturerCode: aData[a].Vendor_List_manufacturerCode,
-                        Vendor_List_countryCode_code: aData[a].Vendor_List_countryCode_code,
-                        Vendor_List_uuid: aData[a].Vendor_List_uuid,
+                        Vendor_List_manufacturerCode: aData[a].manufacturerCode,
+                        Vendor_List_countryCode_code: aData[a].countryCode_code,
+                        Vendor_List_uuid: aData[a].uuid,
                         localManufacturerCode: aData[a].localManufacturerCode,
                         Comment: sText
                     };
@@ -628,7 +601,7 @@ sap.ui.define(
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var oPayLoad = {
-                    notif_uuid: uuid,
+                    uuid: uuid,
                     status: iSelIndex === 0 ? "Pending" : "Deleted"
                 };
                 sap.ui.core.BusyIndicator.show();

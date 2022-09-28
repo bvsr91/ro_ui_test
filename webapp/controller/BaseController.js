@@ -321,70 +321,128 @@ sap.ui.define(
                 return new Promise((resolve, reject) => {
                     taskList.forEach((oUpdate, index) => {
                         sAction = sAction;
-                        oModel[sAction](oUpdate.entityName, oUpdate.payload, {
-                            success: (dataRes) => {
-                                promisesCompleted += 1;
-                                aUpdate[index] = {
-                                    entityName: oUpdate.entityName,
-                                    iSelIndex: oUpdate.iSelIndex,
-                                    result: dataRes,
-                                    status: 'Success'
-                                };
-                                var sMsg;
-                                if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
-                                    sMsg = "Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + ", Local Manufacturer Code:" + dataRes.Vendor_List_localManufacturerCode + " and Country Code:" +
-                                        dataRes.Vendor_List_countryCode_code + " is " + sType + " Successfully"
-                                } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
-                                    sMsg = "Manufacturer Code: " + dataRes.Pricing_Conditions_manufacturerCode + " and Country Code:" +
-                                        dataRes.Pricing_Conditions_countryCode_code + " is " + sType + " Successfully"
-                                } else if (sEntityName === "VendorList") {
-                                    sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + ", Local Manufacturer Code:" + dataRes.localManufacturerCode + " and Country Code:" +
-                                        dataRes.countryCode_code + " is " + sType + " Successfully"
-                                } else if (sEntityName === "PricingConditions") {
-                                    sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + " and Country Code:" +
-                                        dataRes.countryCode_code + " is " + sType + " Successfully"
-                                }
+                        if (sEntityName !== "VendorNotifications") {
+                            oModel[sAction](oUpdate.entityName, oUpdate.payload, {
+                                success: (dataRes) => {
+                                    promisesCompleted += 1;
+                                    aUpdate[index] = {
+                                        entityName: oUpdate.entityName,
+                                        iSelIndex: oUpdate.iSelIndex,
+                                        result: dataRes,
+                                        status: 'Success'
+                                    };
+                                    var sMsg;
+                                    if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
+                                        sMsg = "Manufacturer Code: " + dataRes.Vendor_List_manufacturerCode + " and Country Code:" +
+                                            dataRes.Vendor_List_countryCode_code + " is " + sType + " Successfully"
+                                    } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
+                                        sMsg = "Manufacturer Code: " + dataRes.Pricing_Conditions_manufacturerCode + " and Country Code:" +
+                                            dataRes.Pricing_Conditions_countryCode_code + " is " + sType + " Successfully"
+                                    } else if (sEntityName === "VendorList") {
+                                        sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + ", Local Manufacturer Code:" + dataRes.localManufacturerCode + " and Country Code:" +
+                                            dataRes.countryCode_code + " is " + sType + " Successfully"
+                                    } else if (sEntityName === "PricingConditions") {
+                                        sMsg = "Manufacturer Code: " + dataRes.manufacturerCode + " and Country Code:" +
+                                            dataRes.countryCode_code + " is " + sType + " Successfully"
+                                    }
 
-                                var oMessage = new sap.ui.core.message.Message({
-                                    message: sMsg,
-                                    persistent: true,
-                                    type: sap.ui.core.MessageType.Success,
-                                    description: ""
-                                });
-                                sap.ui.getCore().getMessageManager().addMessages(oMessage);
-                                if (promisesCompleted === taskList.length) {
-                                    if (aUpdate.find(oupdate => oupdate.status === "Failure")) {
-                                        reject(aUpdate);
-                                    } else {
-                                        resolve(aUpdate);
-                                    }
-                                }
-                            },
-                            error: (e) => {
-                                promisesCompleted += 1;
-                                aUpdate[index] = {
-                                    entityName: oUpdate.entityName,
-                                    result: e,
-                                    status: 'Failure'
-                                };
-                                var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().getData();
-                                if (aMessages.length > 0) {
-                                    for (var a of aMessages) {
-                                        var sMsg;
-                                        if (a.description !== "") {
-                                            sMsg = this.prepareErrorMsg(a.message, sEntityName, oUpdate.payload);
-                                            a.description = "";
+                                    var oMessage = new sap.ui.core.message.Message({
+                                        message: sMsg,
+                                        persistent: true,
+                                        type: sap.ui.core.MessageType.Success,
+                                        description: ""
+                                    });
+                                    sap.ui.getCore().getMessageManager().addMessages(oMessage);
+                                    if (promisesCompleted === taskList.length) {
+                                        if (aUpdate.find(oupdate => oupdate.status === "Failure")) {
+                                            reject(aUpdate);
                                         } else {
-                                            continue;
+                                            resolve(aUpdate);
                                         }
-                                        a.message = sMsg;
+                                    }
+                                },
+                                error: (e) => {
+                                    promisesCompleted += 1;
+                                    aUpdate[index] = {
+                                        entityName: oUpdate.entityName,
+                                        result: e,
+                                        status: 'Failure'
+                                    };
+                                    var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().getData();
+                                    if (aMessages.length > 0) {
+                                        for (var a of aMessages) {
+                                            var sMsg;
+                                            if (a.description !== "") {
+                                                sMsg = this.prepareErrorMsg(a.message, sEntityName, oUpdate.payload);
+                                                a.description = "";
+                                            } else {
+                                                continue;
+                                            }
+                                            a.message = sMsg;
+                                        }
+                                    }
+                                    if (promisesCompleted === taskList.length) {
+                                        reject(aUpdate);
                                     }
                                 }
-                                if (promisesCompleted === taskList.length) {
-                                    reject(aUpdate);
+                            });
+                        } else {
+                            oModel[sAction](oUpdate.entityName, {
+                                method: "POST",
+                                urlParameters: oUpdate.payload,
+                                success: (dataRes) => {
+                                    promisesCompleted += 1;
+                                    aUpdate[index] = {
+                                        entityName: oUpdate.entityName,
+                                        iSelIndex: oUpdate.iSelIndex,
+                                        result: dataRes,
+                                        status: 'Success'
+                                    };
+                                    var sMsg;
+                                    if (sEntityName === "VendorNotifications") {
+                                        sMsg = dataRes.approveVendor + " is " + sType + " Successfully"
+                                    }
+                                    var oMessage = new sap.ui.core.message.Message({
+                                        message: sMsg,
+                                        persistent: true,
+                                        type: sap.ui.core.MessageType.Success,
+                                        description: ""
+                                    });
+                                    sap.ui.getCore().getMessageManager().addMessages(oMessage);
+                                    if (promisesCompleted === taskList.length) {
+                                        if (aUpdate.find(oupdate => oupdate.status === "Failure")) {
+                                            reject(aUpdate);
+                                        } else {
+                                            resolve(aUpdate);
+                                        }
+                                    }
+                                },
+                                error: (e) => {
+                                    promisesCompleted += 1;
+                                    aUpdate[index] = {
+                                        entityName: oUpdate.entityName,
+                                        result: e,
+                                        status: 'Failure'
+                                    };
+                                    var aMessages = sap.ui.getCore().getMessageManager().getMessageModel().getData();
+                                    if (aMessages.length > 0) {
+                                        for (var a of aMessages) {
+                                            var sMsg;
+                                            if (a.description !== "") {
+                                                sMsg = this.prepareErrorMsg(a.message, sEntityName, oUpdate.payload);
+                                                a.description = "";
+                                            } else {
+                                                continue;
+                                            }
+                                            a.message = sMsg;
+                                        }
+                                    }
+                                    if (promisesCompleted === taskList.length) {
+                                        reject(aUpdate);
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     })
                 });
             },
@@ -396,10 +454,13 @@ sap.ui.define(
                 } else if (sEntityName === "PricingConditions") {
                     sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.manufacturerCode + " and Country Code:" +
                         oReq.countryCode_code;
-                } else if (sEntityName === "VendorNotifications" || sEntityName === "VendorComments") {
-                    sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.Vendor_List_manufacturerCode + ", Local Manufacturer Code:" + oReq.Vendor_List_localManufacturerCode + " and Country Code:" +
+                } else if (sEntityName === "VendorNotifications") {
+                    sMsg = sErrorMsg;
+                } else if (sEntityName === "VendorComments") {
+                    sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.Vendor_List_manufacturerCode + " and Country Code:" +
                         oReq.Vendor_List_countryCode_code;
-                } else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
+                }
+                else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
                     sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.Pricing_Conditions_manufacturerCode + " and Country Code:" +
                         oReq.Pricing_Conditions_countryCode_code;
                 }
