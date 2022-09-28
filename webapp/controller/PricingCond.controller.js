@@ -116,7 +116,7 @@ sap.ui.define(
                 var bValidEndDate = this.validateStartEndDate(validityStartId, validityEndId);
                 if (bValidEndDate === "1") {
                     bFinalValidation = false;
-                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End must be greater than or equal to Validity Start");
                 } else if (bValidEndDate === "2") {
                     bFinalValidation = false;
                     sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity Start and End Date are mandatory");
@@ -368,7 +368,7 @@ sap.ui.define(
                 var bValidEndDate = this.validateStartEndDate(validityStartId, validityEndId);
                 if (bValidEndDate === "1") {
                     bFinalValidation = false;
-                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End date must greater than Start date");
+                    sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity End must be greater than or equal to Validity Start");
                 } else if (bValidEndDate === "2") {
                     bFinalValidation = false;
                     sFinalMsg = this.prepareErrorMsg(sFinalMsg, "Validity Start and End Date are mandatory");
@@ -932,7 +932,7 @@ sap.ui.define(
             },
             validateStartEndDate: function (startDate, endDate) {
                 if ((startDate || startDate !== null) && (endDate || endDate !== null)) {
-                    if (endDate > startDate) {
+                    if (endDate >= startDate) {
                         return "0";
                     } else {
                         return "1";

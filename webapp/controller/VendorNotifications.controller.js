@@ -463,7 +463,7 @@ sap.ui.define(
                         iCounter += 1;
                     }
                     sap.ui.core.BusyIndicator.hide();
-                    MessageBox.success("Record Approved Successfully");
+                    MessageBox.success("Record(s) Approved Successfully");
                     oTable.clearSelection();
 
 
@@ -565,10 +565,8 @@ sap.ui.define(
                     }
                     that.oRejectDialog.close();
                     sap.ui.core.BusyIndicator.hide();
-                    MessageBox.success("Record Rejected Successfully");
+                    MessageBox.success("Record(s) Rejected Successfully");
                     oTable.clearSelection();
-
-
                 }).catch((error) => {
                     that.getView().byId("idUiTabVendorNoti").setBusy(false);
                     that.getOwnerComponent().getModel().refresh();
