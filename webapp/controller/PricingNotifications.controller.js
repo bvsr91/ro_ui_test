@@ -136,8 +136,8 @@ sap.ui.define(
                         this._sEntitySet = "PricingNoti_CS";
                     }
                     else {
-                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNoti_CS");
-                        this._sEntitySet = "PricingNoti_CS";
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNoti_LS");
+                        this._sEntitySet = "PricingNoti_LS";
                     }
                 }
                 if (sTabSelKey !== "All" && sTabSelKey !== "") {
@@ -289,7 +289,7 @@ sap.ui.define(
                 var oObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if (oObj.userid && (oRecordApprover && oRecordApprover.toUpperCase() === oObj.userid.toUpperCase()) && (oObj.role_role === "GCM" ||
                     oObj.role_role === "LP" || oObj.role_role === "SGC" || oObj.role_role === "SLP")) {
-                    if (oSelObj.status_code === "Approved" || oSelObj.status_code === "Rejected") {
+                    if (oSelObj.status_code !== "Pending") {
                         bEdit = false;
                     } else {
                         bEdit = true;
