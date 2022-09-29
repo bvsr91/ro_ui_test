@@ -124,7 +124,7 @@ sap.ui.define(
                 oPayLoad.manufacturerCode = oPayLoad.manufacturerCode === "" ? null : oPayLoad.manufacturerCode;
                 oPayLoad.localManufacturerCode = oPayLoad.localManufacturerCode === "" ? null : oPayLoad.localManufacturerCode;
                 oPayLoad.countryCode_code = oPayLoad.countryCode_code === "" ? null : oPayLoad.countryCode_code;
-                oPayLoad.v_notif = {};
+                // oPayLoad.v_notif = {};
                 var oModel = this.getOwnerComponent().getModel();
                 // this.getView().setBusy(true);
                 sap.ui.core.BusyIndicator.show();
@@ -488,7 +488,7 @@ sap.ui.define(
                     };
                 oModel.setUseBatch(false);
                 for (var a = 0; a < aData.length; a++) {
-                    aData[a].v_notif = {};
+                    // aData[a].v_notif = {};
                     if (aData[a].manufacturerCode === "") {
                         aData[a].manufacturerCode = null;
                     }
@@ -568,7 +568,7 @@ sap.ui.define(
                     sap.ui.core.BusyIndicator.hide();
                 });
                 for (var a of aData) {
-                    a.v_notif = {};
+                    // a.v_notif = {};
                     oModel.create("/VendorList", a, {
                         method: "POST",
                         success: function (dataRes) {

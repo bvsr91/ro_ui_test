@@ -163,7 +163,7 @@ sap.ui.define(
                 if (bLocalOwnerShipCF) {
                     oPayLoad.countryFactor = null;
                 }
-                oPayLoad.p_notif = {};
+                // oPayLoad.p_notif = {};
                 var oModel = this.getOwnerComponent().getModel();
                 sap.ui.core.BusyIndicator.show();
                 // this.getView().setBusy(true);
@@ -288,7 +288,9 @@ sap.ui.define(
                             if (oSelObj.status_code === "Forwarded" && (oSelObj.lo_countryFactor === true && oSelObj.lo_exchangeRate === true)) {
                                 bEdit = true;
                                 bDelete = true;
-                            } else if ((oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected") && (oSelObj.lo_countryFactor === true || oSelObj.lo_exchangeRate === true)) {
+                            } else if ((oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected")
+                                // && (oSelObj.lo_countryFactor === true || oSelObj.lo_exchangeRate === true)
+                            ) {
                                 bEdit = true;
                                 bDelete = true;
                             }
@@ -415,7 +417,7 @@ sap.ui.define(
                 oPayLoad.manufacturerCodeDesc = manufacturerDesc.trim();
                 oPayLoad.ld_initiator = oObj.ld_initiator;
                 oPayLoad.countryCode_code = oObj.countryCode_code;
-                oPayLoad.p_notif_uuid = oObj.p_notif_uuid;
+                // oPayLoad.p_notif_uuid = oObj.p_notif_uuid;
                 oPayLoad.status_code = "Pending";
                 oPayLoad.countryFactor = isNaN(parseInt(countryFactor)) && countryFactor === "" ? null : parseFloat(countryFactor);
                 oPayLoad.exchangeRate = isNaN(parseInt(exchangeRate)) && exchangeRate === "" ? null : parseFloat(exchangeRate);
@@ -476,7 +478,7 @@ sap.ui.define(
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oPayLoad = {};
                 oPayLoad.status_code = "Deleted";
-                oPayLoad.p_notif_uuid = oInput.getBindingContext().getProperty("p_notif_uuid");
+                // oPayLoad.p_notif_uuid = oInput.getBindingContext().getProperty("p_notif_uuid");
                 sap.ui.core.BusyIndicator.show();
                 oModel.update(oInput.getBindingContext().getPath(), oPayLoad, {
                     success: function (oData) {
@@ -684,7 +686,7 @@ sap.ui.define(
                     };
                 oModel.setUseBatch(false);
                 for (var a = 0; a < aData.length; a++) {
-                    aData[a].p_notif = {};
+                    // aData[a].p_notif = {};
                     if (aData[a].manufacturerCode === "") {
                         aData[a].manufacturerCode = null;
                     }

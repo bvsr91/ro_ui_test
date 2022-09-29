@@ -321,7 +321,8 @@ sap.ui.define(
                 return new Promise((resolve, reject) => {
                     taskList.forEach((oUpdate, index) => {
                         sAction = sAction;
-                        if (sEntityName !== "VendorNotifications") {
+                        var aEntities = ["VendorNotifications", "PricingNotifications"];
+                        if (!aEntities.includes(sEntityName)) {
                             oModel[sAction](oUpdate.entityName, oUpdate.payload, {
                                 success: (dataRes) => {
                                     promisesCompleted += 1;
@@ -401,6 +402,8 @@ sap.ui.define(
                                     var sMsg;
                                     if (sEntityName === "VendorNotifications") {
                                         sMsg = dataRes.approveVendor + " is " + sType + " Successfully"
+                                    } else if (sEntityName === "PricingNotifications") {
+                                        sMsg = dataRes.approvePricing + " is " + sType + " Successfully"
                                     }
                                     var oMessage = new sap.ui.core.message.Message({
                                         message: sMsg,
@@ -459,8 +462,9 @@ sap.ui.define(
                 } else if (sEntityName === "VendorComments") {
                     sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.Vendor_List_manufacturerCode + " and Country Code:" +
                         oReq.Vendor_List_countryCode_code;
-                }
-                else if (sEntityName === "PricingComments" || sEntityName === "PricingNotifications") {
+                } else if (sEntityName === "PricingNotifications") {
+                    sMsg = sErrorMsg;
+                } else if (sEntityName === "PricingComments") {
                     sMsg = sErrorMsg + " for Manufacturer Code: " + oReq.Pricing_Conditions_manufacturerCode + " and Country Code:" +
                         oReq.Pricing_Conditions_countryCode_code;
                 }

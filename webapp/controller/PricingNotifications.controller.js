@@ -115,22 +115,30 @@ sap.ui.define(
                     await this.validateUser();
                 }
                 if (role.role_role) {
-                    if (role.role_role === "CDT" || role.role_role === "LDT") {
-                        // sFieldName = "createdBy";
-                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNotifications_U");
-                        this._sEntitySet = "PricingNotifications_U";
-                    } else if (role.role_role === "SGC" || role.role_role === "SLP") {
-                        // sFieldName = "approver"
-                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNotifications_S");
-                        this._sEntitySet = "PricingNotifications_S";
-                    } else {
-                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNotifications_A");
-                        this._sEntitySet = "PricingNotifications_A";
+                    if (role.role_role === "CDT") {
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNoti_CU");
+                        this._sEntitySet = "PricingNoti_CU";
                     }
-                    // var aFilter = [];
-                    // var newFilter = new Filter(sFieldName, FilterOperator.EQ, role.userid);
-                    // // }
-                    // mBindingParams.filters.push(newFilter);
+                    else if (role.role_role === "LDT") {
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNoti_LU");
+                        this._sEntitySet = "PricingNoti_LU";
+                    }
+                    else if (role.role_role === "GCM") {
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNoti_CA");
+                        this._sEntitySet = "PricingNoti_CA";
+                    }
+                    else if (role.role_role === "LP") {
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNoti_LA");
+                        this._sEntitySet = "PricingNoti_LA";
+                    }
+                    else if (role.role_role === "SGC") {
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNoti_CS");
+                        this._sEntitySet = "PricingNoti_CS";
+                    }
+                    else {
+                        this.getView().byId("idSTabPrcingNoti").setEntitySet("PricingNoti_CS");
+                        this._sEntitySet = "PricingNoti_CS";
+                    }
                 }
                 if (sTabSelKey !== "All" && sTabSelKey !== "") {
                     if (role.role_role === "CDT") {
@@ -156,7 +164,7 @@ sap.ui.define(
                         } else {
                             aFilter.push(new Filter("status_code", FilterOperator.EQ, sTabSelKey));
                             aFilter.push(new Filter("status_code", FilterOperator.NE, "Deleted"));
-                            aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
+                            // aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
                             var oFilter = new Filter({
                                 filters: aFilter,
                                 and: true,
@@ -191,7 +199,7 @@ sap.ui.define(
                         mBindingParams.filters.push(oFilter);
                     } else if (role.role_role === "LDT") {
                         var aFilter = [];
-                        aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
+                        // aFilter.push(new Filter("user", FilterOperator.EQ, role.userid));
                         aFilter.push(new Filter("status_code", FilterOperator.EQ, "Forwarded"));
                         aFilter.push(new Filter("status_code", FilterOperator.NE, "Deleted"));
                         var oFilter = new Filter({
@@ -271,12 +279,17 @@ sap.ui.define(
             handleActionPress: function (oEvent) {
                 var oInput = oEvent.getSource().getParent();
                 var bEdit = false, bDelete = false, bAccept = false, bReopen = false;
-                var oSelObj = oInput.getBindingContext().getObject();
-                var oRecordApprover = oInput.getBindingContext().getObject().approver;
+                var oSelObj = oInput.getBindingContext().getObject(),
+                    oRecordApprover;
+                if (oSelObj.ld_initiator && oSelObj.ld_initiator !== "") {
+                    oRecordApprover = oSelObj.localApprover;
+                } else {
+                    oRecordApprover = oSelObj.approver;
+                }
                 var oObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
-                if (oObj.userid && oRecordApprover.toUpperCase() === oObj.userid.toUpperCase() && (oObj.role_role === "GCM" ||
+                if (oObj.userid && (oRecordApprover && oRecordApprover.toUpperCase() === oObj.userid.toUpperCase()) && (oObj.role_role === "GCM" ||
                     oObj.role_role === "LP" || oObj.role_role === "SGC" || oObj.role_role === "SLP")) {
-                    if (oInput.getBindingContext().getObject().status_code === "Approved" || oInput.getBindingContext().getObject().status_code === "Rejected") {
+                    if (oSelObj.status_code === "Approved" || oSelObj.status_code === "Rejected") {
                         bEdit = false;
                     } else {
                         bEdit = true;
@@ -295,7 +308,7 @@ sap.ui.define(
                         bReopen = true;
                     }
                     if ((oObj.role_role === "LP" || oObj.role_role === "SLP") && oSelObj.local_completionDate &&
-                        (oObj.userid.toUpperCase() === oSelObj.approver.toUpperCase() && oSelObj.approver)) {
+                        (oObj.userid.toUpperCase() === oSelObj.localApprover.toUpperCase() && oSelObj.localApprover)) {
                         bReopen = true;
                     }
                 }
@@ -334,45 +347,25 @@ sap.ui.define(
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oActionUriParameters = {
                     uuid: oSelObj.uuid,
-                    Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
-                    Pricing_Conditions_countryCode_code: oSelObj.Pricing_Conditions_countryCode_code,
-                    Pricing_Conditions_uuid: oSelObj.Pricing_Conditions_uuid,
-                    approvedDate: new Date().toISOString(),
-                    approver: logOnUserObj.userid,
-                    status_code: "Approved"
+                    manufacturerCode: oSelObj.manufacturerCode,
+                    countryCode: oSelObj.countryCode_code
                 };
-                if (logOnUserObj.role_role === "GCM" || logOnUserObj.role_role === "SGC") {
-                    oActionUriParameters.completionDate = new Date().toISOString();
-                } else if (logOnUserObj.role_role === "LP" || logOnUserObj.role_role === "SLP") {
-                    oActionUriParameters.local_completionDate = new Date().toISOString();
-                }
-                var sPath = "/PricingNotifications(guid'" + oSelObj.uuid + "')";
+                var sPath = "/approvePricing";
                 sap.ui.core.BusyIndicator.show();
                 const info = await this.updatePricingRecord(oModel, sPath, oActionUriParameters);
-                if (info.status_code) {
+                if (info.approvePricing) {
                     MessageBox.success("Record Approved Successfully");
                 } else {
                     this.errorHandling(info);
                 }
                 sap.ui.core.BusyIndicator.hide();
-
-                // oModel.callFunction("/approvePricing", {
-                //     method: "POST",
-                //     urlParameters: oActionUriParameters,
-                //     success: function (oData) {
-                //         this.getView().byId("idSTabPrcingNoti").rebindTable(true);
-                //         this._oPopover.close();
-                //         // debugger;
-                //     }.bind(this),
-                //     error: function (error) {
-                //         // debugger;
-                //     }
-                // });
             },
             updatePricingRecord: function (oModel, sPath, oPayLoad) {
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 return new Promise(function (resolve, reject) {
-                    oModel.update(sPath, oPayLoad, {
+                    oModel.callFunction(sPath, {
+                        method: "POST",
+                        urlParameters: oPayLoad,
                         success: function (oData) {
                             this.getView().byId("idSTabPrcingNoti").rebindTable(true);
                             this.getOwnerComponent().getModel().refresh();
@@ -397,9 +390,9 @@ sap.ui.define(
                 }
                 var oList = this.byId(Fragment.createId("FrgPricingComments", "idListPricingComment"));
                 var aFilter = [];
-                aFilter.push(new Filter("Pricing_Conditions_manufacturerCode", FilterOperator.EQ, oSelObj.Pricing_Conditions_manufacturerCode, true));
-                aFilter.push(new Filter("Pricing_Conditions_countryCode_code", FilterOperator.EQ, oSelObj.Pricing_Conditions_countryCode_code, true));
-                aFilter.push(new Filter("Pricing_Conditions_uuid", FilterOperator.EQ, oSelObj.Pricing_Conditions_uuid, true));
+                aFilter.push(new Filter("Pricing_Conditions_manufacturerCode", FilterOperator.EQ, oSelObj.manufacturerCode, true));
+                aFilter.push(new Filter("Pricing_Conditions_countryCode_code", FilterOperator.EQ, oSelObj.countryCode_code, true));
+                aFilter.push(new Filter("Pricing_Conditions_uuid", FilterOperator.EQ, oSelObj.uuid, true));
                 oList.getBinding("items").filter(aFilter);
                 this._oDialog.open();
             },
@@ -417,8 +410,8 @@ sap.ui.define(
                 var oObj = oEvent.getBindingContext().getObject();
                 var oPayLoad = {
                     uuid: oObj.uuid,
-                    manufacturerCode: oObj.Pricing_Conditions_manufacturerCode,
-                    countryCode_code: oObj.Pricing_Conditions_countryCode_code
+                    manufacturerCode: oObj.manufacturerCode,
+                    countryCode_code: oObj.countryCode_code
                 };
                 sap.ui.core.BusyIndicator.show();
 
@@ -453,7 +446,7 @@ sap.ui.define(
                         type: DialogType.Message,
                         content: [
                             new Label({
-                                text: "Do you want to reject " + oSelObj.Pricing_Conditions_manufacturerCode + "?",
+                                text: "Do you want to reject " + oSelObj.manufacturerCode + "?",
                                 labelFor: "rejectionNote",
                             }),
                             new TextArea("rejectionNote", {
@@ -491,10 +484,10 @@ sap.ui.define(
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 var oSelObj = oInput.getBindingContext().getObject();
                 var oActionUriParameters = {
-                    pricing_Notif_uuid: oSelObj.uuid,
-                    Pricing_Conditions_manufacturerCode: oSelObj.Pricing_Conditions_manufacturerCode,
-                    Pricing_Conditions_countryCode_code: oSelObj.Pricing_Conditions_countryCode_code,
-                    Pricing_Conditions_uuid: oSelObj.Pricing_Conditions_uuid,
+                    // pricing_Notif_uuid: oSelObj.uuid,
+                    Pricing_Conditions_manufacturerCode: oSelObj.manufacturerCode,
+                    Pricing_Conditions_countryCode_code: oSelObj.countryCode_code,
+                    Pricing_Conditions_uuid: oSelObj.uuid,
                     Comment: sText
                 };
                 var oPayLoadVL = {
@@ -502,7 +495,7 @@ sap.ui.define(
                 };
                 sap.ui.core.BusyIndicator.show();
                 const info = await this.createPricingComment(oModel, "/PricingComments", oActionUriParameters);
-                if (info.pricing_Notif_uuid) {
+                if (info.uuid) {
                     MessageBox.success("Record Rejected Successfully");
                 } else {
                     this.errorHandling(info);
@@ -603,32 +596,28 @@ sap.ui.define(
                 var selectedValues = oTable.getSelectedIndices();
                 for (var a = 0; a < aData.length; a++) {
                     var oActionUriParameters = {
-                        uuid: a.uuid,
-                        Pricing_Conditions_manufacturerCode: aData[a].Pricing_Conditions_manufacturerCode,
-                        Pricing_Conditions_countryCode_code: aData[a].Pricing_Conditions_countryCode_code,
-                        Pricing_Conditions_uuid: aData[a].Pricing_Conditions_uuid,
-                        approvedDate: new Date().toISOString(),
-                        approver: logOnUserObj.userid,
-                        status_code: "Approved"
+                        uuid: aData[a].uuid,
+                        manufacturerCode: aData[a].manufacturerCode,
+                        countryCode: aData[a].countryCode_code,
                     };
-                    if (logOnUserObj.role_role === "GCM" || logOnUserObj.role_role === "SGC") {
-                        oActionUriParameters.completionDate = new Date().toISOString();
-                    } else if (logOnUserObj.role_role === "LP" || logOnUserObj.role_role === "SLP") {
-                        oActionUriParameters.local_completionDate = new Date().toISOString();
-                    }
+                    // if (logOnUserObj.role_role === "GCM" || logOnUserObj.role_role === "SGC") {
+                    //     oActionUriParameters.completionDate = new Date().toISOString();
+                    // } else if (logOnUserObj.role_role === "LP" || logOnUserObj.role_role === "SLP") {
+                    //     oActionUriParameters.local_completionDate = new Date().toISOString();
+                    // }
 
                     oContext.update.push({
-                        "entityName": "/PricingNotifications(guid'" + aData[a].uuid + "')", "payload": oActionUriParameters, "iSelIndex": selectedValues[a] + 1
+                        "entityName": "/approvePricing", "payload": oActionUriParameters, "iSelIndex": selectedValues[a] + 1
                     });
                 }
-                this.onPromiseAll(oContext.update, 'update', "Approve", "PricingNotifications").then((oResponse) => {
+                this.onPromiseAll(oContext.update, 'callFunction', "Approved", "PricingNotifications").then((oResponse) => {
                     oTable.setBusy(false);
                     if (iCounter === 1) {
                         that.getOwnerComponent().getModel().refresh();
                         iCounter += 1;
                     }
                     sap.ui.core.BusyIndicator.hide();
-                    MessageBox.success("Record Approved Successfully");
+                    MessageBox.success("Record(s) Approved Successfully");
                     oTable.clearSelection();
 
 
@@ -711,10 +700,9 @@ sap.ui.define(
                 var selectedValues = oTable.getSelectedIndices();
                 for (var a = 0; a < aData.length; a++) {
                     var oActionUriParameters = {
-                        pricing_Notif_uuid: aData[a].uuid,
-                        Pricing_Conditions_manufacturerCode: aData[a].Pricing_Conditions_manufacturerCode,
-                        Pricing_Conditions_countryCode_code: aData[a].Pricing_Conditions_countryCode_code,
-                        Pricing_Conditions_uuid: aData[a].Pricing_Conditions_uuid,
+                        Pricing_Conditions_manufacturerCode: aData[a].manufacturerCode,
+                        Pricing_Conditions_countryCode_code: aData[a].countryCode_code,
+                        Pricing_Conditions_uuid: aData[a].uuid,
                         Comment: sText
                     };
                     oContext.update.push({
@@ -729,7 +717,7 @@ sap.ui.define(
                     }
                     that.oRejectDialog.close();
                     sap.ui.core.BusyIndicator.hide();
-                    MessageBox.success("Record Rejected Successfully");
+                    MessageBox.success("Record(s) Rejected Successfully");
                     oTable.clearSelection();
 
 
@@ -765,7 +753,7 @@ sap.ui.define(
                 sap.ui.getCore().getMessageManager().removeAllMessages();
                 var oModel = this.getOwnerComponent().getModel();
                 var oPayLoad = {
-                    notif_uuid: uuid,
+                    uuid: uuid,
                     status: iSelIndex === 0 ? "Pending" : "Deleted"
                 };
                 sap.ui.core.BusyIndicator.show();
