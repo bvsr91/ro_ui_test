@@ -1,16 +1,20 @@
 <core:FragmentDefinition xmlns="sap.m"
-    xmlns:core="sap.ui.core">
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
     <Dialog id="idDlReopen" title="Re-Open Request">
-        <content>
-            <VBox class="sapUiSmallMargin">
+        <form:SimpleForm editable="true" layout="ResponsiveGridLayout" id="SimpleFormToolbarPricingDisplay">
+            <form:content>
                 <Label text="Please choose action" />
-                <RadioButtonGroup id="idRgb">
+                <RadioButtonGroup id="idRgb" columns="2">
                     <RadioButton text="Edit" selected="true"/>
                     <RadioButton text="Delete" />
                 </RadioButtonGroup>
+                <Label text="Comment" required="true"/>
+                <TextArea id="idTxtAreaComment"/>
+                <Label />
                 <Text id="idTxtReopen" visible="false"/>
-            </VBox>
-        </content>
+            </form:content>
+        </form:SimpleForm>
         <buttons>
             <Button text="Save" press="onPressReopenSave" type="Emphasized"/>
             <Button text="Cancel" press="onPressCanelReopen" type="Emphasized"/>

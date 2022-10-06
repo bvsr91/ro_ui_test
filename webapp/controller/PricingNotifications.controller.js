@@ -749,12 +749,18 @@ sap.ui.define(
             },
             onPressReopenSave: function (oEvent) {
                 var iSelIndex = this.byId(Fragment.createId("FrgReopenPricing", "idRgb")).getSelectedIndex(),
-                    uuid = this.byId(Fragment.createId("FrgReopenPricing", "idTxtReopen")).getText();
+                    uuid = this.byId(Fragment.createId("FrgReopenPricing", "idTxtReopen")).getText(),
+                    sComment = this.byId(Fragment.createId("FrgReopenPricing", "idTxtAreaComment")).getValue();
                 sap.ui.getCore().getMessageManager().removeAllMessages();
+                if (sComment.trim() === "") {
+                    MessageBox.error("Please enter Comment");
+                    return;
+                }
                 var oModel = this.getOwnerComponent().getModel();
                 var oPayLoad = {
                     uuid: uuid,
-                    status: iSelIndex === 0 ? "Pending" : "Deleted"
+                    status: iSelIndex === 0 ? "Pending" : "Deleted",
+                    comment: sComment
                 };
                 sap.ui.core.BusyIndicator.show();
 

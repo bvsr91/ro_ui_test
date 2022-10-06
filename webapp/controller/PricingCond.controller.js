@@ -953,12 +953,12 @@ sap.ui.define(
             },
             onLiveChange: function (oEvent) {
                 var value = oEvent.getSource().getValue();
-                var regexp = /^[0-9]{0,2}.?[0-9]{0,3}$/
+                var regexp = /^[0-9]{0,4}.?[0-9]{0,5}$/
                 var bNotnumber = isNaN(value);
                 if (bNotnumber === true) {
                     oEvent.getSource().setValue(value.substring(0, value.length - 1));
                 } else {
-                    if (value.split(".")[0].length <= 2) {
+                    if (value.split(".")[0].length <= 4) {
                         if (!regexp.test(Number(value))) {
                             oEvent.getSource().setValue(value.substring(0, value.length - 1));
                         }

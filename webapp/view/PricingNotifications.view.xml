@@ -18,7 +18,6 @@
                     <IconTabFilter icon="sap-icon://decline" iconColor="Negative" count="" text="Rejected" key="Rejected" />
                     <IconTabFilter icon="sap-icon://forward" iconColor="Marker" count="" text="Forwarded" key="Forwarded" visible="{= ${userModel>/role/role_role} === 'LDT' || ${userModel>/role/role_role} === 'SLP' ? true : false}" />
                     <IconTabFilter icon="sap-icon://in-progress" iconColor="Tile" count="" text="In Progress" key="In Progress" visible="{= ${userModel>/role/role_role} === 'LDT' || ${userModel>/role/role_role} === 'SLP' ? true : false}"/>
-
                 </items>
                 <content>
                     <smartTable:SmartTable entitySet="PricingNoti_CU" id="idSTabPrcingNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid,ld_initiator" requestAtLeastFields="uuid,ld_initiator" beforeRebindTable="onBeforeRebindTable">

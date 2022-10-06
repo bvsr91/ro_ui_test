@@ -201,8 +201,8 @@ sap.ui.define(
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if ((logOnUserObj.userid && oRecordCreator.toLowerCase() === logOnUserObj.userid.toLowerCase())
                     && (logOnUserObj.role_role === "CDT" || logOnUserObj.role_role === "SGC")) {
-                    if (oSelObj.status_code === "Rejected") {
-                        // oSelObj.status_code === "Pending" ||                        
+                    if (oSelObj.status_code === "Rejected"
+                        || oSelObj.status_code === "In Progress") {
                         bEdit = true;
                         bDelete = true;
                     }
