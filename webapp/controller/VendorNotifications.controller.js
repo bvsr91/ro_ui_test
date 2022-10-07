@@ -118,11 +118,12 @@ sap.ui.define(
 
                 if (role.role_role) {
                     if (role.role_role === "CDT") {
-                        // sFieldName = "createdBy";
                         this.getView().byId("idSTabVendorNoti").setEntitySet("VendorNoti_U");
                         this._sEntitySet = "VendorNoti_U";
+                    } else if (role.role_role === "SGC") {
+                        this.getView().byId("idSTabVendorNoti").setEntitySet("VendorNoti_SA");
+                        this._sEntitySet = "VendorNoti_SA";
                     } else {
-                        // sFieldName = "approver"
                         this.getView().byId("idSTabVendorNoti").setEntitySet("VendorNoti_A");
                         this._sEntitySet = "VendorNoti_A";
                     }
@@ -196,8 +197,8 @@ sap.ui.define(
                 var logOnUserObj = this.getOwnerComponent().getModel("userModel").getProperty("/role");
                 if (logOnUserObj.userid && oRecordApprover.toLowerCase() === logOnUserObj.userid.toLowerCase() && (logOnUserObj.role_role === "GCM" ||
                     logOnUserObj.role_role === "SGC")) {
-                    if (oInput.getBindingContext().getObject().status_code === "Approved" ||
-                        oInput.getBindingContext().getObject().status_code === "Rejected") {
+                    if (oSelObj.status_code === "Approved" || oSelObj.status_code === "Rejected" ||
+                        oSelObj.status_code === "In Progress") {
                         bEdit = false;
                     } else {
                         bEdit = true;
