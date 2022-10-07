@@ -303,13 +303,17 @@ sap.ui.define(
                     bAccept = false;
                 }
                 if (oSelObj.status_code === "Approved") {
-                    if ((oObj.role_role === "GCM" || oObj.role_role === "SGC") && !oSelObj.local_completionDate &&
-                        oObj.userid.toUpperCase() === oSelObj.approver.toUpperCase()) {
+                    if (oSelObj.lo_exchangeRate === true || oSelObj.lo_countryFactor === true) {
                         bReopen = true;
-                    }
-                    if ((oObj.role_role === "LP" || oObj.role_role === "SLP") && oSelObj.local_completionDate &&
-                        (oObj.userid.toUpperCase() === oSelObj.localApprover.toUpperCase() && oSelObj.localApprover)) {
-                        bReopen = true;
+                    } else {
+                        if ((oObj.role_role === "GCM" || oObj.role_role === "SGC") && !oSelObj.local_completionDate &&
+                            oObj.userid.toUpperCase() === oSelObj.approver.toUpperCase()) {
+                            bReopen = true;
+                        }
+                        if ((oObj.role_role === "LP" || oObj.role_role === "SLP") && oSelObj.local_completionDate &&
+                            (oObj.userid.toUpperCase() === oSelObj.localApprover.toUpperCase() && oSelObj.localApprover)) {
+                            bReopen = true;
+                        }
                     }
                 }
                 var oActionSheet = new sap.m.ActionSheet({

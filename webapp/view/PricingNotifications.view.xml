@@ -20,7 +20,7 @@
                     <IconTabFilter icon="sap-icon://in-progress" iconColor="Tile" count="" text="In Progress" key="In Progress" visible="{= ${userModel>/role/role_role} === 'LDT' || ${userModel>/role/role_role} === 'SLP' ? true : false}"/>
                 </items>
                 <content>
-                    <smartTable:SmartTable entitySet="PricingNoti_CU" id="idSTabPrcingNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid,ld_initiator" requestAtLeastFields="uuid,ld_initiator" beforeRebindTable="onBeforeRebindTable">
+                    <smartTable:SmartTable entitySet="PricingNoti_CU" id="idSTabPrcingNoti" smartFilterId="smartFilterBar" useExportToExcel="true" beforeExport="onBeforeExport" useTablePersonalisation="true" header="Pricing Notifications" showRowCount="true" useVariantManagement="false" enableAutoBinding="true" class="sapUiResponsiveContentPadding" tableType="Table" enableAutoColumnWidth="true" initiallyVisibleFields="manufacturerCode, country" ignoredFields="uuid,ld_initiator" requestAtLeastFields="uuid,ld_initiator,lo_countryFactor,lo_exchangeRate" beforeRebindTable="onBeforeRebindTable">
                         <t:Table id="idUiTabPricingNoti" rowSelectionChange="onRowlSelChange" visibleRowCount="8">
                             <t:columns>
                                 <t:Column width="8rem" hAlign="Begin">

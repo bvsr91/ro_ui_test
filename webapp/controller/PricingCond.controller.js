@@ -288,9 +288,7 @@ sap.ui.define(
                             if (oSelObj.status_code === "Forwarded" && (oSelObj.lo_countryFactor === true && oSelObj.lo_exchangeRate === true)) {
                                 bEdit = true;
                                 bDelete = true;
-                            } else if ((oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected")
-                                // && (oSelObj.lo_countryFactor === true || oSelObj.lo_exchangeRate === true)
-                            ) {
+                            } else if ((oSelObj.status_code === "Pending" || oSelObj.status_code === "Rejected")) {
                                 bEdit = true;
                                 bDelete = true;
                             }
@@ -301,6 +299,10 @@ sap.ui.define(
                         } else {
                             bEdit = false;
                             bDelete = false;
+                        }
+                    } else {
+                        if (oRecordCreator.toUpperCase() === logOnUserObj.userid.toUpperCase() && oSelObj.status_code === "Rejected") {
+                            bDelete = true;
                         }
                     }
                 }
