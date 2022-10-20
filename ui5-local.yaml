@@ -31,7 +31,7 @@ server:
         ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
         backend:
           - path: /v2
-            url: https://mro_service.dest
+            url: https://mroservice.dest
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:

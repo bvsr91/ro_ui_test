@@ -17,7 +17,7 @@ server:
           url: https://ui5.sap.com
         backend:
           - path: /v2
-            url: https://mro_service.dest
+            url: https://mroservice.dest
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
